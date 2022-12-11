@@ -1,0 +1,3 @@
+ortools~=9.3.10497
+prettytable~=3.3.0
+setuptools~=60.2.0

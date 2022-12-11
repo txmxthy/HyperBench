@@ -1,0 +1,175 @@
+Dataset,Solver,Optimum,Solution,Time (seconds)
+ft10,GoogleORCPSolver,930,930,3.4
+abz5,GoogleORCPSolver,1234,1234,1.2
+abz6,GoogleORCPSolver,943,943,14.6
+ft06,GoogleORCPSolver,55,55,0.1
+ft20,GoogleORCPSolver,1165,1165,0.8
+la01,GoogleORCPSolver,666,666,0.1
+la02,GoogleORCPSolver,655,655,0.2
+la03,GoogleORCPSolver,597,597,0.1
+la04,GoogleORCPSolver,590,590,0.1
+la05,GoogleORCPSolver,593,593,0.1
+la06,GoogleORCPSolver,926,926,0.2
+la07,GoogleORCPSolver,890,890,0.2
+abz5,PriorityDispatchSolver,1234,1383.0,0.0
+abz6,PriorityDispatchSolver,943,981.0,0.0
+abz7,GoogleORCPSolver,656,656,407.9
+abz7,PriorityDispatchSolver,656,745.0,0.2
+abz8,PriorityDispatchSolver,(645, 665),826.0,0.2
+abz9,PriorityDispatchSolver,(661, 679),839.0,0.2
+ft06,PriorityDispatchSolver,55,68.0,0.0
+ft10,PriorityDispatchSolver,930,1007.0,0.0
+ft20,PriorityDispatchSolver,1165,1259.0,0.0
+la01,PriorityDispatchSolver,666,708.0,0.0
+la02,PriorityDispatchSolver,655,717.0,0.0
+la03,PriorityDispatchSolver,597,650.0,0.0
+la04,PriorityDispatchSolver,590,659.0,0.0
+la05,PriorityDispatchSolver,593,593.0,0.0
+la06,PriorityDispatchSolver,926,926.0,0.0
+la07,PriorityDispatchSolver,890,994.0,0.0
+la08,PriorityDispatchSolver,863,863.0,0.0
+la09,PriorityDispatchSolver,951,951.0,0.0
+la10,PriorityDispatchSolver,958,958.0,0.0
+la11,PriorityDispatchSolver,1222,1222.0,0.0
+la12,PriorityDispatchSolver,1039,1039.0,0.0
+la13,PriorityDispatchSolver,1150,1150.0,0.0
+la14,PriorityDispatchSolver,1292,1292.0,0.0
+la15,PriorityDispatchSolver,1207,1334.0,0.1
+la16,PriorityDispatchSolver,945,1055.0,0.0
+la17,PriorityDispatchSolver,784,939.0,0.0
+la18,PriorityDispatchSolver,848,1004.0,0.0
+la19,PriorityDispatchSolver,842,960.0,0.0
+la20,PriorityDispatchSolver,902,972.0,0.0
+la21,PriorityDispatchSolver,1046,1253.0,0.1
+la22,PriorityDispatchSolver,927,1058.0,0.1
+la23,PriorityDispatchSolver,1032,1124.0,0.1
+la24,PriorityDispatchSolver,935,1041.0,0.1
+la25,PriorityDispatchSolver,977,1099.0,0.1
+la26,PriorityDispatchSolver,1218,1480.0,0.1
+la27,PriorityDispatchSolver,1235,1369.0,0.1
+la28,PriorityDispatchSolver,1216,1391.0,0.1
+la29,PriorityDispatchSolver,1152,1408.0,0.1
+la30,PriorityDispatchSolver,1355,1427.0,0.1
+la31,PriorityDispatchSolver,1784,1882.0,0.2
+la32,PriorityDispatchSolver,1850,1850.0,0.2
+la33,PriorityDispatchSolver,1719,1719.0,0.2
+la34,PriorityDispatchSolver,1721,1721.0,0.2
+la35,PriorityDispatchSolver,1888,1888.0,0.2
+la36,PriorityDispatchSolver,1268,1491.0,0.2
+la37,PriorityDispatchSolver,1397,1595.0,0.1
+la38,PriorityDispatchSolver,1196,1428.0,0.1
+la39,PriorityDispatchSolver,1233,1381.0,0.1
+la40,PriorityDispatchSolver,1222,1424.0,0.1
+orb01,PriorityDispatchSolver,1059,1266.0,0.0
+orb02,PriorityDispatchSolver,888,950.0,0.0
+orb03,PriorityDispatchSolver,1005,1209.0,0.0
+orb04,PriorityDispatchSolver,1005,1239.0,0.0
+orb05,PriorityDispatchSolver,887,1071.0,0.0
+orb06,PriorityDispatchSolver,1010,1095.0,0.0
+orb08,PriorityDispatchSolver,899,1095.0,0.0
+orb09,PriorityDispatchSolver,934,1122.0,0.0
+orb10,PriorityDispatchSolver,944,1048.0,0.0
+swv01,PriorityDispatchSolver,1407,1716.0,0.1
+swv02,PriorityDispatchSolver,1475,1773.0,0.1
+swv03,PriorityDispatchSolver,(1369, 1398),1670.0,0.1
+swv04,PriorityDispatchSolver,(1450, 1474),1900.0,0.1
+swv05,PriorityDispatchSolver,1424,1858.0,0.1
+swv06,PriorityDispatchSolver,(1591, 1678),2098.0,0.2
+swv07,PriorityDispatchSolver,(1446, 1600),1876.0,0.2
+swv08,PriorityDispatchSolver,(1640, 1763),2260.0,0.2
+swv09,PriorityDispatchSolver,(1604, 1661),2094.0,0.2
+swv10,PriorityDispatchSolver,(1631, 1767),2107.0,0.2
+swv11,PriorityDispatchSolver,(2983, 2991),3911.0,0.5
+swv12,PriorityDispatchSolver,(2972, 3003),3835.0,0.6
+swv13,PriorityDispatchSolver,3104,3992.0,0.6
+swv14,PriorityDispatchSolver,2968,3813.0,0.6
+swv15,PriorityDispatchSolver,(2885, 2904),3693.0,0.5
+swv16,PriorityDispatchSolver,2924,2924.0,0.6
+swv17,PriorityDispatchSolver,2794,2794.0,0.6
+swv18,PriorityDispatchSolver,2852,2852.0,0.6
+swv19,PriorityDispatchSolver,2843,2843.0,0.6
+swv20,PriorityDispatchSolver,2823,2823.0,0.6
+yn1,PriorityDispatchSolver,(826, 885),1033.0,0.3
+yn2,PriorityDispatchSolver,(861, 909),1025.0,0.3
+yn3,PriorityDispatchSolver,(827, 892),1055.0,0.4
+yn4,PriorityDispatchSolver,(918, 968),1146.0,0.4
+ta01,PriorityDispatchSolver,1231,1423.0,0.1
+ta02,PriorityDispatchSolver,1244,1429.0,0.1
+ta03,PriorityDispatchSolver,1218,1428.0,0.1
+ta04,PriorityDispatchSolver,1175,1368.0,0.1
+ta05,PriorityDispatchSolver,1224,1383.0,0.2
+ta06,PriorityDispatchSolver,1238,1405.0,0.1
+ta07,PriorityDispatchSolver,1227,1477.0,0.1
+ta08,PriorityDispatchSolver,1217,1383.0,0.1
+ta09,PriorityDispatchSolver,1274,1498.0,0.1
+ta10,PriorityDispatchSolver,1241,1533.0,0.1
+ta11,PriorityDispatchSolver,(1323, 1361),1581.0,0.2
+ta12,PriorityDispatchSolver,(1351, 1367),1583.0,0.2
+ta13,PriorityDispatchSolver,(1282, 1342),1626.0,0.2
+ta14,PriorityDispatchSolver,1345,1563.0,0.2
+ta15,PriorityDispatchSolver,(1304, 1340),1610.0,0.2
+ta16,PriorityDispatchSolver,(1302, 1360),1611.0,0.2
+ta17,PriorityDispatchSolver,1462,1696.0,0.2
+ta18,PriorityDispatchSolver,(1369, 1396),1645.0,0.2
+ta19,PriorityDispatchSolver,(1297, 1335),1561.0,0.2
+ta20,PriorityDispatchSolver,(1318, 1351),1535.0,0.2
+ta21,PriorityDispatchSolver,(1539, 1644),2033.0,0.4
+ta22,PriorityDispatchSolver,(1511, 1600),1837.0,0.3
+ta23,PriorityDispatchSolver,(1472, 1557),1903.0,0.4
+ta24,PriorityDispatchSolver,(1602, 1647),1921.0,0.3
+ta25,PriorityDispatchSolver,(1504, 1595),1829.0,0.3
+ta26,PriorityDispatchSolver,(1539, 1645),1885.0,0.4
+ta27,PriorityDispatchSolver,(1616, 1680),1998.0,0.3
+ta28,PriorityDispatchSolver,(1591, 1614),1902.0,0.4
+ta29,PriorityDispatchSolver,(1514, 1635),1878.0,0.4
+ta30,PriorityDispatchSolver,(1473, 1584),1946.0,0.4
+ta31,PriorityDispatchSolver,1764,1986.0,0.4
+ta32,PriorityDispatchSolver,(1774, 1796),2124.0,0.4
+ta33,PriorityDispatchSolver,(1778, 1793),2088.0,0.4
+ta34,PriorityDispatchSolver,(1828, 1829),2088.0,0.4
+ta35,PriorityDispatchSolver,2007,2180.0,0.4
+ta36,PriorityDispatchSolver,1819,2087.0,0.4
+ta37,PriorityDispatchSolver,(1771, 1778),2107.0,0.4
+ta38,PriorityDispatchSolver,1673,1981.0,0.5
+ta39,PriorityDispatchSolver,1795,2105.0,0.4
+ta40,PriorityDispatchSolver,(1631, 1674),2041.0,0.5
+ta41,PriorityDispatchSolver,(1859, 2018),2506.0,0.7
+ta42,PriorityDispatchSolver,(1867, 1956),2334.0,0.7
+ta43,PriorityDispatchSolver,(1809, 1859),2303.0,0.7
+ta44,PriorityDispatchSolver,(1927, 1984),2375.0,0.7
+ta45,PriorityDispatchSolver,(1997, 2000),2269.0,0.7
+ta46,PriorityDispatchSolver,(1940, 2021),2395.0,0.7
+ta47,PriorityDispatchSolver,(1789, 1903),2197.0,0.9
+ta48,PriorityDispatchSolver,(1912, 1952),2284.0,0.7
+ta49,PriorityDispatchSolver,(1915, 1968),2259.0,0.8
+ta50,PriorityDispatchSolver,(1807, 1926),2247.0,0.8
+ta51,PriorityDispatchSolver,2760,3332.0,1.3
+ta52,PriorityDispatchSolver,2756,3140.0,1.3
+ta53,PriorityDispatchSolver,2717,3097.0,1.2
+ta54,PriorityDispatchSolver,2839,2862.0,1.2
+ta55,PriorityDispatchSolver,2679,3131.0,1.2
+ta56,PriorityDispatchSolver,2781,3119.0,1.2
+ta57,PriorityDispatchSolver,2943,3308.0,1.2
+ta58,PriorityDispatchSolver,2885,3109.0,1.2
+ta59,PriorityDispatchSolver,2655,3021.0,1.2
+ta60,PriorityDispatchSolver,2723,2975.0,1.3
+ta61,PriorityDispatchSolver,2868,3164.0,2.1
+ta62,PriorityDispatchSolver,2869,3299.0,2.0
+ta63,PriorityDispatchSolver,2755,3038.0,2.1
+ta64,PriorityDispatchSolver,2702,2972.0,2.0
+ta65,PriorityDispatchSolver,2725,3147.0,2.1
+ta66,PriorityDispatchSolver,2845,3240.0,2.1
+ta67,PriorityDispatchSolver,2825,3306.0,2.1
+ta68,PriorityDispatchSolver,2784,3020.0,2.1
+ta69,PriorityDispatchSolver,3071,3380.0,2.1
+ta70,PriorityDispatchSolver,2995,3435.0,2.1
+ta71,PriorityDispatchSolver,None,5661.0,8.3
+ta72,PriorityDispatchSolver,None,5333.0,8.1
+ta73,PriorityDispatchSolver,None,5806.0,8.1
+ta74,PriorityDispatchSolver,None,5415.0,8.0
+ta75,PriorityDispatchSolver,None,5799.0,8.0
+ta76,PriorityDispatchSolver,None,5679.0,8.1
+ta77,PriorityDispatchSolver,None,5587.0,8.3
+ta78,PriorityDispatchSolver,None,5543.0,8.0
+ta79,PriorityDispatchSolver,None,5383.0,8.0
+ta80,PriorityDispatchSolver,None,5461.0,8.0
