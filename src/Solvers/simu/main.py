@@ -3,11 +3,20 @@ import os
 
 from jobshop import *
 
-def simu_main():
 
+def simu_main(seed=None, mode=None, timeout=None):
     files = (os.listdir(os.getcwd() + "/instances"))
     print(files)
-    maxTime = int(input('Please input the maximum time in seconds (default 30): ') or 30)
+
+    if seed is None:
+        seed = int(input("seed: "))
+
+    if mode is None:
+        mode = input("mode: ")
+
+    if timeout is None:
+        timeout = int(input("timeout [30]: ") or 30)
+
     scores = {}
 
     for file in files:
@@ -20,7 +29,8 @@ def simu_main():
         print("Number of jobs:", j)
         printJobs(jobs)
 
-        cost, solution = simulatedAnnealingSearch(jobs, maxTime=maxTime, T=int(200), termination=int(10), halting=int(10),
+        cost, solution = simulatedAnnealingSearch(jobs, maxTime=timeout, T=int(200), termination=int(10),
+                                                  halting=int(10),
                                                   mode='random', decrease=float(0.8))
 
         printSchedule(jobs, solution)
@@ -37,6 +47,7 @@ def simu_main():
             writer.writerow(scores)
     except IOError:
         print("I/O error")
+
 
 if __name__ == '__main__':
     simu_main()
