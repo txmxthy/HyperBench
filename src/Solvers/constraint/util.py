@@ -1,8 +1,9 @@
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import logging
-from src.data.script.load_instance import load_instance
-from src.Solvers.constraint.jsp_fwk import JSSolution, JSProblem
-from src.Solvers.constraint.jsp_fwk.solver import PriorityDispatchSolver, GoogleORCPSolver
+
+from data.script.load_instance import load_instance
+from jsp_fwk import JSProblem, JSSolution
+from jsp_fwk.solver import GoogleORCPSolver, PriorityDispatchSolver
 
 
 def print_header(text):
@@ -180,7 +181,7 @@ def do_solve(problem, solver):
         print(f'Solution: {problem.solution.makespan}')
         print(f'Terminate successfully in {solver.user_time} sec.')
         # Add to file if not already in file
-        with open('data/outputs/results.csv', 'r+') as f:
+        with open('Solvers/constraint/data/outputs/results.csv', 'r+') as f:
             # Headers are Dataset, Algorithm, Optimum, Solution, Time
             # If there is not an entry for this dataset and algorithm, add it
             if not any(line.startswith(f'{problem.name},{solver.name}') for line in f):

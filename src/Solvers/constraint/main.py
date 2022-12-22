@@ -1,5 +1,4 @@
-import src.util as util
-
+import util
 if __name__ == '__main__':
     # Select Algorithms
     Algorithms = util.get_algorithms()  # ✔️
