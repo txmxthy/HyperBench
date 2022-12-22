@@ -1,12 +1,15 @@
 import csv
 import os
-import plotly
-from utils import readFilePairs
-from jspGA import genetic
+from alg.utils import readFilePairs
+from alg.jspGA import genetic
 
-if __name__ == '__main__':
+
+def genetic_main():
     target = None
-    files = (os.listdir(os.getcwd() + "/cases"))
+    # Print the location of this file
+    path = os.path.dirname(os.path.abspath(__file__))
+    path += "/cases/"
+    files = os.listdir(path)
     print(files)
 
     population_size = int(input('Please input the size of population (default: 30): ') or 30)
@@ -28,3 +31,7 @@ if __name__ == '__main__':
             writer.writerow(scores)
     except IOError:
         print("I/O error")
+
+
+if __name__ == '__main__':
+    genetic_main()

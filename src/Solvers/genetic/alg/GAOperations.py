@@ -1,5 +1,5 @@
 import random
-from utils import swap_rnd
+from alg.utils import swap_rnd
 
 def removeFromList(parent, list):
     seen = set()

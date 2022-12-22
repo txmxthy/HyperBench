@@ -322,7 +322,7 @@ class TabuSearch:
         return update_ans  # 返回更新后的解
 
 
-if __name__ == "__main__":
+def tabu_main():
     # get the full path of the directory "instance:
     files = (os.listdir(os.getcwd() + "/instances"))
     print(files)
@@ -377,7 +377,6 @@ if __name__ == "__main__":
     print(scores)
     csv_columns = files
 
-
     csv_file = "scores.csv"
     try:
         with open(csv_file, 'w') as csvfile:
@@ -386,3 +385,7 @@ if __name__ == "__main__":
             writer.writerow(scores)
     except IOError:
         print("I/O error")
+
+
+if __name__ == "__main__":
+    tabu_main()

@@ -1,6 +1,7 @@
-
 import random
-from calculateMakespan import calculateMakespan
+
+from alg import calculateMakespan
+
 
 def readFilePairs(filepath):
     times_done = False
@@ -64,7 +65,7 @@ def fromPermutation(permutation, n):
     
 
 def testPermutation(permutation, times, machines, n):
-    best_result, table = calculateMakespan(times, machines, permutation, n)
+    best_result, table = calculateMakespan.calculateMakespan(times, machines, permutation, n)
     print("SEQUENCE")
     print(permutation)
     print("RESULT:")

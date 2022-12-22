@@ -1,10 +1,10 @@
 import copy
 import time
 import sys
-from calculateMakespan import calculateMakespan
-from GAOperations import checkDiversity, generate_population, getFitness, evolve
-from plotResult import plotResult
-from utils import fromPermutation, printTable
+from alg import calculateMakespan
+from alg.GAOperations import checkDiversity, generate_population, getFitness, evolve
+from alg.plotResult import plotResult
+from alg.utils import fromPermutation, printTable
 
 
 def printProgress(bestValue, iterations, timeElapsed):
@@ -23,7 +23,7 @@ def genetic(times, machines, n, population_number, iterations, rate, target, max
         for individual in population:
             result = None
             if not individual[1]:
-                result, table = calculateMakespan(times, machines, individual[0], n)
+                result, table = calculateMakespan.calculateMakespan(times, machines, individual[0], n)
                 individual[1] = result
             else:
                 result = individual[1]
@@ -76,7 +76,7 @@ def genetic(times, machines, n, population_number, iterations, rate, target, max
             # We check the diversity, in case the diversity percentage is very low we delete a number of the population and we add randome members
             checkDiversity(population, diffPercentage, n, machine_number)
 
-    best_result, best_table = calculateMakespan(times, machines, global_best_ind[0], n)
+    best_result, best_table = calculateMakespan.calculateMakespan(times, machines, global_best_ind[0], n)
     print("\nOVERALL RESULT")
     print("RESULT: %s" % best_result)
     print('the elapsed time:%ss' % (int(time.time() - start_time)))

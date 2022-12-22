@@ -3,7 +3,7 @@ import os
 
 from jobshop import *
 
-if __name__ == '__main__':
+def simu_main():
 
     files = (os.listdir(os.getcwd() + "/instances"))
     print(files)
@@ -37,3 +37,6 @@ if __name__ == '__main__':
             writer.writerow(scores)
     except IOError:
         print("I/O error")
+
+if __name__ == '__main__':
+    simu_main()
