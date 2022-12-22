@@ -325,6 +325,7 @@ class TabuSearch:
 if __name__ == "__main__":
     # get the full path of the directory "instance:
     files = (os.listdir(os.getcwd() + "/instances"))
+    print(files)
     maxTime = float(input("Input the max time in seconds for each instance:"))
 
     scores = {}

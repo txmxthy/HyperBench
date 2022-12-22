@@ -6,6 +6,7 @@ from jobshop import *
 if __name__ == '__main__':
 
     files = (os.listdir(os.getcwd() + "/instances"))
+    print(files)
     maxTime = int(input('Please input the maximum time in seconds (default 30): ') or 30)
     scores = {}
 

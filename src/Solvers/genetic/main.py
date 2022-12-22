@@ -1,6 +1,6 @@
 import csv
 import os
-
+import plotly
 from utils import readFilePairs
 from jspGA import genetic
 
