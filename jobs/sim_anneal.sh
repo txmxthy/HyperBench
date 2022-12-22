@@ -8,7 +8,7 @@
 #SBATCH --mail-user=mcdermtimo@ecs.vuw.ac.nz
 
 module load python/3.8.1
-
+#@TODO Virtual Env and install deps only once
 python3 -m pip upgrade pip
 pip3 install -r ../requirements.txt
 
