@@ -155,9 +155,11 @@ class JSProblem(Cloneable):
         prj_path = os.path.dirname(os.path.dirname(script_path))
         benchmark_path = os.path.join(prj_path, 'benchmark')
 
+
         # check benchmark name
         with open(os.path.join(benchmark_path, 'instances.json'), 'r') as f:
-            instances = json.load(f)        
+            instances = json.load(f)
+
         for instance in instances:
             if instance['name']==name:
                 filename = instance['path']

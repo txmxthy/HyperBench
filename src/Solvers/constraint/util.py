@@ -110,7 +110,8 @@ def get_datasets():
                     continue
                 scores[dataset] = optimum
             print(scores)
-            selected_datasets.append(test_set)
+            for ins in test_set:
+                selected_datasets.append(ins)
             return selected_datasets
 
 
