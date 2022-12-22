@@ -1,6 +1,8 @@
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import logging
 from data.script.load_instance import load_instance
+from src.Solvers.constraint.jsp_fwk import JSSolution, JSProblem
+from src.Solvers.constraint.jsp_fwk.solver import PriorityDispatchSolver, GoogleORCPSolver
 
 
 def print_header(text):
@@ -20,7 +22,7 @@ def get_algorithms():
     """
 
     # Get user input from terminal to select algorithms from a check box.
-    all_algorithms = ['Google Or Tools', 'Tabu Search', 'Dispatching Rules']
+    all_algorithms = ['Google Or Tools', 'Dispatching Rules']
     print_header('Select Algorithms')
     # Get selection
     selected_algorithms = []
@@ -140,54 +142,52 @@ def get_datasets():
     return selected_datasets
 
 
-# def run_algorithms(Algorithms, Datasets):
-#     """
-#     Run the selected algorithms on the selected datasets.
-#     :param Algorithms: A list of strings representing the algorithms to run.
-#     :param Datasets: A map of dataset code to [file path, optimal solution]
-#     # @TODO - Add support for multiple algorithms
-#     """
-#     for dataset in Datasets:
-#         problem = JSProblem(benchmark=dataset)
-#         # Structural pattern match for the algorithms
-#         for alg in Algorithms:
-#             if alg == 'Google Or Tools':
-#                 solver = GoogleORCPSolver()
-#                 do_solve(problem, solver)
-#             elif alg == 'Tabu Search':
-#                 solver = TabuSearchSolver()
-#                 do_solve(problem, solver)
-#             elif alg == 'Dispatching Rules':
-#                 rules = ['spt', 'mopr', 'mwkr', 'hh', 'ihh']
-#                 solver = PriorityDispatchSolver(rule=rules[-1])
-#                 do_solve(problem, solver)
-#             else:
-#                 print(f'Algorithm {alg} not found.')
-#                 continue
+
+def run_algorithms(Algorithms, Datasets):
+    """
+    Run the selected algorithms on the selected datasets.
+    :param Algorithms: A list of strings representing the algorithms to run.
+    :param Datasets: A map of dataset code to [file path, optimal solution]
+    # @TODO - Add support for multiple algorithms
+    """
+    for dataset in Datasets:
+        problem = JSProblem(benchmark=dataset)
+        # Structural pattern match for the algorithms
+        for alg in Algorithms:
+            if alg == 'Google Or Tools':
+                solver = GoogleORCPSolver()
+                do_solve(problem, solver)
+            elif alg == 'Dispatching Rules':
+                rules = ['spt', 'mopr', 'mwkr', 'hh', 'ihh']
+                solver = PriorityDispatchSolver(rule=rules[-1])
+                do_solve(problem, solver)
+            else:
+                print(f'Algorithm {alg} not found.')
+                continue
 
 
-# def do_solve(problem, solver):
-#     # @TODO only solve if there is not already a solution recorded
-#     solver.solve(problem=problem, interval=2000, callback=print_intermediate_solution)
-#     solver.wait()
-#     print('----------------------------------------')
-#     if solver.status:
-#         print(f'Problem: {len(problem.jobs)} jobs, {len(problem.machines)} machines')
-#         print(f'Optimum: {problem.optimum}')
-#         print(f'Solution: {problem.solution.makespan}')
-#         print(f'Terminate successfully in {solver.user_time} sec.')
-#         # Add to file if not already in file
-#         with open('data/outputs/results.csv', 'r+') as f:
-#             # Headers are Dataset, Algorithm, Optimum, Solution, Time
-#             # If there is not an entry for this dataset and algorithm, add it
-#             if not any(line.startswith(f'{problem.name},{solver.name}') for line in f):
-#                 f.write(f'{problem.name},{solver.name},{problem.optimum},{problem.solution.makespan},{solver.user_time}\n')
-#     else:
-#         print(f'Solving process failed in {solver.user_time} sec.')
+def do_solve(problem, solver):
+    # @TODO only solve if there is not already a solution recorded
+    solver.solve(problem=problem, interval=2000, callback=print_intermediate_solution)
+    solver.wait()
+    print('----------------------------------------')
+    if solver.status:
+        print(f'Problem: {len(problem.jobs)} jobs, {len(problem.machines)} machines')
+        print(f'Optimum: {problem.optimum}')
+        print(f'Solution: {problem.solution.makespan}')
+        print(f'Terminate successfully in {solver.user_time} sec.')
+        # Add to file if not already in file
+        with open('data/outputs/results.csv', 'r+') as f:
+            # Headers are Dataset, Algorithm, Optimum, Solution, Time
+            # If there is not an entry for this dataset and algorithm, add it
+            if not any(line.startswith(f'{problem.name},{solver.name}') for line in f):
+                f.write(f'{problem.name},{solver.name},{problem.optimum},{problem.solution.makespan},{solver.user_time}\n')
+    else:
+        print(f'Solving process failed in {solver.user_time} sec.')
 
-#
-# def print_intermediate_solution(solution: JSSolution):
-#     logging.info(f'Makespan: {solution.makespan}')
+
+def print_intermediate_solution(solution: JSSolution):
+    logging.info(f'Makespan: {solution.makespan}')
 
 
 def compare_algorithms(Algorithms, Datasets):
