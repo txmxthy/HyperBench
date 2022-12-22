@@ -1,6 +1,6 @@
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import logging
-from data.script.load_instance import load_instance
+from src.data.script.load_instance import load_instance
 from src.Solvers.constraint.jsp_fwk import JSSolution, JSProblem
 from src.Solvers.constraint.jsp_fwk.solver import PriorityDispatchSolver, GoogleORCPSolver
 
@@ -78,7 +78,7 @@ def get_datasets():
     # Select specific datasets
     selected_datasets = []
     while True:
-        if input(f'Select specific dataset(s)? (y/n) ') == 'y':
+        if input(f'Select specific dataset(s) (y) or test-set (n)? (y/n) ') == 'y':
             code = input(f'Input exact dataset code: ')
             # Get Optimum
             path, optimum = load(code)
@@ -109,6 +109,9 @@ def get_datasets():
                     continue
                 scores[dataset] = optimum
             print(scores)
+            selected_datasets.append(test_set)
+            return selected_datasets
+
 
     # Get user input from terminal to select datasets from a check box.
 
