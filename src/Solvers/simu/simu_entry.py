@@ -3,7 +3,6 @@ import os
 
 from main import simu_main
 
-lines: list[str] = []
 with open("simu_inputs.txt", "r") as f:
     lines = f.readlines()
 
