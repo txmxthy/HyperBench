@@ -7,7 +7,7 @@
 #SBATCH --mail-type=BEGIN,END,FAIL
 #SBATCH --mail-user=mcdermtimo@ecs.vuw.ac.nz
 
-# module load python/3.8.1
-python3 ../src/main.py
+module load python/3.8.1
+python3 ../src/Solvers/constraint/main.py
 
 

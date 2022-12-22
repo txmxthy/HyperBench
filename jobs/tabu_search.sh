@@ -8,6 +8,6 @@
 #SBATCH --mail-user=mcdermtimo@ecs.vuw.ac.nz
 
 module load python/3.8.1
-python3 ../src/main.py
+python3 ../src/Solvers/tabu/main.py
 
 

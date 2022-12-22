@@ -1,5 +1,5 @@
 # Job Shop Problem Brief
-
+MrdotCai
 - Job-shop Scheduling Problem (JSP) is a scheduling problem in manufacturing process planning and management. In this problem, a set of machines needs to process a set of workpieces. Each workpiece is formed by a series of processes with sequential constraints. Each process requires only one machine. The machine is always available and can process one operation at a time without interruption. Decisions include how to sequence the processes on the machine to optimize a given performance metric. A typical performance indicator of JSP is the completion time (Makespan), that is, the time required to complete all the work. In computer science, the job shop scheduling problem is considered to be a very strong NP-hard problem.
 
 - Problem Description
