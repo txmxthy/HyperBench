@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH -a 1-2700
+#SBATCH -a 1-1001
 #SBATCH -o stdio/sim_anneal-stdout-%A-%a.txt
 #SBATCH -e stdio/sim_anneal-stderr-%A-%a.txt
 #SBATCH --cpus-per-task=1
