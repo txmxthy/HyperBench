@@ -8,7 +8,7 @@ import time
 def getNeigbors(state, mode="normal"):
     allNeighbors = []
 
-    for i in range(len(state)-1):
+    for i in range(len(state) - 1):
         neighbor = state[:]
         if mode == "normal":
             swapIndex = i + 1
@@ -19,7 +19,17 @@ def getNeigbors(state, mode="normal"):
 
     return allNeighbors
 
+
 def simulatedAnnealing(jobs, T, termination, halting, mode, decrease):
+    """
+    Simulated Annealing
+    :param jobs: list of jobs
+    :param T: initial temperature
+    :param termination: number of iterations in each temperature
+    :param halting: number of halting iterations
+    :param mode: mode of neighbor generation
+    :param decrease: cooldown factor
+    """
     numberOfJobs = len(jobs)
     numberOfMachines = len(jobs[0])
 
@@ -37,7 +47,7 @@ def simulatedAnnealing(jobs, T, termination, halting, mode, decrease):
                     state = n
                     actualCost = nCost
                 else:
-                    probability = math.exp(-nCost/T)
+                    probability = math.exp(-nCost / T)
                     if random.random() < probability:
                         state = n
                         actualCost = nCost
@@ -45,8 +55,18 @@ def simulatedAnnealing(jobs, T, termination, halting, mode, decrease):
     return actualCost, state
 
 
-
 def simulatedAnnealingSearch(jobs, maxTime=None, T=200, termination=10, halting=10, mode="random", decrease=0.8):
+    """
+    Simulated Annealing Search
+    :param jobs: list of jobs
+    :param maxTime: maximum time to run the algorithm  (in seconds) per
+    :param T: initial temperature
+    :param termination: number of iterations in each temperature
+    :param halting: number of halting iterations
+    :param mode: mode of neighbor generation
+    :param decrease: cooldown factor
+    :return: best cost and best schedule
+    """
     numExperiments = 1
 
     solutions = []
@@ -64,7 +84,8 @@ def simulatedAnnealingSearch(jobs, maxTime=None, T=200, termination=10, halting=
             start = time.time()
 
             for i in range(numExperiments):
-                cost, schedule = simulatedAnnealing(jobs, T=T, termination=termination, halting=halting, mode=mode, decrease=decrease)
+                cost, schedule = simulatedAnnealing(jobs, T=T, termination=termination, halting=halting, mode=mode,
+                                                    decrease=decrease)
 
                 if cost < best:
                     best = cost
@@ -78,7 +99,7 @@ def simulatedAnnealingSearch(jobs, maxTime=None, T=200, termination=10, halting=
             t = time.time() - start
             if t > 0:
                 print("Best:", best, "({:.1f} Experiments/s, {:.1f} s)".format(
-                        numExperiments/t, time.time() - t0))
+                    numExperiments / t, time.time() - t0))
 
             if t > 4:
                 numExperiments //= 2
@@ -87,11 +108,15 @@ def simulatedAnnealingSearch(jobs, maxTime=None, T=200, termination=10, halting=
                 numExperiments *= 2
 
         except (KeyboardInterrupt, OutOfTime) as e:
+            timedOut = isinstance(e, OutOfTime)
+
             print()
             print("================================================")
             print("Best solution:")
             print(solutions[-1][1])
             print("Found in {:} experiments in {:.1f}s".format(totalExperiments, time.time() - t0))
 
-            return solutions[-1]
+            if timedOut:
+                print("Time is over")
 
+            return solutions[-1], timedOut

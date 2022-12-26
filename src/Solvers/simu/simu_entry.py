@@ -9,8 +9,8 @@ with open("simu_inputs.txt", "r") as f:
 task_id = int(os.environ["SLURM_ARRAY_TASK_ID"])
 print(f"Hello! This is Simulated Annealing - Task {task_id}")
 
-seed, mode = lines[task_id].split(',')
+seed, inital_temp, cooldown, instance = lines[task_id].split(',')
 
-timeout = 1200
-simu_main(seed, mode, timeout)
+timeout = 60
+simu_main(seed=seed, temp=inital_temp, cooldowwn=cooldown, timeout=timeout, instance=instance)
 

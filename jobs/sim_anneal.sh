@@ -4,7 +4,7 @@
 #SBATCH -e stdio/sim_anneal-stderr-%A-%a.txt
 #SBATCH --cpus-per-task=1
 #SBATCH --mem-per-cpu=2G
-#SBATCH --time=00:10:00
+#SBATCH --time=00:35:00
 #SBATCH --partition=parallel
 #SBATCH --mail-type=BEGIN,END,FAIL
 #SBATCH --mail-user=mcdermtimo@ecs.vuw.ac.nz
