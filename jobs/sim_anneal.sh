@@ -1,5 +1,7 @@
 #!/bin/bash
 #SBATCH -a 1-4
+#SBATCH -o stdio/sim_anneal-stdout-%j-%t.txt
+#SBATCH -e stdio/sim_anneal-stderr-%j-%t.txt
 #SBATCH --cpus-per-task=1
 #SBATCH --mem-per-cpu=2G
 #SBATCH --time=00:10:00
@@ -11,4 +13,4 @@ module load python/3.8.1
 source ../venv/bin/activate
 
 cd ../src/Solvers/simu || exit 1
-python3 simu_entry.py
+OUTPUT_DIR="../../../jobs/output/sim_anneal" python3 simu_entry.py
