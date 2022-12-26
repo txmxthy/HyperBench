@@ -1,5 +1,15 @@
 import random
 
+def generate_tabu_search_params(datasets, timeout):
+    """
+    Essentially a grid search over the parameters of the simulated annealing algorithm.
+    """
+
+    # Set the parameters
+    seeds = 30 # Set to the number of verification runs
+    tabu_length = [5, 10, 15, 20]
+
+
 
 def generate_simulated_annealing_params(datasets, timeout):
     """

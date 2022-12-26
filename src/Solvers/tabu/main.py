@@ -4,38 +4,49 @@ import time
 import random
 import copy
 import json
-import matplotlib.pyplot as plt
+from pprint import pprint
 import pandas as pd
+import plotly.express as px
+
+
+import matplotlib.pyplot as plt
+import plotly as py
+import plotly.figure_factory as ff
+from pandas import DataFrame
 
 
 class Job:
 
-    def __init__(self, job_constraint, job_id, machines):  # 初始化一个Job模板
-        self.id = job_id  # 本job的id
-        self.order = []  # 记录本job要求的machine先后顺序
-        self.handle_time = []  # 记录本job在各个machine需要执行的时间
+    def __init__(self, job_constraint, job_id, machines):  # Initialize a Job template
+        self.id = job_id  # The id of this job
+        self.order = []  # Record the sequence of machines required by this job
+        self.handle_time = []  # Record the time this job needs to execute in each machine
         # import pdb; pdb.set_trace()
         for i in range(len(job_constraint) // 2):
             self.order.append(machines[job_constraint[i * 2]])
             self.handle_time.append(job_constraint[i * 2 + 1])
-        self.current_operation = 0  # 记录本job当前正在等待完工的操作号
-        self.current_duration = self.handle_time[0]  # 记录本job当前正在等待执行的操作需要的时间
-        self.isDone = False  # 记录本job是否执行完了所有的操作
+        self.current_operation = 0  # Record the number of the job that is currently waiting to be completed
+        self.current_duration = self.handle_time[
+            0]  # Record the time required for the operation that this job is currently waiting to execute
+        self.isDone = False  # Record whether the job has completed all operations
 
-    def reset_job(self, job_constraint, machines):  # 设置Job属性
-        self.current_operation = 0  # 记录本job当前正在等待完工的操作号
-        self.current_duration = self.handle_time[0]  # 记录本job当前正在等待执行的操作需要的时间
-        self.isDone = False  # 记录本job是否执行完了所有的操作
+    def reset_job(self, job_constraint, machines):  # Set Job properties
+        self.current_operation = 0  # Record the number of the job that is currently waiting to be completed
+        self.current_duration = self.handle_time[
+            0]  # Record the time required for the operation that this job is currently waiting to execute
+        self.isDone = False  # Record whether the job has completed all operations
 
-    def goto_next_machine(self, current_time):  # job去其下一个操作所对应的机器中等待，返回该机器对象。如果所有工序已经执行完毕则将isDone置为True返回None
+    def goto_next_machine(self,
+                          current_time):  # The job waits in the machine corresponding to its next operation, and returns the machine object. If all processes have been executed, set is Done to True and return None
         if self.current_operation == len(self.order) - 1:
             self.isDone = True
             return None
         else:
             self.current_operation = self.current_operation + 1
             self.current_duration = self.handle_time[self.current_operation]
-            self.order[self.current_operation].wait_queue.append(self)  # 将本job投入到下一个machine的队列中，如果该machine处于关闭状态则将其启动。
-            if not self.order[self.current_operation].running:  # 启动机器
+            self.order[self.current_operation].wait_queue.append(
+                self)  # Put this job into the queue of the next machine, and start it if the machine is shut down.
+            if not self.order[self.current_operation].running:  # start the machine
                 self.order[self.current_operation].turn_on_machine(current_time)
             return self.order[self.current_operation]
 
@@ -43,26 +54,27 @@ class Job:
 class Machine:
 
     def __init__(self, priority: [int], machine_id):
-        self.id = machine_id  # 本机器的id
-        self.priority = priority  # 处理优先级
-        self.wait_queue = []  # 等待处理的job队列
-        self.running = False  # 机器是否正在运行
-        self.current_job = None  # 正在操作的job对象
-        self.finish_time = 0  # 完工时间点，也即machine下一次空闲的时间点
-        self.schedule_table = []  # 本机器的调度表-结构：[{"job_id":*, "start":*, "end":*}, {...}, {...}]
+        self.id = machine_id  # id of this machine
+        self.priority = priority  # processing priority
+        self.wait_queue = []  # queue of jobs waiting to be processed
+        self.running = False  # is the machine running
+        self.current_job = None  # The job object being operated on
+        self.finish_time = 0  # Completion time point, that is, the time point when the machine is next idle
+        self.schedule_table = []  # Schedule table for this machine - structure: [{"job_id":, "start":, "end":}, {...}, {...}]
 
     def reset_machine(self, priority: [int]):
-        self.priority = priority  # 处理优先级
-        self.wait_queue = []  # 等待处理的job队列
-        self.running = False  # 机器是否正在运行
-        self.current_job = None  # 正在操作的job对象
-        self.finish_time = 0  # 完工时间点，也即machine下一次空闲的时间点
+        self.priority = priority  # processing priority
+        self.wait_queue = []  # queue of jobs waiting to be processed
+        self.running = False  # Is the machine running
+        self.current_job = None  # The job object being operated on
+        self.finish_time = 0  # Completion time point, that is, the time point when the machine is next idle
 
-    def goto_next_job(self, current_time):  # 完成正在加工的job，从已有job队列中拿出优先级最高的job进行处理，并更新完工时间点,返回本次处理完的job对象。如果队列为空则关闭机器
-        finish_job = self.current_job  # 完成正在加工的job
+    def goto_next_job(self,
+                      current_time):  # Complete the job being processed, take the job with the highest priority from the existing job queue for processing, update the completion time point, and return the job object that has been processed this time. shut down the machine if the queue is empty
+        finish_job = self.current_job  # Complete the job being processed
         # import pdb; pdb.set_trace()
-        self.wait_queue.remove(finish_job)  # 将该job移除
-        # 将本job的调度放入调度表
+        self.wait_queue.remove(finish_job)  # remove the job
+        # Put the scheduling of this job into the scheduling table
         schedule = {"job_id": finish_job.id, "start": self.finish_time - finish_job.current_duration,
                     "end": self.finish_time}
         self.schedule_table.append(schedule)
@@ -77,7 +89,8 @@ class Machine:
             self.finish_time = current_time + self.current_job.current_duration
         return finish_job
 
-    def turn_on_machine(self, current_time):  # 启动机器, 启动成功返回True，失败返回False
+    def turn_on_machine(self,
+                        current_time):  # Start the machine, return True if the startup is successful, and return False if it fails
         if not self.wait_queue:
             self.running = False
         else:
@@ -90,25 +103,26 @@ class Machine:
         return self.running
 
 
-# 数据结构-JSP问题对象
+# Data Structure - JSP Question Object
 class JSPAns:
 
     def __init__(self, m, n, jobs_map: [[int]],
-                 ans_map: [[int]]):  # 针对一个m个machines，n个jobs的JSP问题，随机初始化一个解,jobs_map为jobs要求的执行顺序
+                 ans_map: [[
+                               int]]):  # For a JSP problem with m machines and n jobs, randomly initialize a solution, and the jobs map is the execution order required by the jobs
         '''
-        解的形式：
-        [[0,1,2],[2,1,0],[1,0,2],...] map[m][n]表示m机器处理njob的优先级,值越高表示越越优先
+      The solution is of the form:
+        [[0,1,2],[2,1,0],[1,0,2],...] map[m][n] indicates the priority of m machine processing njob, the higher the value, the better higher priority
         '''
-        # 问题输入
+        # question input
         self.machine_num = m
         self.job_num = n
         self.jobs = []
         self.machines = []
-        self.current_time = 0  # 初始时间点为0
+        self.current_time = 0  # The initial time point is 0
         self.ans_map = ans_map
         self.ans_value = -1
         '''
-        # 初始化一个随机解,并以此初始化m个machine对象
+        # Initialize a random solution, and use it to initialize m machine objects
         # random.seed(time.time())
         x = list(range(n))
         self.current_ans = []
@@ -119,33 +133,33 @@ class JSPAns:
             machine = Machine(x[:], i)
             self.machines.append(machine)
         '''
-        # 生成m个machine
+        # Generate m machines
         for x in ans_map:
             machine = Machine(x, len(self.machines))
             self.machines.append(machine)
-        # 生成n个job对象
+        # Generate n job objects
         for constraint in jobs_map:
             job = Job(constraint, len(self.jobs), self.machines)
             self.jobs.append(job)
-        # 初始化machine的wait队列以及一些状态
+        # Initialize the machine's wait queue and some states
         for job in self.jobs:
             job.order[0].wait_queue.append(job)
         for machine in self.machines:
             machine.turn_on_machine(self.current_time)
-        # 求解适值
+        # Find the fitness value
         self.ans_value = self.calculate_end_time()
         '''
-        # 初始化当前解的适值，已知的最优解，最优解的适值
+        # Initialize the fitness value of the current solution, the known optimal solution, and the fitness value of the optimal solution
         self.current_ans_value = self.calculate_end_time()
         self.best_ans = self.current_ans
         self.best_ans_value = self.current_ans_value
         '''
-        # 甘特图可选颜色
+        # Gantt chart optional colors
         self.colors = ["tomato", "orange", "green", "gold", "royalblue", "violet", "gray", "cyan", "pink", "lime",
                        "chocolate", "bisque", "teal", "salmon", "navy", "dimgray", "orchid", "turquoise",
-                       "darkturquoise", "rosybrown", "steelbule", "moccasin", "blue", "buleviolet", "plum"]
+                       "darkturquoise", "rosybrown", "steelblue", "moccasin", "blue", "blueviolet", "plum"]
 
-    def machine_on_running(self):  # 以列表的形式返回当前正在运行的机器
+    def machine_on_running(self):  # Returns the currently running machines as a list
         running_machines = []
         for machine in self.machines:
             if machine.running:
@@ -157,13 +171,14 @@ class JSPAns:
             running_machines = self.machine_on_running()
             # import pdb; pdb.set_trace()
             if running_machines:
-                first_machine = running_machines[0]  # 最早完工的机器
+                first_machine = running_machines[0]  # FIRST COMPLETED MACHINE
                 for machine in running_machines:
                     if machine.finish_time < first_machine.finish_time:
                         first_machine = machine
-                self.current_time = first_machine.finish_time  # 将当前时间更新为最早完工时间
-                finish_job = first_machine.goto_next_job(self.current_time)  # 机器推进到下一个job
-                finish_job.goto_next_machine(self.current_time)  # 刚完工的job推进到下一个机器
+                self.current_time = first_machine.finish_time  # Update current time to earliest finish time
+                finish_job = first_machine.goto_next_job(self.current_time)  # The machine advances to the next job
+                finish_job.goto_next_machine(
+                    self.current_time)  # The job just completed is advanced to the next machine
             else:
                 break
         return self.current_time
@@ -175,7 +190,7 @@ class JSPAns:
             "xlabel": "time",
             "xticks": []
         }
-        jobs_mark = []
+        # jobs_mark = []
         for m in self.machines:
             for s in m.schedule_table:
                 bar = {}
@@ -183,49 +198,50 @@ class JSPAns:
                 bar['start'] = s["start"]
                 bar['end'] = s["end"]
                 bar['color'] = self.colors[s["job_id"]]
-                if s["job_id"] not in jobs_mark:
-                    bar["legend"] = "Job " + str(s["job_id"])
-                    jobs_mark.append(s["job_id"])
+                bar["legend"] = "Job " + str(s["job_id"])
+                # jobs_mark.append(s["job_id"]) # Old way of not trakcing jobs for labelling (reduce json size)
                 json_dict["packages"].append(bar)
         json_str = json.dumps(json_dict)
         with open("./ganttBar.json", "w") as fp:
             fp.write(json_str)
 
 
-# 禁忌搜索工具包
+# Taboo Search Toolkit
 class TabuSearch:
 
-    def __init__(self, jobs_map, tabu_len, tabu_obj="machine-job-job"):  # 传入禁忌表长度，禁忌对象，问题模型，初始化禁忌表
+    def __init__(self, jobs_map, tabu_len,
+                 tabu_obj="machine-job-job"):  # Pass in the taboo table length, taboo object, problem model, and initialize the taboo table
         self.tabu_list = ["" for _ in range(tabu_len)]
-        self.jobs_map = jobs_map  # 问题模型
-        self.best_ans = None  # 目前找到的最优
+        self.jobs_map = jobs_map  # problemModel
+        self.best_ans = None  # The best found so far
         self.tabu_obj = tabu_obj
 
-    def __tabu_object(self, machine_id, job1_id, job2_id):  # 返回禁忌对象字符串
-        if self.tabu_obj == "machine":  # 禁忌机器
+    def __tabu_object(self, machine_id, job1_id, job2_id):  # Returns the taboo object string
+        if self.tabu_obj == "machine":  # TABOO MACHINE
             return [str(machine_id)]
-        elif self.tabu_obj == "job":  # 禁忌工件
+        elif self.tabu_obj == "job":  # Taboo artifact
             return str(job1_id), str(job2_id)
-        elif self.tabu_obj == "machine-job":  # 禁忌机器-工件二元组
+        elif self.tabu_obj == "machine-job":  # Forbidden Machine-Workpiece Binary
             return str(machine_id) + "-" + str(job1_id), str(machine_id) + "-" + str(job2_id)
-        else:  # 禁忌机器-工件1-工件2三元组
+        else:  # Forbidden Machine-Artifact 1-Artifact 2 triplet
             return str(machine_id) + "-" + str(job1_id) + "-" + str(job2_id), str(machine_id) + "-" + str(
                 job2_id) + "-" + str(job1_id)
 
-    def update_tabu(self, machine_id, job1_id, job2_id):  # 更新禁忌表内容
+    def update_tabu(self, machine_id, job1_id, job2_id):  # Update Taboo Table Contents
         tabu_obj = self.__tabu_object(machine_id, job1_id, job2_id)
         for obj in tabu_obj:
             self.tabu_list.pop(0)
             self.tabu_list.append(obj)
 
-    def check_tabu(self, machine_id, job1_id, job2_id):  # 检查某个搜索所到的邻居是否被禁忌
+    def check_tabu(self, machine_id, job1_id, job2_id):  # Checks if a searched neighbor is taboo
         tabu_obj = self.__tabu_object(machine_id, job1_id, job2_id)
         for obj in tabu_obj:
-            if obj in self.tabu_list: return False  # 如果本次搜索的方向在禁忌表中，返回False
-        return True  # 不在禁忌表中，返回True，说明该邻居不被禁忌
+            if obj in self.tabu_list: return False  # If the direction of this search is in the taboo table, return False
+        return True  # Not in the taboo table, return True, indicating that the neighbor is not taboo
 
     def jsp_random_initial_ans(self, machine_num, job_num) -> [
-        [int]]:  # 返回JSP问题的大小为machine_num*job_num的一个随机解，返回一个JSPAns对象
+        [
+            int]]:  # Returns a random solution of the JSP problem whose size is machine numjob num, returns a JSP Ans object
         ans_map = []
         random.seed(time.time())
         x = list(range(job_num))
@@ -238,8 +254,8 @@ class TabuSearch:
         self.best_ans = initial_ans
         return initial_ans
 
-    def jsp_neighbor_generator(self, current_ans_map: [[int]], m, n):  # 返回一个邻居生成器
-        # 每次随机选一个机器交换两个工件的顺序。返回这个解同时返回，本次搜的方向（machine_id，Job1.id, Job2.id）
+    def jsp_neighbor_generator(self, current_ans_map: [[int]], m, n):  # returns a neighbor generator
+        # Each time a machine is randomly selected to exchange the order of the two workpieces. Return this solution and return the direction of this search (machine_id, Job1.id, Job2.id)
         while True:
             neighbor = copy.deepcopy(current_ans_map)
             random.seed(time.time())
@@ -249,18 +265,19 @@ class TabuSearch:
                                                                            neighbor[machine_id][job1_id]
             yield neighbor, machine_id, job1_id, job2_id
 
-    def jsp_update_ans(self, current_ans, m, n, k):  # current_ans是JSPAns对象，从当前解中找k个邻居更新当前解，返回更新后的当前解对象
+    def jsp_update_ans(self, current_ans, m, n,
+                       k):  # current ans is a JSP Ans object, find k neighbors from the current solution to update the current solution, and return the updated current solution object
         ng = self.jsp_neighbor_generator(current_ans.ans_map, m, n)
-        neighbor_best_tabu = None  # 邻居中被禁的最优解
+        neighbor_best_tabu = None  # Optimal solution banned in neighbors
         nbt_mid = nbt_j1id = nbt_j2id = -1
-        neighbor_best_no_tabu = None  # 邻居中没被禁的最优解
+        neighbor_best_no_tabu = None  # The optimal solution that is not banned in the neighborhood
         nbnt_mid = nbnt_j1id = nbnt_j2id = -1
-        neighbor_worst_tabu = None  # 邻居中被禁的最差解
+        neighbor_worst_tabu = None  # worstSolutionBannedInNeighborhood
         nwt_mid = nwt_j1id = nwt_j2id = -1
         count = 0
         for neighbor, machine_id, job1_id, job2_id in ng:
             new_ans = JSPAns(m, n, self.jobs_map, neighbor)
-            if self.check_tabu(machine_id, job1_id, job2_id):  # 不在禁忌表中
+            if self.check_tabu(machine_id, job1_id, job2_id):  # NOT IN TABOO LIST
                 # print("neighbor", count, " not in tabu", "with value", new_ans.ans_value)
                 if neighbor_best_no_tabu:
                     if neighbor_best_no_tabu.ans_value > new_ans.ans_value:
@@ -269,7 +286,7 @@ class TabuSearch:
                 else:
                     neighbor_best_no_tabu = new_ans
                     nbnt_mid, nbnt_j1id, nbnt_j2id = machine_id, job1_id, job2_id
-            else:  # 在禁忌表中
+            else:  # IN TABOO LIST
                 # print("neighbor", count, "in tabu", "with value", new_ans.ans_value)
                 if neighbor_best_tabu:
                     if neighbor_best_tabu.ans_value > new_ans.ans_value:
@@ -287,8 +304,8 @@ class TabuSearch:
                     nwt_mid, nwt_j1id, nwt_j2id = machine_id, job1_id, job2_id
             count = count + 1
             if count == k: break
-        update_ans = None  # 更新后的解
-        if not neighbor_best_no_tabu:  # 如果没有不被禁的解，则所有邻居都被禁了
+        update_ans = None  # updatedSolution
+        if not neighbor_best_no_tabu:  # If there is no unbanned solution, all neighbors are banned
             if neighbor_best_tabu.ans_value < self.best_ans.ans_value:
                 update_ans = neighbor_best_tabu
                 machine_id, job1_id, job2_id = nbt_mid, nbt_j1id, nbt_j2id
@@ -297,11 +314,11 @@ class TabuSearch:
                 update_ans = neighbor_worst_tabu
                 machine_id, job1_id, job2_id = nwt_mid, nwt_j1id, nwt_j2id
                 # print("update to tabu_worst neighbor")
-        elif not neighbor_best_tabu:  # 如果没有被禁的解，则所有邻居都允许
+        elif not neighbor_best_tabu:  # If there are no forbidden solutions, all neighbors are allowed
             update_ans = neighbor_best_no_tabu
             machine_id, job1_id, job2_id = nbnt_mid, nbnt_j1id, nbnt_j2id
             # print("update to not_tabu_best neighbor")
-        elif neighbor_best_no_tabu.ans_value > neighbor_best_tabu.ans_value:  # 如果既有被禁的也有不被禁的解且被禁的解是所有邻居中最优
+        elif neighbor_best_no_tabu.ans_value > neighbor_best_tabu.ans_value:  # If there are both forbidden and non-banned solutions and the forbidden solution is the best among all neighbors
             if neighbor_best_tabu.ans_value < self.best_ans.ans_value:
                 update_ans = neighbor_best_tabu
                 machine_id, job1_id, job2_id = nbt_mid, nbt_j1id, nbt_j2id
@@ -310,16 +327,16 @@ class TabuSearch:
                 update_ans = neighbor_best_no_tabu
                 machine_id, job1_id, job2_id = nbnt_mid, nbnt_j1id, nbnt_j2id
                 # print("update to not_tabu_best neighbor")
-        else:  # 不被禁的最优解是所有邻居中的最优，则选择此解
+        else:  # The optimal solution that is not forbidden is the optimal solution among all neighbors, then choose this solution
             update_ans = neighbor_best_no_tabu
             machine_id, job1_id, job2_id = nbnt_mid, nbnt_j1id, nbnt_j2id
             # print("update to not_tabu_best neighbor")
-        # 更新目前最好的解以及tabu表
+        # Update the current best solution and tabu table
         if update_ans.ans_value < self.best_ans.ans_value:
             print("New Best Found:", update_ans.ans_value)
             self.best_ans = update_ans
         self.update_tabu(machine_id, job1_id, job2_id)
-        return update_ans  # 返回更新后的解
+        return update_ans  # RETURNS THE UPDATED SOLUTION
 
 
 def tabu_main():
@@ -333,16 +350,16 @@ def tabu_main():
         print("file:", file)
         jobs_map = []
         with open(os.getcwd() + "/instances/" + file, "r") as f:
-            n, m = tuple([int(x) for x in f.readline().split()])  # n是job数，m是machine数
+            n, m = tuple([int(x) for x in f.readline().split()])  # n is the number of jobs, m is the number of machines
             for line in f:
                 jobs_map.append([int(x) for x in line.split()])
             print(m, n)
             print(jobs_map)
         ts = TabuSearch(jobs_map, 100)
         current_ans = ts.jsp_random_initial_ans(m, n)
-        total_steps = 1000  # 最大迭代次数
+        total_steps = 1000  # The maximum number of iterations
         neighbor_num = m * n
-        longest_hold = 1000  # longest_hold后未发现更优的，则退出迭代
+        longest_hold = 1000  # If no better one is found after the longest hold, exit the iteration
         hold_cnt = 0
         last_best = 0
         best_value_record = []
@@ -369,8 +386,8 @@ def tabu_main():
         print("tabu_list:", ts.tabu_list)
         print("best_ans:", ts.best_ans.ans_value)
         scores[file] = ts.best_ans.ans_value
-        ts.best_ans.generate_gantt_json()  # 获取绘制甘特图的json文件
-        plt.plot(best_value_record[:-longest_hold + 50])  # 绘制搜索的过程
+        ts.best_ans.generate_gantt_json()  # Get the json file for drawing the Gantt chart
+        plt.plot(best_value_record[:-longest_hold + 50])  # Mapping the search process
         plt.show()
         # Close the file
         f.close()
@@ -387,5 +404,55 @@ def tabu_main():
         print("I/O error")
 
 
+def render_gantt_json():
+    file = "/home/kali/PycharmProjects/Capstone/src/Solvers/tabu/ganttBar.json"
+    with open (file, "r") as f:
+        gantt_data = json.load(f)
+
+    for package in gantt_data:
+        print(package)
+
+    # Add to a dataframe
+
+    list_of_dicts = []
+    for job in gantt_data["packages"]:
+        d = {"Machine": job["label"],
+             "Start": job["start"],
+             "End": job["end"],
+             "Color": job["color"],
+             "Job": job["legend"]}
+
+        list_of_dicts.append(d)
+
+
+    print(list_of_dicts)
+
+    df = pd.DataFrame(list_of_dicts)
+    df['Delta'] = df['End'] - df['Start']
+    print(df.head(2))
+
+    fig = px.timeline(df, x_start="Start", x_end="End", y="Machine", color="Color", labels={"Job": "Job"})
+    fig.update_yaxes(autorange="reversed")
+    fig.layout.xaxis.type = 'linear'
+    for d in fig.data:
+        print(d)
+        filt = df['Color'] == d.name
+        d.name = str(df[filt]['Job'].values[0])
+        d.x = df[filt]['Delta'].tolist()
+
+
+
+    # Units to numbers instead of dates
+    fig.update_xaxes(type='linear')
+    fig.update_yaxes(autorange="reversed") # otherwise tasks are listed from the bottom up
+    fig.show()
+    fig.write_image("gantt.png")
+
+
+
+
+
+
 if __name__ == "__main__":
-    tabu_main()
+    # tabu_main()
+    render_gantt_json()
