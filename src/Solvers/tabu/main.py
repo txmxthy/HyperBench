@@ -8,7 +8,6 @@ from pprint import pprint
 import pandas as pd
 import plotly.express as px
 
-
 import matplotlib.pyplot as plt
 import plotly as py
 import plotly.figure_factory as ff
@@ -108,7 +107,7 @@ class JSPAns:
 
     def __init__(self, m, n, jobs_map: [[int]],
                  ans_map: [[
-                               int]]):  # For a JSP problem with m machines and n jobs, randomly initialize a solution, and the jobs map is the execution order required by the jobs
+                     int]]):  # For a JSP problem with m machines and n jobs, randomly initialize a solution, and the jobs map is the execution order required by the jobs
         '''
       The solution is of the form:
         [[0,1,2],[2,1,0],[1,0,2],...] map[m][n] indicates the priority of m machine processing njob, the higher the value, the better higher priority
@@ -183,10 +182,10 @@ class JSPAns:
                 break
         return self.current_time
 
-    def generate_gantt_json(self):
+    def generate_gantt_json(self, instance):
         json_dict = {
             "packages": [],
-            "title": "GANTT",
+            "title": str(instance),
             "xlabel": "time",
             "xticks": []
         }
@@ -344,7 +343,7 @@ def tabu_main():
     files = (os.listdir(os.getcwd() + "/instances"))
     print(files)
     maxTime = float(input("Input the max time in seconds for each instance:"))
-
+    instance = "Override me"
     scores = {}
     for file in files:
         print("file:", file)
@@ -386,7 +385,7 @@ def tabu_main():
         print("tabu_list:", ts.tabu_list)
         print("best_ans:", ts.best_ans.ans_value)
         scores[file] = ts.best_ans.ans_value
-        ts.best_ans.generate_gantt_json()  # Get the json file for drawing the Gantt chart
+        ts.best_ans.generate_gantt_json(instance)  # Get the json file for drawing the Gantt chart
         plt.plot(best_value_record[:-longest_hold + 50])  # Mapping the search process
         plt.show()
         # Close the file
@@ -404,15 +403,10 @@ def tabu_main():
         print("I/O error")
 
 
-def render_gantt_json():
+def render_gantt_json(outdir):
     file = "/home/kali/PycharmProjects/Capstone/src/Solvers/tabu/ganttBar.json"
-    with open (file, "r") as f:
+    with open(file, "r") as f:
         gantt_data = json.load(f)
-
-    for package in gantt_data:
-        print(package)
-
-    # Add to a dataframe
 
     list_of_dicts = []
     for job in gantt_data["packages"]:
@@ -424,35 +418,23 @@ def render_gantt_json():
 
         list_of_dicts.append(d)
 
-
-    print(list_of_dicts)
-
     df = pd.DataFrame(list_of_dicts)
     df['Delta'] = df['End'] - df['Start']
-    print(df.head(2))
 
-    fig = px.timeline(df, x_start="Start", x_end="End", y="Machine", color="Color", labels={"Job": "Job"})
+    fig = px.timeline(df, x_start="Start", x_end="End", y="Machine", color="Color", labels="Job", title=gantt_data["title"])
     fig.update_yaxes(autorange="reversed")
     fig.layout.xaxis.type = 'linear'
     for d in fig.data:
-        print(d)
         filt = df['Color'] == d.name
         d.name = str(df[filt]['Job'].values[0])
         d.x = df[filt]['Delta'].tolist()
 
-
-
-    # Units to numbers instead of dates
     fig.update_xaxes(type='linear')
-    fig.update_yaxes(autorange="reversed") # otherwise tasks are listed from the bottom up
+    fig.update_yaxes(autorange="reversed")  # otherwise tasks are listed from the bottom up
+    fig.write_image(outdir + gantt_data["title"] + ".png")
     fig.show()
-    fig.write_image("gantt.png")
-
-
-
-
-
 
 if __name__ == "__main__":
     # tabu_main()
-    render_gantt_json()
+    outdir = "/home/kali/PycharmProjects/Capstone/jobs/results/tabu_search/"
+    render_gantt_json(outdir)
