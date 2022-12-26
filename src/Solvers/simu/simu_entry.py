@@ -12,5 +12,9 @@ print(f"Hello! This is Simulated Annealing - Task {task_id}")
 seed, inital_temp, cooldown, instance = lines[task_id].split(',')
 
 timeout = 60
-simu_main(seed=seed, temp=inital_temp, cooldowwn=cooldown, timeout=timeout, instance=instance.trim())
+simu_main(seed=int(seed),
+          temp=int(inital_temp),
+          cooldowwn=float(cooldown),
+          timeout=int(timeout),
+          instance=instance.trim())
 
