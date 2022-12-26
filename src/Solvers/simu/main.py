@@ -54,15 +54,13 @@ def simu_main(seed=None, temp=None, cooldowwn=None, timeout=None, instance=None)
 
     csv_columns = instance, cost, seed, temp, cooldowwn, timeout
 
-    csv_file = f"{os.environ['OUTPUT_DIR']}/scores-{os.environ['SLURM_ARRAY_TASK_ID']}.csv"
+    csv_file = f"{os.environ['OUTPUT_DIR']}/results-{os.environ['SLURM_ARRAY_TASK_ID']}.csv"
     try:
         with open(csv_file, 'w') as csvfile:
             writer = csv.DictWriter(csvfile, fieldnames=csv_columns)
             writer.writeheader()
             for data in csv_columns:
                 writer.writerow(data)
-
-
 
     except IOError:
         print("I/O error")
