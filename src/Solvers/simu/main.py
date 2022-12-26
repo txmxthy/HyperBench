@@ -59,8 +59,8 @@ def simu_main(seed=None, temp=None, cooldowwn=None, timeout=None, instance=None)
         with open(csv_file, 'w') as csvfile:
             writer = csv.DictWriter(csvfile, fieldnames=csv_columns)
             writer.writeheader()
-            for data in csv_columns:
-                writer.writerow(data)
+            # for data in csv_columns:
+            #     writer.writerow(data)
 
     except IOError:
         print("I/O error")

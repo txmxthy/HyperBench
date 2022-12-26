@@ -8,7 +8,7 @@ def generate_simulated_annealing_params(datasets, timeout):
 
     # Set the parameters
     seeds = 30 # Set to the number of verification runs
-    initial_temp = [0, 100, 200]
+    initial_temp = [100, 200]
     cooldown = [0.5, 0.8, 0.9]
     # Generate the param file
     with open("param.txt", "w") as param_file:
