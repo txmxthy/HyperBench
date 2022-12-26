@@ -16,5 +16,5 @@ simu_main(seed=int(seed),
           temp=int(inital_temp),
           cooldowwn=float(cooldown),
           timeout=int(timeout),
-          instance=instance.trim())
+          instance=instance.strip())
 
