@@ -4,10 +4,7 @@ import pandas as pd
 import seaborn as sns
 
 
-
 def pretty_plots(instance, dir, key):
-
-
     # Create some plots for the given instance
 
     # Box and whisker plot: Cost variance across seed for each parameter combination
@@ -28,24 +25,24 @@ def pretty_plots(instance, dir, key):
     plt.figure()
 
 
-    # Create a boxplot for each seed
+
+    # Boxplot for overall performance with all seeds combined
+    box_plotter(df, dir, instance, "Overall performance", X="param", Y="cost")
 
 
-    # Create a boxplot for each parameter combination
+    # Create a boxplot for each
     box_plotter(df, dir, instance, "Cost variance across seeds for " + instance, X="seed", Y="cost")
     box_plotter(df, dir, instance, "Cost variance across parameter combination for " + instance, X="param", Y="cost")
 
 
 def box_plotter(df, dir, instance, name, X="param", Y="cost"):
+    result_dir = os.getcwd() + "/jobs/results/" + dir.split("/")[-1]
     sns.boxplot(x=X, y=Y, data=df)
     # Rotate x labels
     plt.xticks(rotation=90)
     plt.title(name)
-    plt.savefig(f"{dir}/{instance}_boxplot_{X}.png", bbox_inches='tight')
+    plt.savefig(f"{result_dir}/{instance}_boxplot_{X}.png", bbox_inches='tight')
     plt.clf()
-
-
-
 
 
 def unify_csvs(dir, key):
@@ -74,9 +71,10 @@ def unify_csvs(dir, key):
 
     # Create a separate file for each instance, overwriting if it exists
     os.system(f"awk -F, '{{print > \"{dir}/\"$1\".csv\"}}' {dir}/results_sorted.csv")
+    result_dir = os.getcwd() + "/jobs/results/" + dir.split("/")[-1]
 
-
-
+    # Copy the sorted file to the results directory
+    os.system(f"cp {dir}/results_sorted.csv {result_dir}/results_sorted.csv")
 
 
 if __name__ == '__main__':
@@ -87,3 +85,5 @@ if __name__ == '__main__':
     datasets = [f for f in os.listdir(dir) if f.startswith('results') is False and f.endswith('.csv')]
     for dataset in datasets:
         pretty_plots(instance=dataset, dir=dir, key=key)
+
+    # pretty_plots(instance="results_sorted.csv", dir=dir, key=key)
