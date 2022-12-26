@@ -9,6 +9,9 @@ from jobshop import *
 def simu_main(seed=None, temp=None, cooldowwn=None, timeout=None, instance=None):
     files = (os.listdir(os.getcwd() + "/instances"))
     print(files)
+    # Print params
+    print(f"Seed: {seed}, Instance: {instance}, Temp: {temp}, Cooldown: {cooldowwn}, Timeout: {timeout}")
+
 
     if seed is None:
         seed = int(input("seed: ") or 0)
