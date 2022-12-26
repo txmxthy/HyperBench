@@ -6,12 +6,11 @@ import numpy
 from jobshop import *
 
 
-def simu_main(seed=None, temp=None, cooldowwn=None, timeout=None, instance=None):
+def simu_main(seed=None, temp=None, cooldown=None, timeout=None, instance=None):
     files = (os.listdir(os.getcwd() + "/instances"))
     print(files)
     # Print params
-    print(f"Seed: {seed}, Instance: {instance}, Temp: {temp}, Cooldown: {cooldowwn}, Timeout: {timeout}")
-
+    print(f"Seed: {seed}, Instance: {instance}, Temp: {temp}, Cooldown: {cooldown}, Timeout: {timeout}")
 
     if seed is None:
         seed = int(input("seed: ") or 0)
@@ -22,8 +21,8 @@ def simu_main(seed=None, temp=None, cooldowwn=None, timeout=None, instance=None)
 
     if temp is None:
         temp = int(input("temp: ") or 200)
-    if cooldowwn is None:
-        cooldowwn = float(input("cooldown: ") or 0.8)
+    if cooldown is None:
+        cooldown = float(input("cooldown: ") or 0.8)
     if timeout is None:
         timeout = int(input("timeout: ") or 5)
 
@@ -46,13 +45,13 @@ def simu_main(seed=None, temp=None, cooldowwn=None, timeout=None, instance=None)
                                                           termination=int(10),
                                                           halting=int(10),
                                                           mode='random',
-                                                          decrease=float(cooldowwn))
+                                                          decrease=float(cooldown))
 
     printSchedule(jobs, solution)
     print("TEST:" + str(cost), "Timed Out?" + str(timedOut))
     # @Todo Solutions are not being saved (Output is saved)
 
-    csv_columns = instance, cost, seed, temp, cooldowwn, timeout
+    csv_columns = instance, cost, seed, temp, cooldown, timeout
 
     csv_file = f"{os.environ['OUTPUT_DIR']}/results-{os.environ['SLURM_ARRAY_TASK_ID']}.csv"
     try:
@@ -64,8 +63,6 @@ def simu_main(seed=None, temp=None, cooldowwn=None, timeout=None, instance=None)
 
     except IOError:
         print("I/O error")
-
-
 
 
 if __name__ == '__main__':

@@ -9,7 +9,7 @@ def generate_tabu_search_params(datasets, timeout):
     # Set the parameters
     seeds = 30  # Set to the number of verification runs
     tabu_length = [2, 3, 4, 6, 8]  # https://iopscience.iop.org/article/10.1088/1742-6596/1235/1/012047/pdf
-    max_steps = [500, 750, 1000]
+    max_steps = [1000]
     longest_hold = [500, 1000]
     # Generate the param file (Exclude anywhere longest_hold > max_steps)
 

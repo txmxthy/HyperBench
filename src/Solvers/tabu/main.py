@@ -5,6 +5,8 @@ import random
 import copy
 import json
 from pprint import pprint
+
+import numpy as np
 import pandas as pd
 import plotly.express as px
 
@@ -338,7 +340,32 @@ class TabuSearch:
         return update_ans  # RETURNS THE UPDATED SOLUTION
 
 
-def tabu_main():
+def tabu_main(seed=None, tabu_len=None, nsteps=None, hold=None, timeout=None, instance=None):
+
+
+
+    if seed is None:
+        seed = int(input("seed: ") or 0)
+
+        # Set the seed
+    random.seed(seed)
+    np.random.seed(seed)
+
+    if tabu_len is None:
+        tabu_len = int(input("temp: ") or 3)
+    if nsteps is None:
+        nsteps = float(input("cooldown: ") or 500)
+
+    if hold is None:
+        hold = int(input("hold: ") or 100)
+
+    if timeout is None:
+        timeout = int(input("timeout: ") or 20)
+
+    if instance is None:
+        instance = input("instance: ") or "abz5"
+
+    # @todo CURRENT SPOT: WORK ON THIS: loading in the instance and settings :)
     # get the full path of the directory "instance:
     files = (os.listdir(os.getcwd() + "/instances"))
     print(files)
@@ -421,7 +448,8 @@ def render_gantt_json(outdir):
     df = pd.DataFrame(list_of_dicts)
     df['Delta'] = df['End'] - df['Start']
 
-    fig = px.timeline(df, x_start="Start", x_end="End", y="Machine", color="Color", labels="Job", title=gantt_data["title"])
+    fig = px.timeline(df, x_start="Start", x_end="End", y="Machine", color="Color", labels="Job",
+                      title=gantt_data["title"])
     fig.update_yaxes(autorange="reversed")
     fig.layout.xaxis.type = 'linear'
     for d in fig.data:
@@ -433,6 +461,7 @@ def render_gantt_json(outdir):
     fig.update_yaxes(autorange="reversed")  # otherwise tasks are listed from the bottom up
     fig.write_image(outdir + gantt_data["title"] + ".png")
     fig.show()
+
 
 if __name__ == "__main__":
     # tabu_main()

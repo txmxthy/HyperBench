@@ -14,7 +14,7 @@ seed, inital_temp, cooldown, instance = lines[task_id].split(',')
 timeout = 60*5
 simu_main(seed=int(seed),
           temp=int(inital_temp),
-          cooldowwn=float(cooldown),
+          cooldown=float(cooldown),
           timeout=int(timeout),
           instance=instance.strip())
 

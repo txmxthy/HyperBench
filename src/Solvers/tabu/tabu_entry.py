@@ -7,14 +7,15 @@ with open("simu_inputs.txt", "r") as f:
     lines = f.readlines()
 
 task_id = int(os.environ["SLURM_ARRAY_TASK_ID"])
-print(f"Hello! This is Simulated Annealing - Task {task_id}")
+print(f"Hello! This is Tabu Search - Task {task_id}")
 
-seed, inital_temp, cooldown, instance = lines[task_id].split(',')
+seed, tabu_length, steps, hold, instance = lines[task_id].split(',')
 
 timeout = 60*5
 tabu_main(seed=int(seed),
-          temp=int(inital_temp),
-          cooldowwn=float(cooldown),
+          tabu_len=int(tabu_length),
+          nsteps=float(steps),
           timeout=int(timeout),
+          hold=int(hold),
           instance=instance.strip())
 
