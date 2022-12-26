@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH -a 1-4
-#SBATCH -o stdio/sim_anneal-stdout-%j-%t.txt
-#SBATCH -e stdio/sim_anneal-stderr-%j-%t.txt
+#SBATCH -o stdio/sim_anneal-stdout-%A-%a.txt
+#SBATCH -e stdio/sim_anneal-stderr-%A-%a.txt
 #SBATCH --cpus-per-task=1
 #SBATCH --mem-per-cpu=2G
 #SBATCH --time=00:10:00
