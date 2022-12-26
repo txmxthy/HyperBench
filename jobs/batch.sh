@@ -5,7 +5,7 @@ module load python/3.8.1
 python3 -m venv ../venv
 source ../venv/bin/activate
 
-python -m pip upgrade pip
+python -m pip install --upgrade pip
 pip3 install -r ../requirements.txt
 
 # kick of each thing we're testing in parallel
