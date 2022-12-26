@@ -1,3 +1,4 @@
+-- seed, mode
 1, normal
 1, random
 42, normal

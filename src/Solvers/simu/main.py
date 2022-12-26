@@ -39,7 +39,7 @@ def simu_main(seed=None, mode=None, timeout=None):
     print(scores)
     csv_columns = files
 
-    csv_file = "scores.csv"
+    csv_file = f"{os.environ['OUTPUT_DIR']}/scores-{os.environ['SLURM_ARRAY_TASK_ID']}.csv"
     try:
         with open(csv_file, 'w') as csvfile:
             writer = csv.DictWriter(csvfile, fieldnames=csv_columns)
