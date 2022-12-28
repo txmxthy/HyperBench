@@ -38,7 +38,7 @@ def genetic_main(instance=None, seed=None, pop_size=None, ngen=None, mut_rate=No
 
     csv_columns = instance, cost, seed, pop_size, ngen, mut_rate, cross_rate, timeout
 
-    csv_file = f"{os.environ['OUTPUT_DIR']}/results-{os.environ['SLURM_ARRAY_TASK_ID']}.csv"
+    csv_file = f"{os.environ['OUTPUT_DIR']}/results-{os.environ['RUN_KEY']}.csv"
     try:
         with open(csv_file, 'w') as csvfile:
             writer = csv.DictWriter(csvfile, fieldnames=csv_columns)

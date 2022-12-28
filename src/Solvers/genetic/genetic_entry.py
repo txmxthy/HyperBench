@@ -6,11 +6,11 @@ from main import genetic_main
 with open("genetic_inputs.txt", "r") as f:
     lines = f.readlines()
 
-task_id = int(os.environ["SLURM_ARRAY_TASK_ID"])
+task_id = int(os.environ["RUN_KEY"])
 print(f"Hello! This is Tabu Search - Task {task_id}")
 
 seed, pop, gen, mut, cross, dataset = lines[task_id].split(',')
-timeout = 60 * 5
+timeout = 10
 
 genetic_main(instance=dataset.strip(),
              seed=int(seed),
