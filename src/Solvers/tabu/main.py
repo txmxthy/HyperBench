@@ -184,10 +184,12 @@ class JSPAns:
                 break
         return self.current_time
 
-    def generate_gantt_json(self, instance):
+    def generate_gantt_json(self, csv_columns):
+        # CSV Columns: instance, cost, seed, tabu_len, nsteps, hold, timeout,
+        instance, cost, seed, tabu_len, nsteps, hold, timeout = csv_columns
         json_dict = {
             "packages": [],
-            "title": str(instance),
+            "title": f"{instance}  Cost: {cost} Slurm: {os.environ['SLURM_ARRAY_TASK_ID']}",
             "xlabel": "time",
             "xticks": []
         }
@@ -203,7 +205,7 @@ class JSPAns:
                 # jobs_mark.append(s["job_id"]) # Old way of not trakcing jobs for labelling (reduce json size)
                 json_dict["packages"].append(bar)
         json_str = json.dumps(json_dict)
-        with open("./ganttBar.json", "w") as fp:
+        with open(os.environ["OUTPUT_DIR"] + f"/json/{instance}_gantt.json", "w") as fp:
             fp.write(json_str)
 
 
@@ -341,9 +343,6 @@ class TabuSearch:
 
 
 def tabu_main(seed=None, tabu_len=None, nsteps=None, hold=None, timeout=None, instance=None):
-
-
-
     if seed is None:
         seed = int(input("seed: ") or 0)
 
@@ -352,9 +351,9 @@ def tabu_main(seed=None, tabu_len=None, nsteps=None, hold=None, timeout=None, in
     np.random.seed(seed)
 
     if tabu_len is None:
-        tabu_len = int(input("temp: ") or 3)
+        tabu_len = int(input("len: ") or 3)
     if nsteps is None:
-        nsteps = float(input("cooldown: ") or 500)
+        nsteps = float(input("steps: ") or 500)
 
     if hold is None:
         hold = int(input("hold: ") or 100)
@@ -363,75 +362,81 @@ def tabu_main(seed=None, tabu_len=None, nsteps=None, hold=None, timeout=None, in
         timeout = int(input("timeout: ") or 20)
 
     if instance is None:
-        instance = input("instance: ") or "abz5"
+        instance = str(input("instance: ") or "abz5")
 
     # @todo CURRENT SPOT: WORK ON THIS: loading in the instance and settings :)
     # get the full path of the directory "instance:
-    files = (os.listdir(os.getcwd() + "/instances"))
-    print(files)
-    maxTime = float(input("Input the max time in seconds for each instance:"))
-    instance = "Override me"
-    scores = {}
-    for file in files:
-        print("file:", file)
-        jobs_map = []
-        with open(os.getcwd() + "/instances/" + file, "r") as f:
-            n, m = tuple([int(x) for x in f.readline().split()])  # n is the number of jobs, m is the number of machines
-            for line in f:
-                jobs_map.append([int(x) for x in line.split()])
-            print(m, n)
-            print(jobs_map)
-        ts = TabuSearch(jobs_map, 100)
-        current_ans = ts.jsp_random_initial_ans(m, n)
-        total_steps = 1000  # The maximum number of iterations
-        neighbor_num = m * n
-        longest_hold = 1000  # If no better one is found after the longest hold, exit the iteration
-        hold_cnt = 0
-        last_best = 0
-        best_value_record = []
-        t0 = time.time()
-        for i in range(total_steps):
+    instance_prefix = os.getcwd() + "/instances/"
+    file = instance
+    maxTime = float(timeout)
 
-            # print("-----------------------------", "step", i, "-----------------------------")
-            current_ans = ts.jsp_update_ans(current_ans, m, n, neighbor_num)
-            # print("current value:", current_ans.ans_value)
-            # print("best in history:", ts.best_ans.ans_value)
-            if last_best == ts.best_ans.ans_value:
-                hold_cnt += 1
-            else:
-                hold_cnt = 0
-            last_best = ts.best_ans.ans_value
-            best_value_record.append(last_best)
-            if hold_cnt == longest_hold:
-                break
+    print("file:", file)
+    jobs_map = []
+    with open(instance_prefix + file, "r") as f:
+        n, m = tuple([int(x) for x in f.readline().split()])  # n is the number of jobs, m is the number of machines
+        for line in f:
+            jobs_map.append([int(x) for x in line.split()])
+        print(m, n)
+        print(jobs_map)
 
-            if maxTime and time.time() - t0 > maxTime:
-                print("Time out!")
-                break
+    ts = TabuSearch(jobs_map, 100)
+    current_ans = ts.jsp_random_initial_ans(m, n)
+    total_steps = 1000  # The maximum number of iterations
+    neighbor_num = m * n
+    longest_hold = 1000  # If no better one is found after the longest hold, exit the iteration
+    hold_cnt = 0
+    last_best = 0
+    best_value_record = []
+    t0 = time.time()
+    for i in range(total_steps):
 
-        print("tabu_list:", ts.tabu_list)
-        print("best_ans:", ts.best_ans.ans_value)
-        scores[file] = ts.best_ans.ans_value
-        ts.best_ans.generate_gantt_json(instance)  # Get the json file for drawing the Gantt chart
-        plt.plot(best_value_record[:-longest_hold + 50])  # Mapping the search process
-        plt.show()
-        # Close the file
-        f.close()
-    print(scores)
-    csv_columns = files
+        # print("-----------------------------", "step", i, "-----------------------------")
+        current_ans = ts.jsp_update_ans(current_ans, m, n, neighbor_num)
+        # print("current value:", current_ans.ans_value)
+        # print("best in history:", ts.best_ans.ans_value)
+        if last_best == ts.best_ans.ans_value:
+            hold_cnt += 1
+        else:
+            hold_cnt = 0
+        last_best = ts.best_ans.ans_value
+        best_value_record.append(last_best)
+        if hold_cnt == longest_hold:
+            break
 
-    csv_file = "scores.csv"
+        if maxTime and time.time() - t0 > maxTime:
+            print("Time out!")
+            break
+
+    print("tabu_list:", ts.tabu_list)
+    print("best_ans:", ts.best_ans.ans_value)
+    cost = ts.best_ans.ans_value
+
+    csv_columns = instance, cost, seed, tabu_len, nsteps, hold, timeout
+    ts.best_ans.generate_gantt_json(csv_columns)  # Get the json file for drawing the Gantt chart
+    plt.plot(best_value_record[:-longest_hold + 50])  # Mapping the search process
+    plt.title(f"Tabu Search Convergence (Slurm: {os.environ['SLURM_ARRAY_TASK_ID']})")
+    plt.savefig(f"{os.environ['OUTPUT_DIR']}/img/convergence-{os.environ['SLURM_ARRAY_TASK_ID']}.png")
+    # Close the file
+    f.close()
+
+
+
+    csv_file = f"{os.environ['OUTPUT_DIR']}/results-{os.environ['SLURM_ARRAY_TASK_ID']}.csv"
     try:
         with open(csv_file, 'w') as csvfile:
             writer = csv.DictWriter(csvfile, fieldnames=csv_columns)
             writer.writeheader()
-            writer.writerow(scores)
+            # for data in csv_columns:
+            #     writer.writerow(data)
+
     except IOError:
         print("I/O error")
 
+    render_gantt_json(instance)
 
-def render_gantt_json(outdir):
-    file = "/home/kali/PycharmProjects/Capstone/src/Solvers/tabu/ganttBar.json"
+
+def render_gantt_json(instance):
+    file = os.environ["OUTPUT_DIR"] + f"/json/{instance}_gantt.json"
     with open(file, "r") as f:
         gantt_data = json.load(f)
 
@@ -459,11 +464,8 @@ def render_gantt_json(outdir):
 
     fig.update_xaxes(type='linear')
     fig.update_yaxes(autorange="reversed")  # otherwise tasks are listed from the bottom up
-    fig.write_image(outdir + gantt_data["title"] + ".png")
-    fig.show()
+    fig.write_image(os.environ["OUTPUT_DIR"] + "/img/gantt-" + os.environ['SLURM_ARRAY_TASK_ID'] + ".png")
 
 
 if __name__ == "__main__":
-    # tabu_main()
-    outdir = "/home/kali/PycharmProjects/Capstone/jobs/results/tabu_search/"
-    render_gantt_json(outdir)
+    tabu_main()
