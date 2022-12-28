@@ -6,7 +6,7 @@ from main import tabu_main
 with open("tabu_inputs.txt", "r") as f:
     lines = f.readlines()
 
-task_id = int(os.environ["SLURM_ARRAY_TASK_ID"])
+task_id = int(os.environ["RUN_KEY"])
 print(f"Hello! This is Tabu Search - Task {task_id}")
 
 seed, tabu_length, steps, hold, instance = lines[task_id].split(',')
