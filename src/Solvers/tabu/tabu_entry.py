@@ -11,7 +11,7 @@ print(f"Hello! This is Tabu Search - Task {task_id}")
 
 seed, tabu_length, steps, hold, instance = lines[task_id].split(',')
 
-timeout = 60*5
+timeout = 20
 tabu_main(seed=int(seed),
           tabu_len=int(tabu_length),
           nsteps=float(steps),
