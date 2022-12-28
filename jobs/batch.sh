@@ -12,5 +12,11 @@ pip3 install -r ../requirements.txt
 #sbatch constraint.sh
 #sbatch genetic.sh
 #sbatch sim_anneal.sh
+
+TABU_RDIR="../../../jobs/output/tabu_search"
+TABU_DATE="$(date +%Y-%m-%d_%H-%M-%S)"
+export TABU_RUNDIR="$TABU_RDIR/$TABU_DATE"
+mkdir -p "$TABU_RUNDIR"
+
 sbatch tabu_search.sh
 
