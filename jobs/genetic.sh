@@ -30,8 +30,13 @@ printf "Verified: %s, %s-%s\n" "$num_elements" "$lowest" "$highest"
 ACCESS_KEY=${VALUES[$SLURM_ARRAY_TASK_ID]}
 
 # Log to STDERR
-echo "++ Running with: $ACCESS_KEY" >&2
+echo "++ Running with Key: $ACCESS_KEY" >&2
 echo "SLURM: $SLURM_ARRAY_TASK_ID" >&2
+# Dump Values array
+for i in "${VALUES[@]}"; do
+    echo "++ $i" >&2
+done
+
 
 
 
