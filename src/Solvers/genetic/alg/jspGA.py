@@ -3,7 +3,7 @@ import time
 import sys
 from alg import calculateMakespan
 from alg.GAOperations import checkDiversity, generate_population, getFitness, evolve
-from alg.plotResult import plotResult, generate_gantt_json
+from alg.plotResult import generate_gantt_json
 from alg.utils import fromPermutation, printTable
 
 
@@ -85,5 +85,5 @@ def genetic(times, machines, n, population_number, iterations, rate, target, max
     printTable(best_table)
     cols = instance, best_result
     generate_gantt_json(best_table, cols)
-    plotResult(best_table, best_result)
+    # plotResult(best_table, best_result)
     return best_result
