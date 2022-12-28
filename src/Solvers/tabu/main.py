@@ -413,15 +413,9 @@ def tabu_main(seed=None, tabu_len=None, nsteps=None, hold=None, timeout=None, in
 
     csv_columns = instance, cost, seed, tabu_len, nsteps, hold, timeout
     ts.best_ans.generate_gantt_json(csv_columns)  # Get the json file for drawing the Gantt chart
-    plt.plot(best_value_record[:-longest_hold + 50])  # Mapping the search process
+    plt.plot(best_value_record)  # Mapping the search process
     plt.title(f"Tabu Search Convergence (Slurm: {os.environ['SLURM_ARRAY_TASK_ID']})")
     plt.savefig(f"{os.environ['OUTPUT_DIR']}/img/convergence-{os.environ['SLURM_ARRAY_TASK_ID']}.png")
-    # Save best_value_record to txt file
-    with open(f"{os.environ['OUTPUT_DIR']}/txt/best_value_record-{os.environ['SLURM_ARRAY_TASK_ID']}.txt", "w") as f:
-        for item in best_value_record:
-            f.write("%s\n" % item)
-
-    # Close the file
     f.close()
 
 
@@ -469,8 +463,8 @@ def render_gantt_json(instance):
 
     fig.update_xaxes(type='linear')
     fig.update_yaxes(autorange="reversed")  # otherwise tasks are listed from the bottom up
-    fig.write_image(os.environ["OUTPUT_DIR"] + "/img/gantt-" + os.environ['SLURM_ARRAY_TASK_ID'] + ".png")
-
+    fig.write_image(os.environ["OUTPUT_DIR"] + "/img/gantt-" + os.environ['SLURM_ARRAY_TASK_ID'] + ".png", format="png")
+    print("Gantt chart saved to", os.environ["OUTPUT_DIR"] + "/img/gantt-" + os.environ['SLURM_ARRAY_TASK_ID'] + ".png")
 
 if __name__ == "__main__":
     tabu_main()
