@@ -416,6 +416,11 @@ def tabu_main(seed=None, tabu_len=None, nsteps=None, hold=None, timeout=None, in
     plt.plot(best_value_record[:-longest_hold + 50])  # Mapping the search process
     plt.title(f"Tabu Search Convergence (Slurm: {os.environ['SLURM_ARRAY_TASK_ID']})")
     plt.savefig(f"{os.environ['OUTPUT_DIR']}/img/convergence-{os.environ['SLURM_ARRAY_TASK_ID']}.png")
+    # Save best_value_record to txt file
+    with open(f"{os.environ['OUTPUT_DIR']}/txt/best_value_record-{os.environ['SLURM_ARRAY_TASK_ID']}.txt", "w") as f:
+        for item in best_value_record:
+            f.write("%s\n" % item)
+
     # Close the file
     f.close()
 

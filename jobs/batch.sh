@@ -16,7 +16,7 @@ pip3 install -r ../requirements.txt
 TABU_RDIR="output/tabu_search"
 TABU_DATE="$(date +%Y-%m-%d_%H-%M-%S)"
 export TABU_RUNDIR="$TABU_RDIR/$TABU_DATE"
-mkdir -p "$TABU_RUNDIR"/{img,json}
+mkdir -p "$TABU_RUNDIR"/{img,json,txt}
 
 
 
