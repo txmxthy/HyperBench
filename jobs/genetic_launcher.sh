@@ -21,7 +21,7 @@ echo "++ Parameter count: $PARAM_COUNT"
 echo "++ Max batch size: $MAX_BATCH_SIZE"
 echo "++ Batch count: $BATCH_COUNT"
 
-$JOB_NAME="GA_JSS"
+
 # Loop through the batches
 for i in $(seq 0 $BATCH_COUNT); do
     # Calculate the start and end of the batch
@@ -42,9 +42,9 @@ for i in $(seq 0 $BATCH_COUNT); do
     NUM_JOBS=1
     # While there are still jobs in the queue with the job name
     while [ "$NUM_JOBS" -gt 0 ]; do
-        sleep 20
-        NUM_JOBS=$(squeue -u $USER -o "%.15i %.10P  %.16j %.7C %.7m %.12M %.12L %.10T %R" | grep $JOB_NAME -c)
+        NUM_JOBS=$(squeue -u $USER -o "%.15i %.10P  %.16j %.7C %.7m %.12M %.12L %.10T %R" | grep "JSS" -c)
         echo "++ Waiting for batch $i to finish. $NUM_JOBS jobs in queue."
+        sleep 20
     done
 
 done
