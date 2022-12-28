@@ -5,3 +5,4 @@ pandas~=1.5.2
 ortools
 prettytable
 plotly
+kaleido
