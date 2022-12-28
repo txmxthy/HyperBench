@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH -a 1002-2002
+#SBATCH -a 1-1001
 #SBATCH -o stdio/tabu_search-stdout-%A-%a.txt
 #SBATCH -e stdio/tabu_search-stderr-%A-%a.txt
 #SBATCH --cpus-per-task=1
