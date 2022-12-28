@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH -a 1-1001
-#SBATCH -o stdio/sim_anneal-stdout-%A-%a.txt
-#SBATCH -e stdio/sim_anneal-stderr-%A-%a.txt
+#SBATCH -o stdio/tabu_search-stdout-%A-%a.txt
+#SBATCH -e stdio/tabu_search-stderr-%A-%a.txt
 #SBATCH --cpus-per-task=1
 #SBATCH --mem-per-cpu=2G
 #SBATCH --time=00:35:00
