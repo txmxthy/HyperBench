@@ -189,7 +189,7 @@ class JSPAns:
         instance, cost, seed, tabu_len, nsteps, hold, timeout = csv_columns
         json_dict = {
             "packages": [],
-            "title": f"TABU {instance}  Cost: {cost} Slurm: {os.environ['SLURM_ARRAY_TASK_ID']}",
+            "title": f"TABU {instance}  Cost: {cost} Slurm: {os.environ['RUN_KEY']}",
             "xlabel": "time",
             "xticks": []
         }
@@ -205,7 +205,7 @@ class JSPAns:
                 # jobs_mark.append(s["job_id"]) # Old way of not trakcing jobs for labelling (reduce json size)
                 json_dict["packages"].append(bar)
         json_str = json.dumps(json_dict)
-        with open(os.environ["OUTPUT_DIR"] + f"/json/{os.environ['SLURM_ARRAY_TASK_ID']}_gantt.json", "w") as fp:
+        with open(os.environ["OUTPUT_DIR"] + f"/json/{os.environ['RUN_KEY']}_gantt.json", "w") as fp:
             fp.write(json_str)
 
 
@@ -417,11 +417,11 @@ def tabu_main(seed=None, tabu_len=None, nsteps=None, hold=None, timeout=None, in
     csv_columns = instance, cost, seed, tabu_len, nsteps, hold, timeout
     ts.best_ans.generate_gantt_json(csv_columns)  # Get the json file for drawing the Gantt chart
     plt.plot(best_value_record)  # Mapping the search process
-    plt.title(f"Tabu Search Convergence (Slurm: {os.environ['SLURM_ARRAY_TASK_ID']})")
-    plt.savefig(f"{os.environ['OUTPUT_DIR']}/img/convergence-{os.environ['SLURM_ARRAY_TASK_ID']}.png")
+    plt.title(f"Tabu Search Convergence (Slurm: {os.environ['RUN_KEY']})")
+    plt.savefig(f"{os.environ['OUTPUT_DIR']}/img/convergence-{os.environ['RUN_KEY']}.png")
     f.close()
 
-    csv_file = f"{os.environ['OUTPUT_DIR']}/results-{os.environ['SLURM_ARRAY_TASK_ID']}.csv"
+    csv_file = f"{os.environ['OUTPUT_DIR']}/results-{os.environ['RUN_KEY']}.csv"
     try:
         with open(csv_file, 'w') as csvfile:
             writer = csv.DictWriter(csvfile, fieldnames=csv_columns)
