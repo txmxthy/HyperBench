@@ -41,7 +41,7 @@ for i in $(seq 0 $BATCH_COUNT); do
     # Echo
     echo "++ Batch $i: $START - $END"
     # Submit the batch
-    START="$START" END="$END" sbatch genetic.sh
+    START="$START" END="$END" BATCH=$i sbatch genetic.sh
 
     # Wait for the batch to finish
 

@@ -34,14 +34,11 @@ fi
 ACCESS_KEY=${VALUES[$SLURM_ARRAY_TASK_ID]}
 
 # Log to STDERR
+echo "Batch $BATCH &2"
 echo "++ Running Slurm ID: $SLURM_ARRAY_TASK_ID" >&2
 echo "Key: $RUN_KEY" >&2
 # Dump Values array
-for i in "${VALUES[@]}"; do
-    echo "++ $i" >&2
-done
-
-
+echo "Values: ${VALUES[0]} ... ${VALUES[-1]}" >&2
 
 
 module load python/3.8.1
