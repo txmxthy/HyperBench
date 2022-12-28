@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --job-name=GA_JSS
-#SBATCH -a 1-19
+#SBATCH -a 1-9
 #SBATCH -o stdio/genetic-stdout-%A-%a.txt
 #SBATCH -e stdio/genetic-stderr-%A-%a.txt
 #SBATCH --cpus-per-task=1
@@ -28,6 +28,13 @@ printf "Verified: %s, %s-%s\n" "$num_elements" "$lowest" "$highest"
 
 
 ACCESS_KEY=${VALUES[$SLURM_ARRAY_TASK_ID]}
+
+# Log to STDERR
+echo "++ Running with: $ACCESS_KEY" >&2
+echo "SLURM: $SLURM_ARRAY_TASK_ID" >&2
+
+
+
 module load python/3.8.1
 source ../venv/bin/activate
 cd ../src/Solvers/genetic || exit 1
