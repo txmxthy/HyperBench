@@ -21,17 +21,16 @@ for i in $(seq $START $END); do
 done
 
 num_elements=${#VALUES[@]}
-sorted_values=($(printf "%s\n" "${VALUES[@]}" | sort -n))
-lowest=${sorted_values[0]}
-highest=${sorted_values[-1]}
+lowest=${VALUES[0]}
+highest=${VALUES[-1]}
 printf "Verified: %s, %s-%s\n" "$num_elements" "$lowest" "$highest"
 
 
 ACCESS_KEY=${VALUES[$SLURM_ARRAY_TASK_ID]}
 
 # Log to STDERR
-echo "++ Running with Key: $ACCESS_KEY" >&2
-echo "SLURM: $SLURM_ARRAY_TASK_ID" >&2
+echo "++ Running Slurm ID: $SLURM_ARRAY_TASK_ID" >&2
+echo "Key: $RUN_KEY" >&2
 # Dump Values array
 for i in "${VALUES[@]}"; do
     echo "++ $i" >&2
