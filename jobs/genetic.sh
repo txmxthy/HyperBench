@@ -1,6 +1,6 @@
 #!/bin/bash
-#SBATCH --job-name=Genetic_alg_jss
-#SBATCH -a 1-1998
+#SBATCH --job-name=GA_JSS
+#SBATCH -a 1-20
 #SBATCH -o stdio/genetic-stdout-%A-%a.txt
 #SBATCH -e stdio/genetic-stderr-%A-%a.txt
 #SBATCH --cpus-per-task=1
@@ -19,13 +19,11 @@ VALUES=()
 for i in $(seq $START $END); do
     VALUES+=("$i")
 done
+
 num_elements=${#VALUES[@]}
 sorted_values=($(printf "%s\n" "${VALUES[@]}" | sort -n))
 lowest=${sorted_values[0]}
 highest=${sorted_values[-1]}
-#echo "Lowest value: $lowest"
-#echo "Highest value: $highest"
-# One one line
 printf "Verified: %s, %s-%s\n" "$num_elements" "$lowest" "$highest"
 
 

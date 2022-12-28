@@ -5,12 +5,12 @@
 # Param file = /home/kali/PycharmProjects/Capstone/src/Solvers/genetic/genetic_inputs.txt
 
 PARAMS="../src/Solvers/genetic/genetic_inputs.txt"
-PARAM_COUNT=$(wc -l < "$PARAMS")
+#PARAM_COUNT=$(wc -l < "$PARAMS")
+PARAM_COUNT=40
 
-# scontrol show config | grep -i array | grep -Eo '[0-9]{1,4}'
 #MAX_BATCH_SIZE=$(scontrol show config | grep -i array | grep -Eo '[0-9]{1,4}')
-MAX_BATCH_SIZE=2000
-# Subtract 1 from the max batch size to account for the first line being skipped
+MAX_BATCH_SIZE=20
+# Subtract 1 from the max batch size to account for the first line being skipped and slurm being dumb
 MAX_BATCH_SIZE=$((MAX_BATCH_SIZE - 2))
 # Get the number of batches required to run all the parameters (without any remainder)
 BATCH_COUNT=$((PARAM_COUNT / MAX_BATCH_SIZE))
@@ -21,6 +21,7 @@ echo "++ Parameter count: $PARAM_COUNT"
 echo "++ Max batch size: $MAX_BATCH_SIZE"
 echo "++ Batch count: $BATCH_COUNT"
 
+$JOB_NAME="GA_JSS"
 # Loop through the batches
 for i in $(seq 0 $BATCH_COUNT); do
     # Calculate the start and end of the batch
@@ -34,6 +35,18 @@ for i in $(seq 0 $BATCH_COUNT); do
     echo "++ Batch $i: $START - $END"
     # Submit the batch
     START="$START" END="$END" sbatch genetic.sh
+
+    # Wait for the batch to finish
+
+    # Count the number of jobs in the queue with the job name
+    NUM_JOBS=1
+    # While there are still jobs in the queue with the job name
+    while [ "$NUM_JOBS" -gt 0 ]; do
+        sleep 20
+        NUM_JOBS=$(squeue -u $USER -o "%.15i %.10P  %.16j %.7C %.7m %.12M %.12L %.10T %R" | grep $JOB_NAME -c)
+        echo "++ Waiting for batch $i to finish. $NUM_JOBS jobs in queue."
+    done
+
 done
 
 

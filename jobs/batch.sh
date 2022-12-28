@@ -24,7 +24,6 @@ GENETIC_DATE="$(date +%Y-%m-%d_%H-%M-%S)"
 export GENETIC_RUNDIR="$GENETIC_RDIR/$GENETIC_DATE"
 mkdir -p "$GENETIC_RUNDIR"/{img,json}
 
-genetic_launcher.sh
 bash genetic_launcher.sh
 
 #sbatch constraint.sh

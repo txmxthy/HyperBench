@@ -1,3 +1,4 @@
+import os
 import random
 
 
@@ -78,7 +79,7 @@ def generate_genetic_algorithm_params(datasets, timeout):
     Essentially a grid search over the parameters of the ga params
     genetic_main(instance=None, seed=None, pop_size=None, ngen=None, mut_rate=None, cross_rate=None, timeout=None):
     """
-
+    print(os.getcwd())
     # Set the parameters
     seeds = 30  # Set to the number of verification runs
     pop_size = [100, 200, 300, 500, 1000]
@@ -86,7 +87,7 @@ def generate_genetic_algorithm_params(datasets, timeout):
     mut_rate = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
     cross_rate = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
     # Generate the param file
-    with open("../genetic_param.txt", "w") as param_file:
+    with open("process_helpers/genetic_param.txt", "w") as param_file:
         # Write the header
         param_file.write("seed,pop_size,ngen,mut_rate,cross_rate")
         # Write the parameters
@@ -105,8 +106,13 @@ def generate_genetic_algorithm_params(datasets, timeout):
 
     #   Close
     param_file.close()
-    total_runs = seeds * len(pop_size) * len(ngen) * len(mut_rate) * len(cross_rate) * len(datasets)
+    # Count lines in the file
+    with open("process_helpers/genetic_param.txt") as f:
+        total_runs = sum(1 for _ in f) - 1
     print("Param file generated for Genetic Algorithm" + f" ({total_runs} runs) with timeout of {timeout} seconds")
+    # print the full path of the param file
+    print("Param file path: " + os.path.abspath("../genetic_param.txt"))
+
     return total_runs
 
 def calculate_runtime(total_runs, timeout):
