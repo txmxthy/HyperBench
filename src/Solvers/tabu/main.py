@@ -433,14 +433,18 @@ def tabu_main(seed=None, tabu_len=None, nsteps=None, hold=None, timeout=None, in
     except IOError:
         print("I/O error")
 
+    print("rendering gantt chart")
     render_gantt_json(instance)
+    print("finished rendering gantt chart")
 
 
 def render_gantt_json(instance):
     file = os.environ["OUTPUT_DIR"] + f"/json/{os.environ['SLURM_ARRAY_TASK_ID']}_gantt.json"
+    print("1: opening gantt chart data file")
     with open(file, "r") as f:
         gantt_data = json.load(f)
 
+    print("2: reorganising gantt chart data")
     list_of_dicts = []
     for job in gantt_data["packages"]:
         d = {"Machine": job["label"],
@@ -451,20 +455,25 @@ def render_gantt_json(instance):
 
         list_of_dicts.append(d)
 
+    print("3: convert to data frame")
     df = pd.DataFrame(list_of_dicts)
     df['Delta'] = df['End'] - df['Start']
 
+    print("4: make a timeline figure")
     fig = px.timeline(df, x_start="Start", x_end="End", y="Machine", color="Color", labels="Job",
                       title=gantt_data["title"])
     fig.update_yaxes(autorange="reversed")
     fig.layout.xaxis.type = 'linear'
+    print("4a: transpose positions")
     for d in fig.data:
         filt = df['Color'] == d.name
         d.name = str(df[filt]['Job'].values[0])
         d.x = df[filt]['Delta'].tolist()
 
+    print("4b: axis shenanigans")
     fig.update_xaxes(type='linear')
     fig.update_yaxes(autorange="reversed")  # otherwise tasks are listed from the bottom up
+    print("5: saving image")
     fig.write_image(os.environ["OUTPUT_DIR"] + "/img/gantt-" + os.environ['SLURM_ARRAY_TASK_ID'] + ".png", format="png")
     print("Gantt chart saved to", os.environ["OUTPUT_DIR"] + "/img/gantt-" + os.environ['SLURM_ARRAY_TASK_ID'] + ".png")
 
