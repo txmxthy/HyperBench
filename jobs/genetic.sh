@@ -14,7 +14,7 @@
 #VALUES=({0..2000})
 
 # Replace the above with a loop to generate between passed in environment variables
-echo ""
+echo "" >&2
 echo "=== Batch $BATCH ===" >&2
 echo "inputs: $START - $END" >&2
 VALUES=()
