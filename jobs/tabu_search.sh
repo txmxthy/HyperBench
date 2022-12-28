@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --job-name=Tabu_Search
-#SBATCH -array=0-2000
+#SBATCH -array=1-1998
 #SBATCH -o stdio/tabu_search-stdout-%A-%a.txt
 #SBATCH -e stdio/tabu_search-stderr-%A-%a.txt
 #SBATCH --cpus-per-task=1
@@ -10,7 +10,7 @@
 #SBATCH --mail-type=BEGIN,END,FAIL
 #SBATCH --mail-user=mcdermtimo@ecs.vuw.ac.nz
 
-VALUES=({0..2000})
+VALUES=({1002..3000})
 ACCESS_KEY=${VALUES[$SLURM_ARRAY_TASK_ID]}
 
 
