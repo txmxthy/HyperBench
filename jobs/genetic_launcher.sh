@@ -32,7 +32,7 @@ echo "++ Batch count: $BATCH_COUNT"
 # Loop through the batches
 for i in $(seq 0 $BATCH_COUNT); do
     # Calculate the start and end of the batch
-    START=$((i * MAX_BATCH_SIZE))
+    START=$((i * MAX_BATCH_SIZE + 1))
     END=$((START + MAX_BATCH_SIZE))
     # If the end is greater than the parameter count, set it to the parameter count
     if [ "$END" -gt "$PARAM_COUNT" ]; then
