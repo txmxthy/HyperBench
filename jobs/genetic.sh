@@ -26,8 +26,9 @@ highest=${VALUES[-1]}
 printf "Verified: %s, %s-%s\n" "$num_elements" "$lowest" "$highest"
 
 # Make sure the slurm thread is needed (Doesn't try to get a value out of the bounds of the array)
+echo "Thread: $SLURM_ARRAY_TASK_ID, Elements: $num_elements" &2
 if [ "$SLURM_ARRAY_TASK_ID" -gt "$num_elements" ]; then
-    echo "SLURM_ARRAY_TASK_ID is greater than the number of elements in the array" &2
+    echo "EXITING"
     exit 1
 fi
 
