@@ -343,7 +343,8 @@ class TabuSearch:
 
 
 def tabu_main(seed=None, tabu_len=None, nsteps=None, hold=None, timeout=None, instance=None):
-    print(f"Running with seed: {seed}, tabu_len: {tabu_len}, nsteps: {nsteps}, hold: {hold}, timeout: {timeout}, instance: {instance}")
+    print(
+        f"Running with seed: {seed}, tabu_len: {tabu_len}, nsteps: {nsteps}, hold: {hold}, timeout: {timeout}, instance: {instance}")
 
     if seed is None:
         seed = int(input("seed: ") or 0)
@@ -420,8 +421,6 @@ def tabu_main(seed=None, tabu_len=None, nsteps=None, hold=None, timeout=None, in
     plt.savefig(f"{os.environ['OUTPUT_DIR']}/img/convergence-{os.environ['SLURM_ARRAY_TASK_ID']}.png")
     f.close()
 
-
-
     csv_file = f"{os.environ['OUTPUT_DIR']}/results-{os.environ['SLURM_ARRAY_TASK_ID']}.csv"
     try:
         with open(csv_file, 'w') as csvfile:
@@ -432,8 +431,6 @@ def tabu_main(seed=None, tabu_len=None, nsteps=None, hold=None, timeout=None, in
 
     except IOError:
         print("I/O error")
-
-
 
 
 if __name__ == "__main__":
