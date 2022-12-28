@@ -9,11 +9,18 @@ PARAMS="../src/Solvers/genetic/genetic_inputs.txt"
 PARAM_COUNT=40
 
 #MAX_BATCH_SIZE=$(scontrol show config | grep -i array | grep -Eo '[0-9]{1,4}')
-MAX_BATCH_SIZE=20
-# Subtract 1 from the max batch size to account for the first line being skipped and slurm being dumb
-MAX_BATCH_SIZE=$((MAX_BATCH_SIZE - 2))
-# Get the number of batches required to run all the parameters (without any remainder)
+# Subtract 2 from the max batch size to account for the first line being skipped and slurm being dumb
+MAX_BATCH_SIZE=18
+# Get the number of batches required to run all the parameters as a float and round up
 BATCH_COUNT=$((PARAM_COUNT / MAX_BATCH_SIZE))
+REMAINING=$((PARAM_COUNT % MAX_BATCH_SIZE))
+
+# Loop to check if there are any remaining parameters to run
+while [ "$REMAINING" -gt 0 ]; do
+    # If there are remaining parameters, add a batch and subtract the max batch size from the remaining
+    BATCH_COUNT=$((BATCH_COUNT + 1))
+    REMAINING=$((REMAINING - MAX_BATCH_SIZE))
+done
 
 # Echo
 echo "++ Parameter file: $PARAMS"
