@@ -4,7 +4,7 @@
 # Divide the parameter file line count by the max batch size to get the number of batches
 # Param file = /home/kali/PycharmProjects/Capstone/src/Solvers/genetic/genetic_inputs.txt
 
-PARAMS="/home/kali/PycharmProjects/Capstone/src/Solvers/genetic/genetic_inputs.txt"
+PARAMS="../src/Solvers/genetic/genetic_inputs.txt"
 PARAM_COUNT=$(wc -l < "$PARAMS")
 
 # scontrol show config | grep -i array | grep -Eo '[0-9]{1,4}'
