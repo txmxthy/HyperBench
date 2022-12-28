@@ -14,7 +14,7 @@
 #VALUES=({0..2000})
 
 # Replace the above with a loop to generate between passed in environment variables
-
+echo "\n=== Batch $BATCH ===" >&2
 VALUES=()
 for i in $(seq $START $END); do
     VALUES+=("$i")
@@ -36,7 +36,6 @@ fi
 ACCESS_KEY=${VALUES[$SLURM_ARRAY_TASK_ID]}
 
 # Log to STDERR
-echo "Batch $BATCH &2"
 echo "++ Running Slurm ID: $SLURM_ARRAY_TASK_ID" >&2
 echo "Key: $RUN_KEY" >&2
 # Dump Values array
