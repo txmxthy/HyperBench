@@ -21,14 +21,14 @@ mkdir -p "$TABU_RUNDIR"/{img,json}
 #
 sbatch tabu_search.sh
 
-exit
-GENETIC_RDIR="output/genetic"
-GENETIC_DATE="$(date +%Y-%m-%d_%H-%M-%S)"
-export GENETIC_RUNDIR="$GENETIC_RDIR/$GENETIC_DATE"
-mkdir -p "$GENETIC_RUNDIR"/{img,json}
-#
-#
-#
-sbatch genetic.sh
+#exit
+#GENETIC_RDIR="output/genetic"
+#GENETIC_DATE="$(date +%Y-%m-%d_%H-%M-%S)"
+#export GENETIC_RUNDIR="$GENETIC_RDIR/$GENETIC_DATE"
+#mkdir -p "$GENETIC_RUNDIR"/{img,json}
+##
+##
+##
+#sbatch genetic.sh
 
 #sbatch constraint.sh
