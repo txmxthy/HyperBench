@@ -205,7 +205,7 @@ class JSPAns:
                 # jobs_mark.append(s["job_id"]) # Old way of not trakcing jobs for labelling (reduce json size)
                 json_dict["packages"].append(bar)
         json_str = json.dumps(json_dict)
-        with open(os.environ["OUTPUT_DIR"] + f"/json/{instance}_gantt.json", "w") as fp:
+        with open(os.environ["OUTPUT_DIR"] + f"/json/{os.environ['SLURM_ARRAY_TASK_ID']}_gantt.json", "w") as fp:
             fp.write(json_str)
 
 
