@@ -20,9 +20,11 @@ for i in $(seq $START $END); do
     VALUES+=("$i")
 done
 
-num_elements=${#VALUES[@]}
+
 lowest=${VALUES[0]}
 highest=${VALUES[-1]}
+# Highest - lowest
+num_elements=$((highest - lowest))
 >&2 printf "Verified: %s, %s-%s\n" "$num_elements" "$lowest" "$highest"
 
 # Make sure the slurm thread is needed (Doesn't try to get a value out of the bounds of the array)
