@@ -436,7 +436,7 @@ def tabu_main(seed=None, tabu_len=None, nsteps=None, hold=None, timeout=None, in
 
 
 def render_gantt_json(instance):
-    file = os.environ["OUTPUT_DIR"] + f"/json/{instance}_gantt.json"
+    file = os.environ["OUTPUT_DIR"] + f"/json/{os.environ['SLURM_ARRAY_TASK_ID']}_gantt.json"
     with open(file, "r") as f:
         gantt_data = json.load(f)
 
