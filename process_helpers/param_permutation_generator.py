@@ -86,7 +86,7 @@ def generate_genetic_algorithm_params(datasets, timeout):
     mut_rate = [0.1, 0.2, 0.3, 0.4, 0.5]
     cross_rate = [0.1, 0.2, 0.3, 0.4, 0.5]
     # Generate the param file
-    with open("genetic_param.txt", "w") as param_file:
+    with open("../genetic_param.txt", "w") as param_file:
         # Write the header
         param_file.write("seed,pop_size,ngen,mut_rate,cross_rate")
         # Write the parameters
