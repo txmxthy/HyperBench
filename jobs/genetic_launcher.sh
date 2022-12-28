@@ -51,7 +51,8 @@ for i in $(seq 0 $BATCH_COUNT); do
     while [ "$NUM_JOBS" -gt 0 ]; do
         NUM_JOBS=$(squeue -u $USER -o "%.15i %.10P  %.16j %.7C %.7m %.12M %.12L %.10T %R" | grep "JSS" -c)
         echo "++ Waiting for batch $i to finish. $NUM_JOBS jobs in queue."
-        sleep 20
+        sleep 30
+        NUM_JOBS=$(squeue -u $USER -o "%.15i %.10P  %.16j %.7C %.7m %.12M %.12L %.10T %R" | grep "JSS" -c)
     done
 
 done
