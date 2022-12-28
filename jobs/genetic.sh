@@ -10,8 +10,25 @@
 #SBATCH --mail-type=BEGIN,END,FAIL
 #SBATCH --mail-user=mcdermtimo@ecs.vuw.ac.nz
 
-VALUES=({0..2000})
-#VALUES=({1998..3996})
+
+#VALUES=({0..2000})
+
+# Replace the above with a loop to generate between passed in environment variables
+
+VALUES=()
+for i in $(seq $START $END); do
+    VALUES+=("$i")
+done
+num_elements=${#VALUES[@]}
+sorted_values=($(printf "%s\n" "${VALUES[@]}" | sort -n))
+lowest=${sorted_values[0]}
+highest=${sorted_values[-1]}
+#echo "Lowest value: $lowest"
+#echo "Highest value: $highest"
+# One one line
+printf "Verified: %s, %s-%s\n" "$num_elements" "$lowest" "$highest"
+
+
 ACCESS_KEY=${VALUES[$SLURM_ARRAY_TASK_ID]}
 
 echo "++ Loading Python environment"

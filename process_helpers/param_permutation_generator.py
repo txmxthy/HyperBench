@@ -83,8 +83,8 @@ def generate_genetic_algorithm_params(datasets, timeout):
     seeds = 30  # Set to the number of verification runs
     pop_size = [100, 200, 300, 500, 1000]
     ngen = [5000]
-    mut_rate = [0.1, 0.2, 0.3, 0.4, 0.5]
-    cross_rate = [0.1, 0.2, 0.3, 0.4, 0.5]
+    mut_rate = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
+    cross_rate = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
     # Generate the param file
     with open("../genetic_param.txt", "w") as param_file:
         # Write the header
@@ -97,6 +97,9 @@ def generate_genetic_algorithm_params(datasets, timeout):
                 for gen in ngen:
                     for mut in mut_rate:
                         for cross in cross_rate:
+                            # Check cross and mut dont exceed 1
+                            if cross + mut > 1:
+                                continue
                             for dataset in datasets:
                                 param_file.write(f"\n{seed},{pop},{gen},{mut},{cross},{dataset}")
 
