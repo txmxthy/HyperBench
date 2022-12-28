@@ -17,6 +17,6 @@ cd ../src/Solvers/tabu || exit 1
 # Env var for the run directory is set in batch.sh as "TABU_RUNDIR"
 echo "Run directory: $TABU_RUNDIR"
 echo "PWD: $PWD"
-OUTPUT_DIR="../../../jobs/$TABU_RUNDIR" python3 tabu_entry.py
+OUTPUT_DIR="../../../jobs/$TABU_RUNDIR" python3 -u tabu_entry.py
 # To get through all instances you have to manually batch the slurm ids, ie 1-1001, 1002-2002, 2003-3003, etc.
 # Match the number of ids to the number of inputs in the file for that script
