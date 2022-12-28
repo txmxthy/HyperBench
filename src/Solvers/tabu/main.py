@@ -343,6 +343,8 @@ class TabuSearch:
 
 
 def tabu_main(seed=None, tabu_len=None, nsteps=None, hold=None, timeout=None, instance=None):
+    print(f"Running with seed: {seed}, tabu_len: {tabu_len}, nsteps: {nsteps}, hold: {hold}, timeout: {timeout}, instance: {instance}")
+
     if seed is None:
         seed = int(input("seed: ") or 0)
 
