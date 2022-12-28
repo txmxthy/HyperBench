@@ -11,6 +11,6 @@ pip3 install -r ../requirements.txt
 # kick of each thing we're testing in parallel
 #sbatch constraint.sh
 #sbatch genetic.sh
-sbatch sim_anneal.sh
-#sbatch tabu_search.sh
+#sbatch sim_anneal.sh
+sbatch tabu_search.sh
 
