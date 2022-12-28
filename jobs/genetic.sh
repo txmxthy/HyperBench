@@ -10,7 +10,7 @@
 #SBATCH --mail-type=BEGIN,END,FAIL
 #SBATCH --mail-user=mcdermtimo@ecs.vuw.ac.nz
 
-#VALUES=({0..2000})
+VALUES=({0..2000})
 #VALUES=({1998..3996})
 ACCESS_KEY=${VALUES[$SLURM_ARRAY_TASK_ID]}
 
