@@ -9,7 +9,8 @@ git fetch && git reset --hard origin/master && bash batch.sh
 
 to monitor slurm jobs
 ```commandline
-
+squeue -u $USER -o "%.15i %.10P  %.16j %.7C %.7m %.12M %.12L %.10T %R"
+```
 
 
 # Local Running:
