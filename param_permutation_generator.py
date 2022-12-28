@@ -73,6 +73,39 @@ def generate_simulated_annealing_params(datasets, timeout):
     return total_runs
 
 
+def generate_genetic_algorithm_params(datasets, timeout):
+    """
+    Essentially a grid search over the parameters of the ga params
+    genetic_main(instance=None, seed=None, pop_size=None, ngen=None, mut_rate=None, cross_rate=None, timeout=None):
+    """
+
+    # Set the parameters
+    seeds = 30  # Set to the number of verification runs
+    pop_size = [100, 200, 300, 500, 1000]
+    ngen = [5000]
+    mut_rate = [0.1, 0.2, 0.3, 0.4, 0.5]
+    cross_rate = [0.1, 0.2, 0.3, 0.4, 0.5]
+    # Generate the param file
+    with open("genetic_param.txt", "w") as param_file:
+        # Write the header
+        param_file.write("seed,pop_size,ngen,mut_rate,cross_rate")
+        # Write the parameters
+        for i in range(seeds):
+            # Generate a random seed
+            seed = random.randint(0, 1000000)
+            for pop in pop_size:
+                for gen in ngen:
+                    for mut in mut_rate:
+                        for cross in cross_rate:
+                            for dataset in datasets:
+                                param_file.write(f"\n{seed},{pop},{gen},{mut},{cross},{dataset}")
+
+    #   Close
+    param_file.close()
+    total_runs = seeds * len(pop_size) * len(ngen) * len(mut_rate) * len(cross_rate) * len(datasets)
+    print("Param file generated for Genetic Algorithm" + f" ({total_runs} runs) with timeout of {timeout} seconds")
+    return total_runs
+
 def calculate_runtime(total_runs, timeout):
     """
     Calculate the runtime of the algorithm
@@ -100,5 +133,5 @@ if __name__ == '__main__':
     timeout_s = 60
 
     # total_runs = generate_simulated_annealing_params(datasets, timeout_s)
-    total_runs = generate_tabu_search_params(datasets, timeout_s)
+    total_runs = generate_genetic_algorithm_params(datasets, timeout_s)
     calculate_runtime(total_runs, timeout_s)

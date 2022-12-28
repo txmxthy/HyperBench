@@ -3,7 +3,7 @@ import time
 import sys
 from alg import calculateMakespan
 from alg.GAOperations import checkDiversity, generate_population, getFitness, evolve
-from alg.plotResult import plotResult
+from alg.plotResult import plotResult, generate_gantt_json
 from alg.utils import fromPermutation, printTable
 
 
@@ -13,7 +13,7 @@ def printProgress(bestValue, iterations, timeElapsed):
     sys.stdout.flush()
 
 
-def genetic(times, machines, n, population_number, iterations, rate, target, maxTime=None):
+def genetic(times, machines, n, population_number, iterations, rate, target, maxTime=None, instance=None):
     machine_number = len(machines[0])
     start_time = time.time()
 
@@ -83,5 +83,7 @@ def genetic(times, machines, n, population_number, iterations, rate, target, max
     print("Permutation: ")
     print(fromPermutation(global_best_ind[0], n))
     printTable(best_table)
+    cols = instance, best_result
+    generate_gantt_json(best_table, cols)
     plotResult(best_table, best_result)
     return best_result

@@ -9,8 +9,6 @@ python -m pip install --upgrade pip
 pip3 install -r ../requirements.txt
 
 # kick of each thing we're testing in parallel
-#sbatch constraint.sh
-#sbatch genetic.sh
 #sbatch sim_anneal.sh
 
 #
@@ -23,3 +21,14 @@ mkdir -p "$TABU_RUNDIR"/{img,json}
 #
 sbatch tabu_search.sh
 
+exit
+GENETIC_RDIR="output/genetic"
+GENETIC_DATE="$(date +%Y-%m-%d_%H-%M-%S)"
+export GENETIC_RUNDIR="$GENETIC_RDIR/$GENETIC_DATE"
+mkdir -p "$GENETIC_RUNDIR"/{img,json}
+#
+#
+#
+sbatch genetic.sh
+
+#sbatch constraint.sh

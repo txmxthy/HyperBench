@@ -4,7 +4,7 @@ from alg.utils import readFilePairs
 from alg.jspGA import genetic
 
 
-def genetic_main():
+def genetic_main(instance=None, seed=None, pop_size=None, ngen=None, mut_rate=None, cross_rate=None, timeout=None):
     target = None
     # Print the location of this file
     path = os.path.dirname(os.path.abspath(__file__))
@@ -12,23 +12,38 @@ def genetic_main():
     files = os.listdir(path)
     print(files)
 
-    population_size = int(input('Please input the size of population (default: 30): ') or 30)
-    mutation_rate = float(input('Please input the size of Mutation Rate (default 0.2): ') or 0.2)
-    iterations = int(input('Please input number of iteration (default 2000): ') or 2000)
-    maxTime = int(input('Please input the maximum time in seconds (default 30): ') or 30)
-    scores = {}
-    for file in files:
-        times, machines, n = readFilePairs("cases/" + file)
-        cost = genetic(times, machines, n, population_size, iterations, mutation_rate, target, maxTime=maxTime)
-        scores[file] = cost
-    print(scores)
-    csv_columns = files
-    csv_file = "scores.csv"
+
+    if pop_size is None:
+        pop_size = int(input('Please input the size of population (default: 30): ') or 30)
+
+    if ngen is None:
+        ngen = int(input('Please input the number of generations (default: 100): ') or 100)
+
+    if mut_rate is None:
+        mut_rate = float(input('Please input the mutation rate (default: 0.1): ') or 0.1)
+    if cross_rate is None:
+        cross_rate = float(input('Please input the crossover rate (default: 0.1): ') or 0.1)
+    if seed is None:
+        seed = int(input('Please input the seed (default: 0): ') or 0)
+    if timeout is None:
+        timeout = int(input('Please input the timeout (default: 60): ') or 60)
+    if instance not in files or instance is None:
+        instance = "abz5"
+
+
+    times, machines, n = readFilePairs("cases/" + instance)
+
+    cost = genetic(times, machines, n, pop_size, ngen, mut_rate, target, maxTime=timeout, instance=instance)
+
+
+    csv_columns = instance, cost, seed, pop_size, ngen, mut_rate, cross_rate, timeout
+
+    csv_file = f"{os.environ['OUTPUT_DIR']}/results-{os.environ['SLURM_ARRAY_TASK_ID']}.csv"
     try:
         with open(csv_file, 'w') as csvfile:
             writer = csv.DictWriter(csvfile, fieldnames=csv_columns)
             writer.writeheader()
-            writer.writerow(scores)
+
     except IOError:
         print("I/O error")
 

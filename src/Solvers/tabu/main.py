@@ -189,7 +189,7 @@ class JSPAns:
         instance, cost, seed, tabu_len, nsteps, hold, timeout = csv_columns
         json_dict = {
             "packages": [],
-            "title": f"{instance}  Cost: {cost} Slurm: {os.environ['SLURM_ARRAY_TASK_ID']}",
+            "title": f"TABU {instance}  Cost: {cost} Slurm: {os.environ['SLURM_ARRAY_TASK_ID']}",
             "xlabel": "time",
             "xticks": []
         }

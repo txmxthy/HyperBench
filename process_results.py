@@ -117,6 +117,7 @@ if __name__ == '__main__':
     outdir = "/home/kali/PycharmProjects/Capstone/jobs/output/"
     sim_dir = outdir + "sim_anneal/"
     tabu_dir = outdir + "tabu_search/"
+    genetic_dir = outdir + "genetic/"
 
 
     ### SIMULATED ANNEALING ###
@@ -129,10 +130,18 @@ if __name__ == '__main__':
     #
     # # pretty_plots(instance="results_sorted.csv", dir=dir, key=key)
 
-    ### TABU SEARCH GANTT ###
+    # ### GENETIC GANTT ###
+    # # for file in os.listdir(tabu_dir + "{DATE}/json/"):
+    # candidates = tabu_dir + "json/"
+    #
+    # files = [f for f in os.listdir(candidates) if f.endswith('.json')]
+    # for file in files:
+    #     render_gantt_json(file=candidates + file, outdir=tabu_dir)
+
+    ### GENETIC ALG GANTT ###
     # for file in os.listdir(tabu_dir + "{DATE}/json/"):
-    candidates = tabu_dir + "json/"
+    candidates = genetic_dir + "json/"
 
     files = [f for f in os.listdir(candidates) if f.endswith('.json')]
     for file in files:
-        render_gantt_json(file=candidates + file, outdir=tabu_dir)
+        render_gantt_json(file=candidates + file, outdir=genetic_dir)
