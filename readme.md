@@ -1,5 +1,16 @@
 # JSS Comparison Project
 
+# Grid running
+
+To pull and run after cloning.
+```commandline
+git fetch && git reset --hard origin/master && bash batch.sh
+```
+
+to monitor slurm jobs
+```commandline
+
+
 
 # Local Running:
 
