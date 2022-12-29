@@ -1,10 +1,11 @@
 '''Solution of Job-Shop Schedule Problem, especially the sequence of operations
 assigned in each machine, and the deduced start time of each operation accordingly.
 '''
-
+import json
+import os
 from collections import defaultdict
 from matplotlib.container import BarContainer
-from .domain import (Operation,Cloneable)
+from .domain import (Operation, Cloneable)
 from .variable import (JobStep, MachineStep, OperationStep)
 from ..common.graph import DirectedGraph
 from .problem import JSProblem
@@ -12,7 +13,7 @@ from .problem import JSProblem
 
 class JSSolution(Cloneable):
 
-    def __init__(self, problem:JSProblem) -> None:
+    def __init__(self, problem: JSProblem) -> None:
         '''Initialize solution by copying all operations from `problem`.
 
         Args:
@@ -26,27 +27,27 @@ class JSSolution(Cloneable):
         self.__create_job_chain()
 
         # operations in topological order: available for disjunctive graph model only
-        self.__sorted_ops = None # type: list[OperationStep]
-    
+        self.__sorted_ops = None  # type: list[OperationStep]
+        self.instance = problem.name
 
     @property
-    def ops(self) -> list: 
+    def ops(self) -> list:
         '''All operation steps in job related order: 
         [job0_op0, job0_op1, ..., job1_op0, job1_op1, ...]'''
         return self.__ops
 
     @property
-    def job_ops(self): 
+    def job_ops(self):
         '''Operation steps grouped by job: {job_step: [op0, op1, op2, ...]}.'''
         return self.__job_ops
 
     @property
-    def machine_ops(self): 
+    def machine_ops(self):
         '''Operation steps grouped by machine: {machine_step: [op0, op5, op8, ...]}.'''
         return self.__machine_ops
 
     @property
-    def sorted_ops(self): 
+    def sorted_ops(self):
         '''Topological order of the operation steps. Only available for disjunctive graph model.'''
         return self.__sorted_ops
 
@@ -56,28 +57,25 @@ class JSSolution(Cloneable):
         Only available when the solution is feasible; otherwise None.
         '''
         return max(map(lambda op: op.end_time, self.__ops))
-    
 
-    def find(self, source_op:Operation):
+    def find(self, source_op: Operation):
         '''Find the associated step with source operation.'''
         for op in self.__ops:
-            if op.source==source_op:
+            if op.source == source_op:
                 return op
         return None
-        
 
-    def job_head(self, op:OperationStep):
+    def job_head(self, op: OperationStep):
         '''The first step in job chain of specified `op`, i.e. the virtual job step.'''
         for job_step in self.__job_ops:
-            if job_step.source==op.source.job:
+            if job_step.source == op.source.job:
                 return job_step
         return None
-    
 
-    def machine_head(self, op:OperationStep):
+    def machine_head(self, op: OperationStep):
         '''The first step in machine chain of specified `op`, i.e. the virtual machine step.'''
         for machine_step in self.__machine_ops:
-            if machine_step.source==op.source.machine:
+            if machine_step.source == op.source.machine:
                 return machine_step
         return None
 
@@ -92,7 +90,6 @@ class JSSolution(Cloneable):
             if op: head_ops.append(op)
         return head_ops
 
-    
     def copy(self):
         '''Hard copy of current solution. Override `Cloneable.copy()`.'''
         # copy step instances and job chain
@@ -108,30 +105,28 @@ class JSSolution(Cloneable):
                 for op_step in ops:
                     step_map[op_step.source] = op_step
             return step_map
+
         step_map = map_source_to_step(solution)
 
         for op, new_op in zip(self.__ops, solution.ops):
             if not op.pre_machine_op: continue
             new_op.pre_machine_op = step_map[op.pre_machine_op.source]
-        
+
         # update
         solution.evaluate()
 
         return solution
 
-
-    def estimated_start_time(self, op:OperationStep) -> float:
+    def estimated_start_time(self, op: OperationStep) -> float:
         '''Estimate the start time if it's dispatched to the end of current machine chain.'''
         machine_op = self.machine_head(op).tailed_machine_op
         return max(op.pre_job_op.end_time, machine_op.end_time)
 
-
-    def dispatch(self, op:OperationStep):
+    def dispatch(self, op: OperationStep):
         '''Dispatch the operation step to the associated machine.'''
         pre_machine_op = self.machine_head(op).tailed_machine_op
         op.pre_machine_op = pre_machine_op
-        self.evaluate(op=op) # update start time accordingly
-
+        self.evaluate(op=op)  # update start time accordingly
 
     def is_feasible(self) -> bool:
         '''If current solution is valid or not. 
@@ -143,24 +138,23 @@ class JSSolution(Cloneable):
 
         # validate job chain        
         for job, ops in self.__job_ops.items():
-            ops.sort(key=lambda op: op.id) # sort in job sequence, i.e. default id order
+            ops.sort(key=lambda op: op.id)  # sort in job sequence, i.e. default id order
             ref = 0
             for op in ops:
                 if op.end_time <= ref: return False
                 ref = op.end_time
-        
+
         # validate machine chain        
         for machine, ops in self.__machine_ops.items():
-            ops.sort(key=lambda op: op.start_time) # sort by start time
+            ops.sort(key=lambda op: op.start_time)  # sort by start time
             ref = 0
             for op in ops:
                 if op.end_time <= ref: return False
                 ref = op.end_time
-        
+
         return True
 
-
-    def evaluate(self, op:OperationStep=None) -> bool:
+    def evaluate(self, op: OperationStep = None) -> bool:
         '''Evaluate specified and succeeding operations of current solution, especially 
         work time. Generally the machine chain was changed before calling this method.
 
@@ -179,15 +173,14 @@ class JSSolution(Cloneable):
 
         # the position of target process
         pos = 0 if op is None else self.__sorted_ops.index(op)
-        
+
         # update process by the topological order
         for op in self.__sorted_ops[pos:]:
             op.update_start_time()
-        
+
         return True
 
-
-    def plot(self, axes:tuple):
+    def plot(self, axes: tuple):
         '''Plot Gantt chart.
 
         Args:
@@ -201,19 +194,70 @@ class JSSolution(Cloneable):
         # clear plotted bars
         bars = [bar for bar in gnt_job.containers if isinstance(bar, BarContainer)]
         bars.extend([bar for bar in gnt_machine.containers if isinstance(bar, BarContainer)])
-        for bar in bars: 
+        for bar in bars:
             bar.remove()
-        
+
         # plot new bars
         for op in self.__ops:
             gnt_job.barh(op.source.job.id, op.source.duration, left=op.start_time, height=0.5)
             gnt_machine.barh(op.source.machine.id, op.source.duration, left=op.start_time, height=0.5)
-            
+
         # reset x-limit
         for axis in axes:
             axis.relim()
             axis.autoscale()
 
+    def to_json(self):
+        '''
+        Convert to Gantt chart JSON for later rendering.
+        '''
+        # collect data
+
+        colors = ["tomato", "orange", "green", "gold", "royalblue", "violet", "gray", "cyan", "pink", "lime",
+                  "chocolate", "bisque", "teal", "salmon", "navy", "dimgray", "orchid", "turquoise",
+                  "darkturquoise", "rosybrown", "steelblue", "moccasin", "blue", "blueviolet", "plum"]
+        # CSV Columns: instance, cost, seed, tabu_len, nsteps, hold, timeout,
+
+        # Access problekm
+
+        # @TODO pass solver name
+        # and slurm
+        json_dict = {
+            "packages": [],
+            "title": f"GA {self.instance}  Cost: {self.makespan} Slurm: {1}",
+            "xlabel": "time",
+            "xticks": []
+        }
+
+        # Reformat to a table to be able to sort by machine
+        # Op has fields: id, source, start_time, end_time
+        # Source has fields: id, job, machine, duration
+        table = []
+        for op in self.__ops:
+            table.append([op.source.job.id, op.source.machine.id, op.start_time, op.end_time, op.source.duration])
+        table.sort(key=lambda x: x[1])
+
+        # # print table with key
+        # print("Job ID, Machine ID, Start Time, End Time, Duration")
+        # for row in table:
+        #     print(row)
+
+        for slot in table:
+
+
+            bar = {}
+            bar['label'] = "Machine " + str(slot[1])
+            bar['start'] = slot[2]
+            bar['end'] = slot[3]
+            bar['color'] = colors[slot[0]]
+            bar["legend"] = "Job " + str(slot[0])  # May neeed to add 1
+            # jobs_mark.append(s["job_id"]) # Old way of not trakcing jobs for labelling (reduce json size)
+
+            json_dict["packages"].append(bar)
+
+        json_str = json.dumps(json_dict)
+        with open(os.environ["OUTPUT_DIR"] + f"/json/{os.environ['RUN_KEY']}_gantt.json", "w") as fp:
+            fp.write(json_str)
 
     def __create_job_chain(self):
         '''Initialize job chain based on the sequence of operations.'''
@@ -223,19 +267,19 @@ class JSSolution(Cloneable):
         for op in self.__ops:
             job_ops[op.source.job].append(op)
             machine_ops[op.source.machine].append(op)
-        
+
         # convert the key form Job/Machine to JobStep/MachineStep
-        self.__job_ops = { JobStep(job) : ops for job, ops in job_ops.items() }
-        self.__machine_ops = { MachineStep(machine) : ops for machine, ops in machine_ops.items() }
-        
+        self.__job_ops = {JobStep(job): ops for job, ops in job_ops.items()}
+        self.__machine_ops = {MachineStep(machine): ops for machine, ops in machine_ops.items()}
+
         # create chain for operations of each job
-        def create_chain(job_step:JobStep, ops:list):
+        def create_chain(job_step: JobStep, ops: list):
             pre = job_step
             for op in ops:
                 op.pre_job_op = pre
                 pre = op
 
-        for job, ops in self.__job_ops.items(): create_chain(job, ops)    
+        for job, ops in self.__job_ops.items(): create_chain(job, ops)
 
 
     def __update_graph(self):
@@ -247,22 +291,19 @@ class JSSolution(Cloneable):
         graph = DirectedGraph()
         for op in self.__ops:
             # job chain edge
-            if not isinstance(op.pre_job_op, OperationStep): # first real operation step
+            if not isinstance(op.pre_job_op, OperationStep):  # first real operation step
                 graph.add_edge(source, op)
-            
+
             if op.next_job_op:
                 graph.add_edge(op, op.next_job_op)
             else:
                 graph.add_edge(op, sink)
-            
+
             # machine chain edge
-            if op.next_machine_op and op.next_machine_op!=op.next_job_op:
+            if op.next_machine_op and op.next_machine_op != op.next_job_op:
                 graph.add_edge(op, op.next_machine_op)
 
         # topological order:
         # except the dummy source and sink nodes
         ops = graph.sort()
         self.__sorted_ops = ops[1:-1] if ops else None
-
-
-        

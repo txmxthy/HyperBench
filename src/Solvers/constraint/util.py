@@ -1,5 +1,9 @@
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+import os
+
 import logging
+import random
+
+import numpy as np
 
 from data.script.load_instance import load_instance
 from jsp_fwk import JSProblem, JSSolution
@@ -114,7 +118,6 @@ def get_datasets():
                 selected_datasets.append(ins)
             return selected_datasets
 
-
     # Get user input from terminal to select datasets from a check box.
 
     for source in sources:
@@ -147,7 +150,6 @@ def get_datasets():
     return selected_datasets
 
 
-
 def run_algorithms(Algorithms, Datasets, parameters):
     """
     Run the selected algorithms on the selected datasets.
@@ -155,6 +157,11 @@ def run_algorithms(Algorithms, Datasets, parameters):
     :param Datasets: A map of dataset code to [file path, optimal solution]
     # @TODO - Add support for multiple algorithms
     """
+    seed = parameters["seed"]
+    # set seeds
+    np.random.seed(seed)
+    random.seed(seed)
+
     for dataset in Datasets:
         problem = JSProblem(benchmark=dataset)
         # Structural pattern match for the algorithms
@@ -177,41 +184,27 @@ def do_solve(problem, solver):
     solver.wait()
     print('----------------------------------------')
     if solver.status:
+        problem.solution.to_json()
         print(f'Problem: {len(problem.jobs)} jobs, {len(problem.machines)} machines')
         print(f'Optimum: {problem.optimum}')
         print(f'Solution: {problem.solution.makespan}')
         print(f'Terminate successfully in {solver.user_time} sec.')
-        # Add to file if not already in file
-        with open('Solvers/constraint/data/outputs/results.csv', 'r+') as f:
-            # Headers are Dataset, Algorithm, Optimum, Solution, Time
-            # If there is not an entry for this dataset and algorithm, add it
-            if not any(line.startswith(f'{problem.name},{solver.name}') for line in f):
-                f.write(f'{problem.name},{solver.name},{problem.optimum},{problem.solution.makespan},{solver.user_time}\n')
+        # # Add to file if not already in file
+        # with open('Solvers/constraint/data/outputs/results.csv', 'w') as f:
+        #     # Headers are Dataset, Algorithm, Optimum, Solution, Time
+        #     # If there is not an entry for this dataset and algorithm, add it
+        #     if not any(line.startswith(f'{problem.name},{solver.name}') for line in f):
+        #         f.write(f'{problem.name},{solver.name},{problem.optimum},{problem.solution.makespan},{solver.user_time}\n')
+
+        # Create a file and write to it
+        print(os.getcwd())
+        with open('outputs/results.csv', 'w') as f:
+            f.write(f'{problem.name},{solver.name},{problem.optimum},{problem.solution.makespan},{solver.user_time}\n')
+
+
     else:
         print(f'Solving process failed in {solver.user_time} sec.')
 
 
 def print_intermediate_solution(solution: JSSolution):
     logging.info(f'Makespan: {solution.makespan}')
-
-
-def compare_algorithms(Algorithms, Datasets):
-    return None
-
-
-def estimate_runtime(Algorithms, Datasets):
-    calculate_combinations(Datasets)
-    return None
-
-
-def calculate_combinations(Dataset):
-    return None
-
-
-def draw_figure(canvas, figure):
-    figure_canvas_agg = FigureCanvasTkAgg(figure, canvas)
-    figure_canvas_agg.draw()
-    figure_canvas_agg.get_tk_widget().pack(side="top", fill="both", expand=1)
-    return figure_canvas_agg
-
-

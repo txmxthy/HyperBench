@@ -30,7 +30,6 @@ def constraint_main(instance, timeout):
     util.run_algorithms(algorithm, dataset, parameters)
 
 
-
 # No. Rules   Description                     Type
 # ----------------------------------------------------
 # 1   FIFO    First In First Out              Static
@@ -61,16 +60,15 @@ def constraint_main(instance, timeout):
 # - Total Work Remaining  : The time for a job to complete the remaining operations.
 
 
-def dispatching_main(instance, timeout, rules):
-    algorithm = ['Dispatching Rules']
-    dataset = [instance]
-    parameters = {"timeout": timeout,
+def dispatching_main(seed, datasets, timeout, rules):
+    parameters = {"seed": seed,
+                  "timeout": timeout,
                   "rules": rules}
 
-    util.run_algorithms(algorithm, dataset, parameters)
+    util.run_algorithms(['Dispatching Rules'], datasets, parameters)
 
 
 if __name__ == '__main__':
     # main()
     # constraint_main('abz5', 60)
-    dispatching_main('abz5', 60, ['spt', 'mopr', 'mwkr', 'hh', 'ihh'])
+    dispatching_main(20, 'abz5', 60, ['mopr', 'mwkr', 'hh', 'ihh'])

@@ -7,7 +7,7 @@ with open("genetic_inputs.txt", "r") as f:
     lines = f.readlines()
 
 task_id = int(os.environ["RUN_KEY"])
-print(f"Hello! This is Tabu Search - Task {task_id}")
+print(f"Hello! This is Genetic Algorithm - Task {task_id}")
 
 seed, pop, gen, mut, cross, dataset = lines[task_id].split(',')
 timeout = 60*5

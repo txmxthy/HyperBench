@@ -67,10 +67,10 @@ class JSSolver(Cloneable):
                                 name=f'{currentThread().name}_{self.name}')
         self.__thread.start()
 
-        # show gantt chart and listen to the solution update in main thread
-        if interval:
-            problem.dynamic_gantt(interval=interval)
-            plt.show()
+        # show gantt chart and listen to the solution update in main thread (DISABLED FOR GRID)
+        # if interval:
+        #     problem.dynamic_gantt(interval=interval)
+        #     plt.show()
 
 
     def do_solve(self, problem:JSProblem):

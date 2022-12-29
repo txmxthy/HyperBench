@@ -9,12 +9,17 @@ if __name__ == '__main__':
     tabu_dir = outdir + "tabu_search/"
     genetic_dir = outdir + "genetic/"
 
-    # Box Plots and CSV magic
-    key = "instance,cost,seed,temp,cooldown,timeout"
-    alg_merge_boxes("SA", sim_dir + "results/", key)
+    hardcoded_Test="/home/kali/PycharmProjects/Capstone/src/Solvers/constraint/outputs/"
+    alg_gantts(hardcoded_Test, hardcoded_Test)
 
-    key = "instance,cost,seed,tabu_length,max_steps,longest_hold,timeout"
-    alg_merge_boxes("TA", tabu_dir + "results/", key)
+
+
+    # # Box Plots and CSV magic
+    # key = "instance,cost,seed,temp,cooldown,timeout"
+    # alg_merge_boxes("SA", sim_dir + "results/", key)
+    #
+    # key = "instance,cost,seed,tabu_length,max_steps,longest_hold,timeout"
+    # alg_merge_boxes("TA", tabu_dir + "results/", key)
 
     # # Gantt Charts
     # candidates = tabu_dir + "json/"

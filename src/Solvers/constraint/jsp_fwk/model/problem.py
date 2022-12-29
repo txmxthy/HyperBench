@@ -138,7 +138,9 @@ class JSProblem(Cloneable):
             self.__need_update_chart = False
 
         # update gantt chart
-        self.__solution.plot(axes)
+        # self.__solution.plot(axes)
+        # self.__solution.to_json(axes)
+
 
 
     def __collect_jobs_and_machines(self):

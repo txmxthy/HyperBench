@@ -109,7 +109,7 @@ class DisPatchingRules:
         '''Get rule method by name.'''
         fun_rule = cls.__dict__.get(name, None)
         if not fun_rule:
-            raise JSPException('Invalid rule name.')
+            raise JSPException('Invalid rule name ' + name)
         return fun_rule.__func__
 
     # static parameters:
@@ -163,6 +163,8 @@ class DisPatchingRules:
     # ------------------------------
     # static rules
     # ------------------------------
+
+
     @staticmethod
     def SPT(op:OperationStep, solution:JSSolution):
         '''Shortest Processing Time.'''
