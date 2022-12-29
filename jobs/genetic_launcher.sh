@@ -53,7 +53,7 @@ for i in $(seq 0 $LIMIT); do
     # Echo
     echo "++ Batch $i: $START - $END"
     # Submit the batch
-    START="$START" END="$END" BATCH=$i sbatch -a 1-$MAX_BATCH_SIZE genetic.sh
+    START="$START" END="$END" BATCH=$i sbatch -a 1-$MAX_BATCH_SIZE -e genetic.sh
 
     # Wait for the batch to finish
 
@@ -62,14 +62,13 @@ for i in $(seq 0 $LIMIT); do
     # While there are still jobs in the queue with the job name
     while [ "$NUM_JOBS" -gt 0 ]; do
 
-        # Highest slurm reached
-        UPTO=$(cat stdio/genetic-stderr-* 2>/dev/null | grep Slurm | grep -Eo '[0-9]{1,4}' | sort -n | tail -n 1)
-
+        # Highest Access Key reached
+        UPTO=$(ls $GENETIC_RUNDIR/results-* 2>/dev/null | grep -Eo '[0-9]+' | sort -n | tail -n 1)
         t1=$(date +%s)
         delta=$((t1 - t0))
         NUM_JOBS=$(squeue -u $USER -o "%.15i %.10P  %.16j %.7C %.7m %.12M %.12L %.10T %R" | grep "JSS" -c)
-        # Progress bar
-        echo -ne "++ Batch $i running with $NUM_JOBS Jobs: $UPTO / $MAX_BATCH_SIZE, Over $delta seconds \r"
+        # Progress bar upto vs end for this batch
+        echo -ne "++ Batch $i running with $NUM_JOBS Jobs: $UPTO / $END, Over $delta seconds \r"
         sleep $SLEEPTIME
     done
     echo "++ Batch $i finished in ~$delta seconds"
