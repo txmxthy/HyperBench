@@ -224,6 +224,26 @@ def validate_rules(group):
 
     return True
 
+def generate_constraint_params(datasets):
+
+    # No hyper params just seeds and datasets
+    seeds = 30  # Set to the number of verification runs
+
+    # Write the parameters
+    with open("process_helpers/constraint_param.txt", "w") as param_file:
+        # Write the header
+        param_file.write("seed,dataset")
+        # Write the parameters
+        for i in range(seeds):
+            seed = random.randint(0, 1000000)
+            for dataset in datasets:
+                param_file.write(f"\n{seed},{dataset}")
+
+    # close
+    param_file.close()
+
+    total_runs = seeds * len(datasets)
+    return total_runs
 
 def calculate_runtime(total_runs, timeout):
     """
@@ -251,6 +271,9 @@ if __name__ == '__main__':
     datasets = ['ft10', 'abz7', 'ft20', 'abz9', 'la04', 'la03', 'abz6', 'la02', 'abz5', 'la01']
     timeout_s = 60
 
+    total_runs = generate_constraint_params(datasets)
+    calculate_runtime(total_runs, timeout_s)
+
     # total_runs = generate_simulated_annealing_params(datasets, timeout_s)
-    total_runs = generate_dispatching_params(timeout_s)
+    # total_runs = generate_dispatching_params(timeout_s)
     # calculate_runtime(total_runs, timeout_s)

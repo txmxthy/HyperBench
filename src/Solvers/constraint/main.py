@@ -1,3 +1,5 @@
+import os
+
 import util
 
 
@@ -21,43 +23,12 @@ def main():
     util.run_algorithms(Algorithms, Datasets)
 
 
-def constraint_main(instance, timeout):
-    algorithm = ['Google Or Tools']
+def constraint_main(seed, instance, timeout):
     dataset = [instance]
+    parameters = {"seed": seed,
+                  "timeout": timeout}
 
-    parameters = {"timeout": timeout}
-
-    util.run_algorithms(algorithm, dataset, parameters)
-
-
-# No. Rules   Description                     Type
-# ----------------------------------------------------
-# 1   FIFO    First In First Out              Static
-# 2   LIFO    Last In First Out               Static
-# 3   SPT     Shortest Processing Time        Static
-# 4   LPT     Longest Processing Time         Static
-# 5   SPS     Shortest Process Sequence       Static
-# 6   LPS     Longest Process Sequence        Static
-# 7   STPT    Shortest Total Processing Time  Static
-# 8   LTPT    Longest Total Processing Time   Static
-# 9   ECT     Earliest Creation Time          Dynamic
-# 10  LCT     Longest Creation Time           Dynamic
-# 11  SWT     Shortest Waiting Time           Dynamic
-# 12  LWT     Longest Waiting Time            Dynamic
-# 13  LTWR    Least Total Work Remaining      Dynamic
-# 14  MTWR    Most Total Work Remaining       Dynamic
-#
-# These rules are based on 3 static parameters:
-#
-# - Processing Time       : Time required to complete an operation on a specific machine.
-# - Process Sequence      : Total count of operations to complete a job.
-# - Total Processing Time : Total time required to complete a job.
-#
-# and 3 dynamic parameters depending on the passage of time:
-#
-# - Creation Time         : The time when an operation arriving at a machine.
-# - Waiting Time          : The time that an operation spent when waiting in the queue line on machine.
-# - Total Work Remaining  : The time for a job to complete the remaining operations.
+    util.run_algorithms(['Google Or Tools'], dataset, parameters)
 
 
 def dispatching_main(seed, datasets, timeout, rules):
@@ -68,7 +39,9 @@ def dispatching_main(seed, datasets, timeout, rules):
     util.run_algorithms(['Dispatching Rules'], datasets, parameters)
 
 
+
 if __name__ == '__main__':
     # main()
-    # constraint_main('abz5', 60)
-    dispatching_main(20, 'abz5', 60, ['mopr', 'mwkr', 'hh', 'ihh'])
+    os.system("SLURM_ARRAY_TASK_ID=1 OUTPUT_DIR=/home/kali/PycharmProjects/Capstone/jobs/output/constraint RUN_KEY=1 python3 constraint_entry.py")
+    # constraint_main(30,'abz5', 60)
+    # dispatching_main(20, 'abz5', 60, ['mopr', 'mwkr', 'hh', 'ihh'])

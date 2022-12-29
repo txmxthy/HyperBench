@@ -256,6 +256,7 @@ class JSSolution(Cloneable):
             json_dict["packages"].append(bar)
 
         json_str = json.dumps(json_dict)
+        #@TODO Instance name to filename here (RUN Key is shared since each instance goes so fast)
         with open(os.environ["OUTPUT_DIR"] + f"/json/{os.environ['RUN_KEY']}_gantt.json", "w") as fp:
             fp.write(json_str)
 

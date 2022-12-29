@@ -40,6 +40,16 @@ SLURM_ARRAY_TASK_ID=1 OUTPUT_DIR=/home/kali/PycharmProjects/Capstone/jobs/output
 SLURM_ARRAY_TASK_ID=1 OUTPUT_DIR=/home/kali/PycharmProjects/Capstone/jobs/output/genetic python3 genetic_entry.py    
 ```
 
+## Dispatching Rules
+```commandline
+SLURM_ARRAY_TASK_ID=1 OUTPUT_DIR=/home/kali/PycharmProjects/Capstone/jobs/output/dispatching_rules python3 dispatching_rules_entry.py    
+```
+
+## Constraint 
+```commandline
+SLURM_ARRAY_TASK_ID=1 OUTPUT_DIR=/home/kali/PycharmProjects/Capstone/jobs/output/constraint python3 constraint_entry.py    
+```
+
 # Ga parameters
 https://eprints.ncl.ac.uk/file_store/production/56840/02F80BF2-FA85-49F3-B5B4-3E63CB6A4412.pdf
 https://www.researchgate.net/figure/Genetic-algorithm-parameters-and-their-values-types_tbl2_266204025

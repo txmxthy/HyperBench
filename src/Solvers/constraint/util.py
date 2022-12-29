@@ -198,7 +198,7 @@ def do_solve(problem, solver):
 
         # Create a file and write to it
         print(os.getcwd())
-        with open('outputs/results.csv', 'w') as f:
+        with open(os.environ['OUTPUT_DIR'] + '/results/results.csv', 'w') as f:
             f.write(f'{problem.name},{solver.name},{problem.optimum},{problem.solution.makespan},{solver.user_time}\n')
 
 
