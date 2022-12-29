@@ -148,7 +148,7 @@ def get_datasets():
 
 
 
-def run_algorithms(Algorithms, Datasets):
+def run_algorithms(Algorithms, Datasets, parameters):
     """
     Run the selected algorithms on the selected datasets.
     :param Algorithms: A list of strings representing the algorithms to run.
@@ -160,10 +160,10 @@ def run_algorithms(Algorithms, Datasets):
         # Structural pattern match for the algorithms
         for alg in Algorithms:
             if alg == 'Google Or Tools':
-                solver = GoogleORCPSolver()
+                solver = GoogleORCPSolver(max_time=parameters['timeout'])
                 do_solve(problem, solver)
             elif alg == 'Dispatching Rules':
-                rules = ['spt', 'mopr', 'mwkr', 'hh', 'ihh']
+                rules = parameters['rules']
                 solver = PriorityDispatchSolver(rule=rules[-1])
                 do_solve(problem, solver)
             else:

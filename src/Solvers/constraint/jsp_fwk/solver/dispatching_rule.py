@@ -242,7 +242,8 @@ class DisPatchingRules:
 
     @staticmethod
     def HH(op:OperationStep, solution:JSSolution):
-        '''黄志, 黄文奇. 作业车间调度问题的一种启发式算法.'''
+        '''Huang Zhi, Huang Wenqi. A heuristic algorithm for job shop scheduling problems.
+        黄志, 黄文奇. 作业车间调度问题的一种启发式算法.'''
         remaining = DisPatchingRules.TWR(op, solution) - 1.5*op.source.duration
         return DisPatchingRules.EST(op, solution), -remaining
     
