@@ -1,0 +1,51 @@
+++ Parameter file: ../src/Solvers/genetic/genetic_inputs.txt
+++ Parameter count: 67500
+++ Max batch size: 1998
+++ Batch count: 34
+++ Batch 0: 0 - 1998
+Submitted batch job 2600999
+++ Batch 0 finished in ~949 seconds8 / 1998, Over 949 seconds
+++ Batch 1: 1998 - 3996
+Submitted batch job 2603004
+++ Batch 1 finished in ~1248 seconds / 1998, Over 1248 seconds  5 seconds
+++ Batch 2: 3996 - 5994
+Submitted batch job 2605009
+++ Batch 2 finished in ~1115 seconds / 1998, Over 1115 seconds
+++ Batch 3: 5994 - 7992
+Submitted batch job 2607011
+++ Batch 3 finished in ~605 seconds8 / 1998, Over 605 seconds
+++ Batch 4: 7992 - 9990
+Submitted batch job 2609022
+++ Batch 4 finished in ~854 seconds8 / 1998, Over 854 seconds
+++ Batch 5: 9990 - 11988
+Submitted batch job 2611033
+++ Batch 5 finished in ~757 seconds8 / 1998, Over 757 seconds
+++ Batch 6: 11988 - 13986
+Submitted batch job 2613041
+++ Batch 6 finished in ~1089 seconds / 1998, Over 1089 seconds
+++ Batch 7: 13986 - 15984
+Submitted batch job 2615045
+++ Batch 7 finished in ~1098 seconds / 1998, Over 1098 seconds
+++ Batch 8: 15984 - 17982
+Submitted batch job 2617050
+++ Batch 8 finished in ~996 seconds8 / 1998, Over 996 seconds
+++ Batch 9: 17982 - 19980
+Submitted batch job 2619058
+++ Batch 9 finished in ~967 seconds8 / 1998, Over 967 seconds
+++ Batch 10: 19980 - 21978
+Submitted batch job 2621064
+++ Batch 10 finished in ~952 seconds8 / 1998, Over 952 seconds
+++ Batch 11: 21978 - 23976
+Submitted batch job 2623071
+++ Batch 11 finished in ~1106 seconds / 1998, Over 1106 seconds
+++ Batch 12: 23976 - 25974
+Submitted batch job 2625074
+++ Batch 12 finished in ~782 seconds8 / 1998, Over 782 seconds
+++ Batch 13: 25974 - 27972
+Submitted batch job 2627081
+++ Batch 13 finished in ~596 seconds8 / 1998, Over 596 seconds
+++ Batch 14: 27972 - 29970
+Submitted batch job 2629085
+----
+ERROR HERE <---- Manual rerun.
+

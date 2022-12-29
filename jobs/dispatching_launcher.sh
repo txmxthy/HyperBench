@@ -1,10 +1,5 @@
 #!/bin/bash
-# Utility script to batch up genetic runs with large parameter inputs
-
-# Divide the parameter file line count by the max batch size to get the number of batches
-# Param file = /home/kali/PycharmProjects/Capstone/src/Solvers/genetic/genetic_inputs.txt
-
-PARAMS="../src/Solvers/genetic/genetic_inputs.txt"
+PARAMS="../src/Solvers/constraint/dispatching_inputs.txt"
 PARAM_COUNT=$(wc -l < "$PARAMS")
 
 #TIMEOUT=60
@@ -53,7 +48,7 @@ for i in $(seq 0 $LIMIT); do
     # Echo
     echo "++ Batch $i: $START - $END"
     # Submit the batch
-    START="$START" END="$END" BATCH=$i sbatch -a 1-$MAX_BATCH_SIZE -e genetic.sh
+    START="$START" END="$END" BATCH=$i sbatch -a 1-$MAX_BATCH_SIZE -e dispatching.sh
 
     # Wait for the batch to finish
 
@@ -63,10 +58,10 @@ for i in $(seq 0 $LIMIT); do
     while [ "$NUM_JOBS" -gt 0 ]; do
 
         # Highest Access Key reached
-        UPTO=$(ls "$GENETIC_RUNDIR"/results-* 2>/dev/null | grep -Eo '[0-9]+' | sort -n | tail -n 1)
+        UPTO=$(ls "$DISPATCH_RUNDIR"/results-* 2>/dev/null | grep -Eo '[0-9]+' | sort -n | tail -n 1)
         t1=$(date +%s)
         delta=$((t1 - t0))
-        NUM_JOBS=$(squeue -u "$USER" -o "%.15i %.10P  %.16j %.7C %.7m %.12M %.12L %.10T %R" | grep "GA_JSS" -c)
+        NUM_JOBS=$(squeue -u "$USER" -o "%.15i %.10P  %.16j %.7C %.7m %.12M %.12L %.10T %R" | grep "DISPATCHING_JSS" -c)
         # Progress bar upto vs end for this batch
         echo -ne "++ Batch $i running with $NUM_JOBS Jobs: $UPTO / $END, Over $delta seconds \r"
         sleep $SLEEPTIME

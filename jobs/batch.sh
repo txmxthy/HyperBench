@@ -11,6 +11,7 @@ pip3 install -r ../requirements.txt
 # kick of each thing we're testing in parallel
 #sbatch sim_anneal.sh
 
+# Tabu Search
 
 #TABU_RDIR="output/tabu_search"
 #TABU_DATE="$(date +%Y-%m-%d_%H-%M-%S)"
@@ -19,11 +20,24 @@ pip3 install -r ../requirements.txt
 
 #sbatch tabu_search.sh
 
-GENETIC_RDIR="output/genetic"
-GENETIC_DATE="$(date +%Y-%m-%d_%H-%M-%S)"
-export GENETIC_RUNDIR="$GENETIC_RDIR/$GENETIC_DATE"
-mkdir -p "$GENETIC_RUNDIR"/{img,json}
+# Genetic Algorithm
 
-bash genetic_launcher.sh
+#GENETIC_RDIR="output/genetic"
+#GENETIC_DATE="$(date +%Y-%m-%d_%H-%M-%S)"
+#export GENETIC_RUNDIR="$GENETIC_RDIR/$GENETIC_DATE"
+#mkdir -p "$GENETIC_RUNDIR"/{img,json}
+#
+#bash genetic_launcher.sh
+
+# Dispatching Rules
+DISPATCH_RDIR="output/dispatching_rules"
+DISPATCH_DATE="$(date +%Y-%m-%d_%H-%M-%S)"
+export DISPATCH_RUNDIR="$DISPATCH_RDIR/$DISPATCH_DATE"
+mkdir -p "$DISPATCH_RUNDIR"/{img,json}
+
+bash dispatching_launcher.sh
+
+
+# Constraint Programming (Google OR Tools)
 
 #sbatch constraint.sh

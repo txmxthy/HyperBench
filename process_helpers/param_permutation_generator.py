@@ -207,6 +207,8 @@ def generate_dispatching_params(timeout):
     # Merge the files in terminal
     os.system(
         "cat process_helpers/dispatching_param.txt process_helpers/dispatching_param_2.txt process_helpers/dispatching_param_3.txt > process_helpers/dispatching_inputs.txt")
+    # Delete the old files
+    os.system("rm process_helpers/dispatching_param.txt process_helpers/dispatching_param_2.txt process_helpers/dispatching_param_3.txt")
 
 
 def validate_rules(group):

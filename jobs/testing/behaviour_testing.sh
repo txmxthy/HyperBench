@@ -1,8 +1,8 @@
 #!/bin/bash
 
 PARAMS="../src/Solvers/genetic/genetic_inputs.txt"
-PARAM_COUNT=20
-MAX_BATCH_SIZE=8
+PARAM_COUNT=67501
+MAX_BATCH_SIZE=1998
 BATCH_COUNT=$((PARAM_COUNT / MAX_BATCH_SIZE))
 REMAINING=$((PARAM_COUNT % MAX_BATCH_SIZE))
 
@@ -23,14 +23,15 @@ run_batch() {
   local start="$1"
   local end="$2"
   local slurm="$3"
+  local batch="$4"
 
-  echo "$start..$end: $slurm"
+  echo "$start..$end: $slurm | $batch"
 }
 
 # Batch_count -1 for 0 indexing
 LIMIT=$((BATCH_COUNT - 1))
 
-for i in $(seq 0 $LIMIT); do
+for i in $(seq 14 $LIMIT); do
   START=$(($i * $MAX_BATCH_SIZE))
   END=$(($START + $MAX_BATCH_SIZE))
 
@@ -41,7 +42,7 @@ for i in $(seq 0 $LIMIT); do
     MAX_BATCH_SIZE=$(($MAX_BATCH_SIZE + $REMAINING))
   fi
 
-  run_batch $START $END $MAX_BATCH_SIZE
+  run_batch $START $END $MAX_BATCH_SIZE $i
 done
 
 # run_batch $END $((END + REMAINING))
