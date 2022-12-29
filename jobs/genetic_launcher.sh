@@ -8,6 +8,11 @@ PARAMS="../src/Solvers/genetic/genetic_inputs.txt"
 #PARAM_COUNT=$(wc -l < "$PARAMS")
 PARAM_COUNT=20
 
+
+# Get start time
+START_TIME=$(date +%s)
+
+
 #MAX_BATCH_SIZE=$(scontrol show config | grep -i array | grep -Eo '[0-9]{1,4}')
 # Subtract 2 from the max batch size to account for the first line being skipped and slurm being dumb
 MAX_BATCH_SIZE=7 #@TODO This isnt working and associated numbers are off too!
@@ -58,8 +63,14 @@ for i in $(seq 0 $LIMIT); do
         sleep 30
         NUM_JOBS=$(squeue -u $USER -o "%.15i %.10P  %.16j %.7C %.7m %.12M %.12L %.10T %R" | grep "JSS" -c)
     done
-
+    echo "++ Batch $i finished."
 done
+# Get end time
+END_TIME=$(date +%s)
+# Calculate the time taken
+TIME_TAKEN=$((END_TIME - START_TIME))
+# Echo
+echo "++ All batches finished in $TIME_TAKEN seconds."
 
 
 
