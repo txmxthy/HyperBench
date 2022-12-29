@@ -9,14 +9,15 @@ import matplotlib.pyplot as plt
 def alg_merge_boxes(alg, filepath, key):
     print("Merging CSVs for Boxplots: " + alg)
 
+    # UNCOMMENT IF NEED
     unify_csvs(filepath, key=key)
 
-    datasets = [f for f in os.listdir(filepath) if f.startswith('results') is False and f.endswith('.csv')]
-    for dataset in datasets:
-        pretty_plots(instance=dataset, target_dir=filepath, key=key, alg=alg)
-
-    pretty_plots(instance="results_sorted.csv", target_dir=filepath, key=key, alg=alg, verbose=True)
-
+    # datasets = [f for f in os.listdir(filepath) if f.startswith('results') is False and f.endswith('.csv')]
+    # for dataset in datasets:
+    #     pretty_plots(instance=dataset, target_dir=filepath, key=key, alg=alg)
+    #
+    # pretty_plots(instance="results_sorted.csv", target_dir=filepath, key=key, alg=alg, verbose=True)
+    #
 
 
 def pretty_plots(instance, target_dir, key, alg, verbose=False):
@@ -43,6 +44,14 @@ def pretty_plots(instance, target_dir, key, alg, verbose=False):
         df['param'] = df['tabu_length'].astype(str) + "-" + df['max_steps'].astype(str) + "-" + df[
             'longest_hold'].astype(
             str)
+    elif alg == "GA":
+        # pop_size,ngen,mut_rate,cross_rate
+        df['param'] = df['pop_size'].astype(str) + "-" + df['mut_rate'].astype(
+            str) + "-" + df['cross_rate'].astype(str)
+    # # Count unique parameter combinations
+    # params = df['param'].unique()
+    # print(f"Found {len(params)} parameter combinations")
+    # input("Press Enter to continue...")
 
     # Boxplot for overall performance with all seeds combined
     box_plotter(df, target_dir, instance, alg + "Cost variance across seeds for " + instance, X="seed", Y="cost")
@@ -62,9 +71,17 @@ def alg_gantts(candidates, filepath):
         render_gantt_json(file=candidates + file, outdir=filepath)
 
 
+def root_dir():
+    """
+    Dir above jobs
+    """
+    return os.getcwd()[0:os.getcwd().index("Capstone") + len("Capstone")]
+
+
 def box_plotter(df, target_dir, instance, name, X="param", Y="cost",):
     #@TODO Make sure scale is the same across all plots (y axis) so that they can be compared
-    result_dir = os.getcwd() + "/jobs/results/" + target_dir.split("/")[-3]
+
+    result_dir = root_dir() + "/jobs/results/" + target_dir.split("/")[-3]
     sns.boxplot(x=X, y=Y, data=df)
     # Rotate x labels
     plt.xticks(rotation=90)
@@ -76,6 +93,7 @@ def box_plotter(df, target_dir, instance, name, X="param", Y="cost",):
 def unify_csvs(filepath, key):
     print("Unifying csvs")
     print("Trying for dir " + filepath.split("/")[-3])
+    print("Full path:" + filepath)
     # Delete the files we create if the script has been run before
     # If it is prefixed with results keep it, if it is not, delete it
     for file in os.listdir(filepath):
@@ -92,7 +110,11 @@ def unify_csvs(filepath, key):
         for file in files:
             with open(f"{filepath}/{file}", "r") as file:
                 for line in file:
+                    slurm = file.name.split("/results-")[-1].split(".csv")[0]
+                    line = line.strip() + "," + slurm + "\n"
                     results_file.write(line)
+
+
     # Sort rows by instance
     os.system(f"sort -t, -k1,1 {filepath}/results.csv > {filepath}/results_sorted.csv")
 
@@ -101,13 +123,13 @@ def unify_csvs(filepath, key):
 
     # Create a separate file for each instance, overwriting if it exists
     os.system(f"awk -F, '{{print > \"{filepath}/\"$1\".csv\"}}' {filepath}/results_sorted.csv")
-    result_dir = os.getcwd() + "/jobs/results/" + filepath.split("/")[-3]
+    result_dir = root_dir() + "/jobs/results/" + filepath.split("/")[-3]
 
     # Copy the sorted file to the results directory
     os.system(f"cp {filepath}/results_sorted.csv {result_dir}/results_sorted.csv")
 
 
-def render_gantt_json(file, outdir):
+def render_gantt_json(file, outdir, img_subdir=True):
     with open(file, "r") as f:
         gantt_data = json.load(f)
 
@@ -140,4 +162,10 @@ def render_gantt_json(file, outdir):
     name = file.split("/")[-1].split(".")[0]
     slurm = name.split("_")[0]
 
-    fig.write_image(outdir + "/img/gantt-" + slurm + ".png", format="png")
+
+    if img_subdir:
+        dest = outdir + "/img/gantt-"
+    else:
+        dest = outdir + "/gantt-"
+
+    fig.write_image(dest + slurm + ".png", format="png")
