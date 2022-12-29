@@ -30,10 +30,11 @@ echo "++ Batch count: $BATCH_COUNT"
 
 
 # Loop through the batches
-for i in $(seq 0 $BATCH_COUNT); do
+LIMIT=$((BATCH_COUNT - 1))
+for i in $(seq 0 $LIMIT); do
     # Calculate the start and end of the batch
-    START=$((i * MAX_BATCH_SIZE + 1))
-    END=$((START + MAX_BATCH_SIZE + 2))
+    START=$((i * MAX_BATCH_SIZE))
+    END=$((START + MAX_BATCH_SIZE))
     # If the end is greater than the parameter count, set it to the parameter count
     if [ "$END" -gt "$PARAM_COUNT" ]; then
         END="$PARAM_COUNT"
@@ -41,7 +42,7 @@ for i in $(seq 0 $BATCH_COUNT); do
     # Echo
     echo "++ Batch $i: $START - $END"
     # Submit the batch
-    START="$START" END="$END" BATCH=$i sbatch genetic.sh
+    START="$START" END="$END" BATCH=$i sbatch -a 1-$MAX_BATCH_SIZE genetic.sh
 
     # Wait for the batch to finish
 

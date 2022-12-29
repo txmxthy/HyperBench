@@ -1,6 +1,5 @@
 #!/bin/bash
 #SBATCH --job-name=GA_JSS
-#SBATCH -a 1-9
 #SBATCH -o stdio/genetic-stdout-%A-%a.txt
 #SBATCH -e stdio/genetic-stderr-%A-%a.txt
 #SBATCH --cpus-per-task=1
