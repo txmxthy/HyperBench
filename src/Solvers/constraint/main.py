@@ -17,4 +17,10 @@ if __name__ == '__main__':
     util.run_algorithms(Algorithms, Datasets)
 
 
+def constraint_main(instance):
+    all_algorithms = ['Google Or Tools']
+    util.run_algorithms(Algorithms, Datasets)
 
+def dispatching_main():
+    all_algorithms = ['Dispatching Rules']
+    util.run_algorithms(Algorithms, Datasets)
