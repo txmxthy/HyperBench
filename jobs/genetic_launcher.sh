@@ -72,7 +72,7 @@ for i in $(seq 0 $LIMIT); do
         echo -ne "++ Batch $i running with $NUM_JOBS Jobs: $UPTO / $MAX_BATCH_SIZE, Over $delta seconds \r"
         sleep $SLEEPTIME
     done
-    echo "++ Batch $i finished."
+    echo "++ Batch $i finished in ~$delta seconds"
 done
 # Get end time
 END_TIME=$(date +%s)
