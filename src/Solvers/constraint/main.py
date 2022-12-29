@@ -42,6 +42,6 @@ def dispatching_main(seed, datasets, timeout, rules):
 
 if __name__ == '__main__':
     # main()
-    os.system("SLURM_ARRAY_TASK_ID=1 OUTPUT_DIR=/home/kali/PycharmProjects/Capstone/jobs/output/constraint RUN_KEY=1 python3 constraint_entry.py")
+    os.system("SLURM_ARRAY_TASK_ID=1 OUTPUT_DIR=/home/kali/PycharmProjects/Capstone/jobs/output/constraint RUN_KEY=3 python3 constraint_entry.py")
     # constraint_main(30,'abz5', 60)
     # dispatching_main(20, 'abz5', 60, ['mopr', 'mwkr', 'hh', 'ihh'])

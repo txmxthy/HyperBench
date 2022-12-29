@@ -1,3 +1,4 @@
+import logging
 from collections import (namedtuple, defaultdict)
 from ortools.sat.python import cp_model
 from ..common.exception import JSPException
@@ -26,6 +27,11 @@ class VarArraySolutionPrinter(cp_model.CpSolverSolutionCallback):
         
         # update solution
         self.__problem.update_solution(self.__solution)
+
+        # Check if early stop is requested.
+        if self.__solution.early_termination:
+            logging.info('Early Stop Identified.')
+            self.StopSearch()
 
 
 

@@ -49,7 +49,7 @@ class JSSolver(Cloneable):
         Args:
             problem (JSProblem): Problem to solve.
             interval (int, optional): Gantt chart refresh interval (in ms). Defaults to None, i.e. 
-                don not show Gantt chart.
+                do not show Gantt chart.
             callback (function): User defined function called when a better solution is found.
                 It takes a `JSSolution` instance as input.
         '''

@@ -367,7 +367,7 @@ def tabu_main(seed=None, tabu_len=None, nsteps=None, hold=None, timeout=None, in
     if instance is None:
         instance = str(input("instance: ") or "abz5")
 
-    # @todo CURRENT SPOT: WORK ON THIS: loading in the instance and settings :)
+
     # get the full path of the directory "instance:
     instance_prefix = os.getcwd() + "/instances/"
     file = instance

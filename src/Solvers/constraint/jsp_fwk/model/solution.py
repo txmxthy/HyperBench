@@ -29,6 +29,8 @@ class JSSolution(Cloneable):
         # operations in topological order: available for disjunctive graph model only
         self.__sorted_ops = None  # type: list[OperationStep]
         self.instance = problem.name
+        self.problem_optimum = problem.optimum
+        self.early_termination = False
 
     @property
     def ops(self) -> list:
@@ -207,7 +209,7 @@ class JSSolution(Cloneable):
             axis.relim()
             axis.autoscale()
 
-    def to_json(self):
+    def to_json(self, solver_name):
         '''
         Convert to Gantt chart JSON for later rendering.
         '''
@@ -220,11 +222,9 @@ class JSSolution(Cloneable):
 
         # Access problekm
 
-        # @TODO pass solver name
-        # and slurm
         json_dict = {
             "packages": [],
-            "title": f"GA {self.instance}  Cost: {self.makespan} Slurm: {1}",
+            "title": f"{solver_name}: {self.instance}  Cost: {self.makespan} Slurm: {os.environ['RUN_KEY']}",
             "xlabel": "time",
             "xticks": []
         }
@@ -256,8 +256,7 @@ class JSSolution(Cloneable):
             json_dict["packages"].append(bar)
 
         json_str = json.dumps(json_dict)
-        #@TODO Instance name to filename here (RUN Key is shared since each instance goes so fast)
-        with open(os.environ["OUTPUT_DIR"] + f"/json/{os.environ['RUN_KEY']}_gantt.json", "w") as fp:
+        with open(os.environ["OUTPUT_DIR"] + f"/json/{self.instance}-{os.environ['RUN_KEY']}_gantt.json", "w") as fp:
             fp.write(json_str)
 
     def __create_job_chain(self):

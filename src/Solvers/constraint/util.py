@@ -22,8 +22,6 @@ def get_algorithms():
     """
     Allow user to select which algorithms to run individually or as a whole.
     :return: A list of selected Job Shop Scheduling algorithms.
-    @TODO - Add tuning for additional selection - i.e. adding dispatching rules, etc.
-    @TODO - Put real data here
     """
 
     # Get user input from terminal to select algorithms from a check box.
@@ -155,7 +153,6 @@ def run_algorithms(Algorithms, Datasets, parameters):
     Run the selected algorithms on the selected datasets.
     :param Algorithms: A list of strings representing the algorithms to run.
     :param Datasets: A map of dataset code to [file path, optimal solution]
-    # @TODO - Add support for multiple algorithms
     """
     seed = parameters["seed"]
     # set seeds
@@ -168,23 +165,23 @@ def run_algorithms(Algorithms, Datasets, parameters):
         for alg in Algorithms:
             if alg == 'Google Or Tools':
                 solver = GoogleORCPSolver(max_time=parameters['timeout'])
-                do_solve(problem, solver)
+                do_solve(problem, solver, seed)
             elif alg == 'Dispatching Rules':
                 rules = parameters['rules']
                 solver = PriorityDispatchSolver(rule=rules[-1])
-                do_solve(problem, solver)
+                do_solve(problem, solver, seed)
             else:
                 print(f'Algorithm {alg} not found.')
                 continue
 
 
-def do_solve(problem, solver):
-    # @TODO only solve if there is not already a solution recorded
-    solver.solve(problem=problem, interval=2000, callback=print_intermediate_solution)
+def do_solve(problem, solver, seed):
+    solver.solve(problem=problem, interval=None, callback=print_intermediate_solution)
     solver.wait()
     print('----------------------------------------')
     if solver.status:
-        problem.solution.to_json()
+
+        problem.solution.to_json(solver.name)
         print(f'Problem: {len(problem.jobs)} jobs, {len(problem.machines)} machines')
         print(f'Optimum: {problem.optimum}')
         print(f'Solution: {problem.solution.makespan}')
@@ -198,8 +195,8 @@ def do_solve(problem, solver):
 
         # Create a file and write to it
         print(os.getcwd())
-        with open(os.environ['OUTPUT_DIR'] + '/results/results.csv', 'w') as f:
-            f.write(f'{problem.name},{solver.name},{problem.optimum},{problem.solution.makespan},{solver.user_time}\n')
+        with open(os.environ['OUTPUT_DIR'] + f'/results/results-{problem.solution.instance}{os.environ["RUN_KEY"]}.csv', 'w') as f:
+            f.write(f'{seed},{problem.solution.makespan},{problem.name}\n')
 
 
     else:
@@ -208,3 +205,6 @@ def do_solve(problem, solver):
 
 def print_intermediate_solution(solution: JSSolution):
     logging.info(f'Makespan: {solution.makespan}')
+    if solution.makespan == solution.problem_optimum:
+        logging.info(f'Found optimal solution: {solution.makespan}')
+        solution.early_termination = True
