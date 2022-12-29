@@ -38,6 +38,9 @@ for i in $(seq 0 $LIMIT); do
     # If the end is greater than the parameter count, set it to the parameter count
     if [ "$END" -gt "$PARAM_COUNT" ]; then
         END="$PARAM_COUNT"
+        # Change the slurm array to only run the remaining parameters
+        # Subtract remaining from max batch size (Remaining will be negative)
+        MAX_BATCH_SIZE=$((MAX_BATCH_SIZE + REMAINING))
     fi
     # Echo
     echo "++ Batch $i: $START - $END"
