@@ -12,6 +12,15 @@ to monitor slurm jobs
 squeue -u $USER -o "%.15i %.10P  %.16j %.7C %.7m %.12M %.12L %.10T %R"
 ```
 
+to monitor slurm ids
+```commandline
+cat genetic-stderr-* | grep Slurm | grep -Eo '[0-9]{1,4}'
+```
+as above but sorted to get highest max
+```commandline
+cat genetic-stderr-* | grep Slurm | grep -Eo '[0-9]{1,4}' | sort -n | tail -n 1
+```
+
 
 # Local Running:
 

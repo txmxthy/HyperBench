@@ -7,7 +7,9 @@
 PARAMS="../src/Solvers/genetic/genetic_inputs.txt"
 PARAM_COUNT=$(wc -l < "$PARAMS")
 
-
+TIMEOUT=60
+# Sleep as 1/4 of timeout
+SLEEPTIME=$((TIMEOUT / 4))
 
 # Get start time
 START_TIME=$(date +%s)
@@ -36,6 +38,7 @@ echo "++ Batch count: $BATCH_COUNT"
 # Loop through the batches
 LIMIT=$((BATCH_COUNT - 1))
 for i in $(seq 0 $LIMIT); do
+    t0=$(date +%s)
     # Calculate the start and end of the batch
     START=$((i * MAX_BATCH_SIZE))
     END=$((START + MAX_BATCH_SIZE))
@@ -57,10 +60,15 @@ for i in $(seq 0 $LIMIT); do
     NUM_JOBS=1
     # While there are still jobs in the queue with the job name
     while [ "$NUM_JOBS" -gt 0 ]; do
+
+        # Highest slurm reached
+        UPTO=$(cat genetic-stderr-* | grep Slurm | grep -Eo '[0-9]{1,4}' | sort -n | tail -n 1)
+        t1=$(date +%s)
+        delta=$((t1 - t0))
         NUM_JOBS=$(squeue -u $USER -o "%.15i %.10P  %.16j %.7C %.7m %.12M %.12L %.10T %R" | grep "JSS" -c)
-        echo "++ Waiting for batch $i to finish. $NUM_JOBS jobs in queue."
-        sleep 30
-        NUM_JOBS=$(squeue -u $USER -o "%.15i %.10P  %.16j %.7C %.7m %.12M %.12L %.10T %R" | grep "JSS" -c)
+        # Progress bar
+        echo -ne "++ Batch $i running with $NUM_JOBS: $UPTO / $MAX_BATCH_SIZE, TIME_TAKEN: $delta \r"
+        sleep $SLEEPTIME
     done
     echo "++ Batch $i finished."
 done
