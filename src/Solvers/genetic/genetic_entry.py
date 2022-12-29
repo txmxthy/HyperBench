@@ -10,7 +10,7 @@ task_id = int(os.environ["RUN_KEY"])
 print(f"Hello! This is Tabu Search - Task {task_id}")
 
 seed, pop, gen, mut, cross, dataset = lines[task_id].split(',')
-timeout = 10
+timeout = 60*5
 
 genetic_main(instance=dataset.strip(),
              seed=int(seed),
