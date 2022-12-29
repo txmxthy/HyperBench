@@ -7,9 +7,10 @@
 PARAMS="../src/Solvers/genetic/genetic_inputs.txt"
 PARAM_COUNT=$(wc -l < "$PARAMS")
 
-TIMEOUT=60
+#TIMEOUT=60
 # Sleep as 1/4 of timeout
-SLEEPTIME=$((TIMEOUT / 4))
+#SLEEPTIME=$((TIMEOUT / 4))
+SLEEPTIME=3
 
 # Get start time
 START_TIME=$(date +%s)
@@ -62,7 +63,8 @@ for i in $(seq 0 $LIMIT); do
     while [ "$NUM_JOBS" -gt 0 ]; do
 
         # Highest slurm reached
-        UPTO=$(cat stdio/genetic-stderr-* | grep Slurm | grep -Eo '[0-9]{1,4}' | sort -n | tail -n 1)
+        UPTO=$(cat stdio/genetic-stderr-* 2>/dev/null | grep Slurm | grep -Eo '[0-9]{1,4}' | sort -n | tail -n 1)
+
         t1=$(date +%s)
         delta=$((t1 - t0))
         NUM_JOBS=$(squeue -u $USER -o "%.15i %.10P  %.16j %.7C %.7m %.12M %.12L %.10T %R" | grep "JSS" -c)
