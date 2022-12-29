@@ -69,7 +69,7 @@ for i in $(seq 0 $LIMIT); do
         delta=$((t1 - t0))
         NUM_JOBS=$(squeue -u $USER -o "%.15i %.10P  %.16j %.7C %.7m %.12M %.12L %.10T %R" | grep "JSS" -c)
         # Progress bar
-        echo -ne "++ Batch $i running with $NUM_JOBS: $UPTO / $MAX_BATCH_SIZE, TIME_TAKEN: $delta \r"
+        echo -ne "++ Batch $i running with $NUM_JOBS Jobs: $UPTO / $MAX_BATCH_SIZE, Over $delta seconds \r"
         sleep $SLEEPTIME
     done
     echo "++ Batch $i finished."
