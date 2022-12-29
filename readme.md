@@ -27,7 +27,7 @@ cat genetic-stderr-* | grep Slurm | grep -Eo '[0-9]{1,4}' | sort -n | tail -n 1
 
 ## Simulated Annealing
 ```commandline
-SLURM_ARRAY_TASK_ID=1 OUTPUT_DIR=/home/kali/PycharmProjects/Capstone/jobs/output/sim_anneal python3 simu_entry.py    
+SLURM_ARRAY_TASK_ID=1 OUTPUT_DIR=/home/kali/PycharmProjects/Capstone/jobs/output/sim_anneal RUN_KEY=1 python3 simu_entry.py    
 ```
 
 ## Tabu Search

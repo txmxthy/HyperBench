@@ -112,9 +112,9 @@ def simulatedAnnealingSearch(jobs, maxTime=None, T=200, termination=10, halting=
 
             print()
             print("================================================")
-            print("Best solution:")
-            print(solutions[-1][1])
-            print("Found in {:} experiments in {:.1f}s".format(totalExperiments, time.time() - t0))
+            # print("Best solution:")
+            # print(solutions[-1][1])
+            print("Found best solution in {:} experiments in {:.1f}s".format(totalExperiments, time.time() - t0))
 
             if timedOut:
                 print("Time is over")

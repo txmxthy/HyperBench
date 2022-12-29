@@ -22,6 +22,8 @@ if __name__ == '__main__':
     #
     # alg_gantts(genetic_dir + "json/", genetic_dir)
 
-    alg_gantts(constraint_dir + "json/", constraint_dir)
+    # alg_gantts(constraint_dir + "json/", constraint_dir)
+
+    alg_gantts(sim_dir + "json/", sim_dir)
 
     print("Done!")

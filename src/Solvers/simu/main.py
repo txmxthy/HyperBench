@@ -47,20 +47,17 @@ def simu_main(seed=None, temp=None, cooldown=None, timeout=None, instance=None):
                                                           mode='random',
                                                           decrease=float(cooldown))
 
-    printSchedule(jobs, solution)
-    print("TEST:" + str(cost), "Timed Out?" + str(timedOut))
-    # @Todo Solutions are not being saved (Output is saved)
+    # printSchedule(jobs, solution)
+    print("Cost:" + str(cost), "Timed Out: " + str(timedOut))
+    schedule_to_gantt_json(jobs, solution, cost, instance)
 
     csv_columns = instance, cost, seed, temp, cooldown, timeout
 
-    csv_file = f"{os.environ['OUTPUT_DIR']}/results-{os.environ['SLURM_ARRAY_TASK_ID']}.csv"
+    csv_file = f"{os.environ['OUTPUT_DIR']}/results/results-{os.environ['SLURM_ARRAY_TASK_ID']}.csv"
     try:
         with open(csv_file, 'w') as csvfile:
             writer = csv.DictWriter(csvfile, fieldnames=csv_columns)
             writer.writeheader()
-            # for data in csv_columns:
-            #     writer.writerow(data)
-
     except IOError:
         print("I/O error")
 
