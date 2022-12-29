@@ -5,17 +5,16 @@
 # Param file = /home/kali/PycharmProjects/Capstone/src/Solvers/genetic/genetic_inputs.txt
 
 PARAMS="../src/Solvers/genetic/genetic_inputs.txt"
-#PARAM_COUNT=$(wc -l < "$PARAMS")
-PARAM_COUNT=20
+PARAM_COUNT=$(wc -l < "$PARAMS")
+
 
 
 # Get start time
 START_TIME=$(date +%s)
+MAX_BATCH_SIZE=$(scontrol show config | grep -i array | grep -Eo '[0-9]{1,4}')
+# Subtract 2 from it because -1 doesnt work
+MAX_BATCH_SIZE=$((MAX_BATCH_SIZE - 2))
 
-
-#MAX_BATCH_SIZE=$(scontrol show config | grep -i array | grep -Eo '[0-9]{1,4}')
-# Subtract 2 from the max batch size to account for the first line being skipped and slurm being dumb
-MAX_BATCH_SIZE=7 #@TODO This isnt working and associated numbers are off too!
 # Get the number of batches required to run all the parameters as a float and round up
 BATCH_COUNT=$((PARAM_COUNT / MAX_BATCH_SIZE))
 REMAINING=$((PARAM_COUNT % MAX_BATCH_SIZE))
