@@ -63,10 +63,19 @@ for i in $(seq 0 $LIMIT); do
         delta=$((t1 - t0))
         NUM_JOBS=$(squeue -u "$USER" -o "%.15i %.10P  %.16j %.7C %.7m %.12M %.12L %.10T %R" | grep "DISPATCHING_JSS" -c)
         # Progress bar upto vs end for this batch
-        echo -ne "\e[2K++ Batch $i running with $NUM_JOBS Jobs. | Out of $END got $UPTO Duration $delta seconds\r"
+        echo -ne "\e[2K++ Batch $i running with $NUM_JOBS Jobs. | Out of $END got $UPTO | Duration $delta seconds\r"
         sleep $SLEEPTIME
     done
     echo "++ Batch $i finished in ~$delta seconds"
+    # Merge the results from the batch into one file
+    echo "++ Merging results"
+    cat $DISPATCH_RUNDIR/results/results-????-*.csv > $DISPATCH_RUNDIR/batched_results-$i.csv
+    echo "++ Results merged"
+    # Delete the individual files from the dir
+    echo "++ Deleting individual Files"
+    find $DISPATCH_RUNDIR/results/ -name 'results-????-*.csv' -delete
+    echo "++ Individual Files Deleted"
+
 done
 # Get end time
 END_TIME=$(date +%s)
