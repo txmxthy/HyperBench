@@ -47,5 +47,69 @@ Submitted batch job 2627081
 ++ Batch 14: 27972 - 29970
 Submitted batch job 2629085
 ----
-ERROR HERE <---- Manual rerun.
-
+ERROR HERE <---- Manual rerun (Wasn't error actually, we just got bumped and requeued)
+++ Parameter file: ../src/Solvers/genetic/genetic_inputs.txt
+++ Parameter count: 67500
+++ Max batch size: 1998
+++ Batch count: 34
+++ Batch 14: 27972 - 29970
+Submitted batch job 2629222
+++ Batch 14 finished in ~679 seconds8 / 1998, Over 679 seconds
+++ Batch 15: 29970 - 31968
+Submitted batch job 2631232
+++ Batch 15 finished in ~1038 seconds / 1998, Over 1038 seconds
+++ Batch 16: 31968 - 33966
+Submitted batch job 2633235
+++ Batch 16 finished in ~1067 seconds / 1998, Over 1067 seconds
+++ Batch 17: 33966 - 35964
+Submitted batch job 2635238
+++ Batch 17 finished in ~1092 seconds / 1998, Over 1092 seconds
+++ Batch 18: 35964 - 37962
+Submitted batch job 2637242
+++ Batch 18 finished in ~922 seconds8 / 1998, Over 922 seconds
+++ Batch 19: 37962 - 39960
+Submitted batch job 2639250
+++ Batch 19 finished in ~986 seconds8 / 1998, Over 986 seconds
+++ Batch 20: 39960 - 41958
+Submitted batch job 2641257
+++ Batch 20 finished in ~916 seconds8 / 1998, Over 916 seconds
+++ Batch 21: 41958 - 43956
+Submitted batch job 2643263
+++ Batch 21 finished in ~1016 seconds / 1998, Over 1016 seconds
+++ Batch 22: 43956 - 45954
+Submitted batch job 2645269
+++ Batch 22 finished in ~1029 seconds / 1998, Over 1029 seconds
+++ Batch 23: 45954 - 47952
+Submitted batch job 2647274
+++ Batch 23 finished in ~1162 seconds998, Over 1162 seconds  s
+++ Batch 24: 47952 - 49950
+Submitted batch job 2649277
+++ Batch 24 finished in ~1387 seconds998, Over 1387 seconds
+++ Batch 25: 49950 - 51948
+Submitted batch job 2651276
+++ Batch 25 finished in ~1068 seconds998, Over 1068 seconds
+++ Batch 26: 51948 - 53946
+Submitted batch job 2653282
+++ Batch 26 finished in ~906 seconds1998, Over 906 seconds
+++ Batch 27: 53946 - 55944
+Submitted batch job 2655290
+++ Batch 27 finished in ~893 seconds1998, Over 893 seconds
+++ Batch 28: 55944 - 57942
+Submitted batch job 2657296
+++ Batch 28 finished in ~842 seconds1998, Over 842 seconds
+++ Batch 29: 57942 - 59940
+Submitted batch job 2659307
+++ Batch 29 finished in ~704 seconds1998, Over 704 seconds
+++ Batch 30: 59940 - 61938
+Submitted batch job 2661319
+++ Batch 30 finished in ~844 seconds1998, Over 844 seconds
+++ Batch 31: 61938 - 63936
+Submitted batch job 2663418
+++ Batch 31 finished in ~501 seconds1998, Over 501 seconds
+++ Batch 32: 63936 - 65934
+Submitted batch job 2665442
+++ Batch 32 finished in ~655 seconds1998, Over 655 seconds
+++ Batch 33: 65934 - 67500
+Submitted batch job 2667450
+++ Batch 33 finished in ~860 seconds1566, Over 860 seconds
+++ All batches finished in 18630 seconds.

@@ -414,7 +414,7 @@ def tabu_main(seed=None, tabu_len=None, nsteps=None, hold=None, timeout=None, in
     print("best_ans:", ts.best_ans.ans_value)
     cost = ts.best_ans.ans_value
 
-    csv_columns = instance, cost, seed, tabu_len, nsteps, hold, timeout
+    csv_columns = instance, cost, seed, tabu_len, nsteps, hold, timeout, os.environ['RUN_KEY']
     ts.best_ans.generate_gantt_json(csv_columns)  # Get the json file for drawing the Gantt chart
     plt.plot(best_value_record)  # Mapping the search process
     plt.title(f"Tabu Search Convergence (Slurm: {os.environ['RUN_KEY']})")

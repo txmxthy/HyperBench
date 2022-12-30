@@ -51,7 +51,7 @@ def simu_main(seed=None, temp=None, cooldown=None, timeout=None, instance=None):
     print("Cost:" + str(cost), "Timed Out: " + str(timedOut))
     schedule_to_gantt_json(jobs, solution, cost, instance)
 
-    csv_columns = instance, cost, seed, temp, cooldown, timeout
+    csv_columns = instance, cost, seed, temp, cooldown, timeout,os.environ['SLURM_ARRAY_TASK_ID']
 
     csv_file = f"{os.environ['OUTPUT_DIR']}/results/results-{os.environ['SLURM_ARRAY_TASK_ID']}.csv"
     try:

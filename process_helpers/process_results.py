@@ -30,7 +30,6 @@ def gantt_gif_by_dataset(dataset, key, target_dir):
     # If {target_dir}/gif/{dataset}/ does not exist, create it
     img_path = f"{target_dir}/img/gif/{dataset}/"
 
-
     if not os.path.exists(img_path):
         os.makedirs(img_path)
 
@@ -52,7 +51,6 @@ def gantt_gif_by_dataset(dataset, key, target_dir):
                    append_images=frames[1:],
                    save_all=True,
                    duration=300, loop=0)
-
 
 
 def unique_slurm_ids(cols, csv_path):
@@ -85,10 +83,6 @@ def animated_gantt(target_dir, key):
     for dataset in datasets:
         gantt_gif_by_dataset(dataset, key, target_dir)
 
-    # Merge
-    # Read all pngs from target dir and combine them into one gif
-    # https://pillow.readthedocs.io/en/stable/handbook/image-file-formats.html#gif
-
     # Create the frames
     frames = []
     path = target_dir + "img/gif/*/*.png"
@@ -99,11 +93,9 @@ def animated_gantt(target_dir, key):
 
     # Save into a GIF file that loops forever
     frames[0].save(target_dir + "ALL.gif", format='GIF',
-                     append_images=frames[1:],
-                        save_all=True,
-                        duration=300, loop=0)
-
-
+                   append_images=frames[1:],
+                   save_all=True,
+                   duration=300, loop=0)
 
 
 if __name__ == '__main__':

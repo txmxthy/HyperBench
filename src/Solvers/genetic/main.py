@@ -12,7 +12,6 @@ def genetic_main(instance=None, seed=None, pop_size=None, ngen=None, mut_rate=No
     files = os.listdir(path)
     print(files)
 
-
     if pop_size is None:
         pop_size = int(input('Please input the size of population (default: 30): ') or 30)
 
@@ -30,13 +29,11 @@ def genetic_main(instance=None, seed=None, pop_size=None, ngen=None, mut_rate=No
     if instance not in files or instance is None:
         instance = "abz5"
 
-
     times, machines, n = readFilePairs("cases/" + instance)
 
     cost = genetic(times, machines, n, pop_size, ngen, mut_rate, target, maxTime=timeout, instance=instance)
 
-
-    csv_columns = instance, cost, seed, pop_size, ngen, mut_rate, cross_rate, timeout
+    csv_columns = instance, cost, seed, pop_size, ngen, mut_rate, cross_rate, timeout, os.environ['RUN_KEY']
 
     csv_file = f"{os.environ['OUTPUT_DIR']}/results-{os.environ['RUN_KEY']}.csv"
     try:
