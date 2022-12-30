@@ -33,7 +33,7 @@ pip3 install -r ../requirements.txt
 DISPATCH_RDIR="output/dispatching_rules"
 DISPATCH_DATE="$(date +%Y-%m-%d_%H-%M-%S)"
 export DISPATCH_RUNDIR="$DISPATCH_RDIR/$DISPATCH_DATE"
-mkdir -p "$DISPATCH_RUNDIR"/{img,json}
+mkdir -p "$DISPATCH_RUNDIR"/{img,json,results}
 
 bash dispatching_launcher.sh
 

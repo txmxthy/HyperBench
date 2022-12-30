@@ -58,7 +58,7 @@ for i in $(seq 0 $LIMIT); do
     while [ "$NUM_JOBS" -gt 0 ]; do
 
         # Highest Access Key reached
-        UPTO=$(ls $DISPATCH_RUNDIR/results-* 2>/dev/null | grep -Eo '[0-9]+' | sort -n | tail -n 1)
+        UPTO=$(ls $DISPATCH_RUNDIR/results/results-* 2>/dev/null | grep -Eo '[0-9]+' | sort -n | tail -n 1)
         t1=$(date +%s)
         delta=$((t1 - t0))
         NUM_JOBS=$(squeue -u "$USER" -o "%.15i %.10P  %.16j %.7C %.7m %.12M %.12L %.10T %R" | grep "DISPATCHING_JSS" -c)
