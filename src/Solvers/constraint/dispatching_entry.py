@@ -10,7 +10,7 @@ task_id = int(os.environ["RUN_KEY"])
 
 print(f"Hello! This is Dispatching Rules - Task {task_id}")
 
-seed, rules, dataset = lines[task_id].split(',')
+seed, rules = lines[task_id].split(',')
 rules = rules.split(':')
 timeout = 60 * 5
 
