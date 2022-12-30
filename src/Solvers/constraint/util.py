@@ -193,12 +193,13 @@ def do_solve(problem, solver, seed):
         #     if not any(line.startswith(f'{problem.name},{solver.name}') for line in f):
         #         f.write(f'{problem.name},{solver.name},{problem.optimum},{problem.solution.makespan},{solver.user_time}\n')
 
-        # Create a file and write to it
-        print(os.getcwd())
+        # Try and write the content to the target file, creating it if it doesn't exist
         target = f'{os.environ["OUTPUT_DIR"]}/results/results-{os.environ["RUN_KEY"]}.csv'
-        print("Writing to file: ", target)
-        with open(target, 'w') as f:
-            f.write(f'{problem.name},{seed},{problem.solution.makespan},{os.environ["RUN_KEY"]}\n')
+        content= f'{problem.name},{seed},{problem.solution.makespan},{os.environ["RUN_KEY"]}\n'
+
+        with open(target, 'a') as f:
+            f.write(content)
+
 
 
     else:
