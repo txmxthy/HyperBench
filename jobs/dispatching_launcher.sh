@@ -48,7 +48,7 @@ for i in $(seq 0 $LIMIT); do
     # Echo
     echo "++ Batch $i: $START - $END"
     # Submit the batch
-    START="$START" END="$END" BATCH=$i sbatch -a 1-$MAX_BATCH_SIZE -e dispatching.sh
+    START="$START" END="$END" BATCH=$i sbatch -a 1-$MAX_BATCH_SIZE dispatching.sh
 
     # Wait for the batch to finish
 
