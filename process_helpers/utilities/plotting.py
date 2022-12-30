@@ -129,8 +129,8 @@ def unify_csvs(filepath, key):
     os.system(f"cp {filepath}/results_sorted.csv {result_dir}/results_sorted.csv")
 
 
-def render_gantt_json(file, outdir, img_subdir=True):
-    with open(file, "r") as f:
+def render_gantt_json(infile, destination, subdir=False):
+    with open(infile, "r") as f:
         gantt_data = json.load(f)
 
     list_of_dicts = []
@@ -159,13 +159,9 @@ def render_gantt_json(file, outdir, img_subdir=True):
     fig.update_xaxes(type='linear')
     fig.update_yaxes(autorange="reversed")  # otherwise tasks are listed from the bottom up
     # Read the name of the file
-    name = file.split("/")[-1].split(".")[0]
+    name = infile.split("/")[-1].split(".")[0]
     slurm = name.split("_")[0]
 
+    filename = f"{destination}/gantt-{slurm}.png"
 
-    if img_subdir:
-        dest = outdir + "/img/gantt-"
-    else:
-        dest = outdir + "/gantt-"
-
-    fig.write_image(dest + slurm + ".png", format="png")
+    fig.write_image(filename, format="png")
