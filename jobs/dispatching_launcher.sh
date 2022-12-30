@@ -58,7 +58,7 @@ for i in $(seq 0 $LIMIT); do
     while [ "$NUM_JOBS" -gt 0 ]; do
 
         # Highest Access Key reached
-        UPTO=$(find $DISPATCH_RUNDIR/results/ -name 'results-????-*.csv' | grep -Eo '[0-9]+\.' | sort -n | tail -n 1)
+        UPTO=$(find $DISPATCH_RUNDIR/results/ -name 'results-*.csv' | grep -Eo '[0-9]+\.' | sort -n | tail -n 1)
         t1=$(date +%s)
         delta=$((t1 - t0))
         NUM_JOBS=$(squeue -u "$USER" -o "%.15i %.10P  %.16j %.7C %.7m %.12M %.12L %.10T %R" | grep "DISPATCHING_JSS" -c)
@@ -70,7 +70,7 @@ for i in $(seq 0 $LIMIT); do
     echo "++ Batch $i finished in ~$delta seconds"
     # Merge the results from the batch into one file
     echo "++ Merging results"
-    cat $DISPATCH_RUNDIR/results/results-????-*.csv > $DISPATCH_RUNDIR/batched_results-$i.csv
+    cat $DISPATCH_RUNDIR/results/results-*.csv > $DISPATCH_RUNDIR/batched_results-$i.csv
     t4=$(date +%s)
     echo "++ Results merged into $DISPATCH_RUNDIR/batched_results-$i.csv in ~$((t4 - t3)) seconds"
     # Delete the individual files from the dir
@@ -78,7 +78,6 @@ for i in $(seq 0 $LIMIT); do
     find $DISPATCH_RUNDIR/results/ -name '*.csv' -delete
     t5=$(date +%s)
     echo "++ Individual Files Deleted in ~$((t5 - t4)) seconds"
-
 done
 # Get end time
 END_TIME=$(date +%s)

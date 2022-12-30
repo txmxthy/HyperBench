@@ -195,7 +195,7 @@ def do_solve(problem, solver, seed):
 
         # Create a file and write to it
         print(os.getcwd())
-        target = f'{os.environ["OUTPUT_DIR"]}/results/results-{problem.solution.instance}-{os.environ["RUN_KEY"]}.csv'
+        target = f'{os.environ["OUTPUT_DIR"]}/results/results-{os.environ["RUN_KEY"]}.csv'
         print("Writing to file: ", target)
         with open(target, 'w') as f:
             f.write(f'{problem.name},{seed},{problem.solution.makespan},{os.environ["RUN_KEY"]}\n')
