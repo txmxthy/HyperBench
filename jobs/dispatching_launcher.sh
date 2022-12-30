@@ -75,7 +75,7 @@ for i in $(seq 0 $LIMIT); do
     echo "++ Results merged into $DISPATCH_RUNDIR/batched_results-$i.csv in ~$((t4 - t3)) seconds"
     # Delete the individual files from the dir
     echo "++ Deleting individual Files"
-    find $DISPATCH_RUNDIR/results/ -name 'results-????-*.csv' -delete
+    find $DISPATCH_RUNDIR/results/ -name '*.csv' -delete
     t5=$(date +%s)
     echo "++ Individual Files Deleted in ~$((t5 - t4)) seconds"
 
