@@ -163,7 +163,7 @@ def generate_dispatching_params(timeout):
     # Single Rule per Seed and Dataset
     with open("process_helpers/dispatching_param.txt", "w") as param_file:
         # Write the header
-        param_file.write("seed,rules:+...,dataset")
+        param_file.write("seed,rules:+...")
         # Write the parameters
         for i in range(seeds):
             seed = random.randint(0, 1000000)
@@ -175,8 +175,6 @@ def generate_dispatching_params(timeout):
 
     # Two Rules per Seed
     with open("process_helpers/dispatching_param_2.txt", "w") as param_file:
-        # Write the header
-        param_file.write("seed,rules:+...,dataset")
         # Write the parameters
         for i in range(seeds):
             seed = random.randint(0, 1000000)
@@ -189,8 +187,6 @@ def generate_dispatching_params(timeout):
 
     # Three Rules per Seed
     with open("process_helpers/dispatching_param_3.txt", "w") as param_file:
-        # Write the header
-        param_file.write("seed,rules:+...,dataset")
         # Write the parameters
         for i in range(seeds):
             seed = random.randint(0, 1000000)
@@ -268,12 +264,14 @@ if __name__ == '__main__':
     Generate a param file to pass arguments to the jobshop solver on SLURM grid cluster
     - Removed abz8, la05, ft06
     """
-    datasets = ['ft10', 'abz7', 'ft20', 'abz9', 'la04', 'la03', 'abz6', 'la02', 'abz5', 'la01']
+    # datasets = ['ft10', 'abz7', 'ft20', 'abz9', 'la04', 'la03', 'abz6', 'la02', 'abz5', 'la01']
     timeout_s = 60
-
-    total_runs = generate_constraint_params(datasets)
-    calculate_runtime(total_runs, timeout_s)
+    #
+    # total_runs = generate_constraint_params(datasets)
+    # calculate_runtime(total_runs, timeout_s)
 
     # total_runs = generate_simulated_annealing_params(datasets, timeout_s)
-    # total_runs = generate_dispatching_params(timeout_s)
+    total_runs = generate_dispatching_params(timeout_s)
     # calculate_runtime(total_runs, timeout_s)
+
+
