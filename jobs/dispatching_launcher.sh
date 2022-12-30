@@ -66,15 +66,18 @@ for i in $(seq 0 $LIMIT); do
         echo -ne "\e[2K++ Batch $i running with $NUM_JOBS Jobs. | Out of $END got $UPTO | Duration $delta seconds\r"
         sleep $SLEEPTIME
     done
+    t3=$(date +%s)
     echo "++ Batch $i finished in ~$delta seconds"
     # Merge the results from the batch into one file
     echo "++ Merging results"
     cat $DISPATCH_RUNDIR/results/results-????-*.csv > $DISPATCH_RUNDIR/batched_results-$i.csv
-    echo "++ Results merged"
+    t4=$(date +%s)
+    echo "++ Results merged into $DISPATCH_RUNDIR/batched_results-$i.csv in ~$((t4 - t3)) seconds"
     # Delete the individual files from the dir
     echo "++ Deleting individual Files"
     find $DISPATCH_RUNDIR/results/ -name 'results-????-*.csv' -delete
-    echo "++ Individual Files Deleted"
+    t5=$(date +%s)
+    echo "++ Individual Files Deleted in ~$((t5 - t4)) seconds"
 
 done
 # Get end time
