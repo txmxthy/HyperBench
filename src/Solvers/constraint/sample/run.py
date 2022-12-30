@@ -34,7 +34,7 @@ if __name__ == '__main__':
 
         s = GoogleORCPSolver(max_time=maxTime)
 
-        # priority dispatching
+        # priority dispatching_rules
         # rules = ['spt', 'mopr', 'mwkr', 'hh', 'ihh']
         # s = PriorityDispatchSolver(rule=rules[-1])
 

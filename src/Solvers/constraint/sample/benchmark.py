@@ -24,7 +24,7 @@ if __name__=='__main__':
     # googl or-tools
     s = GoogleORCPSolver(max_time=300)
 
-    # priority dispatching
+    # priority dispatching_rules
     rules = ['spt', 'lpt', 'sps', 'lps', 'stpt', 'ltpt', 'ect', 'lct', \
              'swt', 'lwt', 'ltwr', 'mtwr', 'est', 'lst', 'hh', 'ihh']
     for i in [0, -5, -2, -1]:

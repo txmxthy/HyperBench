@@ -104,7 +104,7 @@ if __name__ == '__main__':
     tabu_dir = outdir + "tabu_search/"
     genetic_dir = outdir + "genetic/"
     constraint_dir = outdir + "constraint/"
-    dispatch_dir = outdir + "dispatching/"
+    dispatch_dir = outdir + "dispatching_rules/"
 
     # # Box Plots and CSV magic
     # key = "instance,cost,seed,temp,cooldown,timeout"

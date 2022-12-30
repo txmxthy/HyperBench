@@ -130,7 +130,7 @@ class OperationStep(JobStep, MachineStep):
     def update_start_time(self, start_time:float=None):
         '''Set start time directly, or update start time based on operations sequence in disjunctive 
         graph model. Note the difference to `estimated_start_time`, which is to estimate start time
-        before dispatching to the machine, while this method is run after dispatched to a machine. 
+        before dispatching to the machine, while this method is run after dispatched to a machine.
         
         Args:
             start_time (float): The tartget time. Default to None, update start time based on sequence.

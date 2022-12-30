@@ -1,13 +1,13 @@
 '''
 The sequence of jobs/operations is determined by DISPATCHING RULE:
 When a machine becomes available, imminent operations waiting in the queue are prioritized 
-by using a dispatching rule. Then, the operation with the highest priority is selected and 
+by using a dispatching_rules rule. Then, the operation with the highest priority is selected and
 scheduled at the machine. 
 
-A dispatching rule might be one of the basic dispatching rules below, or a combination of 
+A dispatching_rules rule might be one of the basic dispatching_rules rules below, or a combination of
 several of them.
 
-Kaban, A. et al. "Comparison of dispatching rules in job-shop scheduling problem using simulation: 
+Kaban, A. et al. "Comparison of dispatching_rules rules in job-shop scheduling problem using simulation:
 a case study." International Journal of Simulation Modelling 11 (2012): 129-140.
 
 No. Rules   Description                     Type 
@@ -57,7 +57,7 @@ class PriorityDispatchSolver(JSSolver):
         Args:
             name (str, optional): Solver name.
             rule (str, optional): Pre-defined rule name. Defaults to None.
-            fun_rule (function, optional): User defined function for dispatching rule. It takes
+            fun_rule (function, optional): User defined function for dispatching_rules rule. It takes
             an OperationStep instance and associated JSSolution instance as inputs, and returns 
             a tuple representing the priority. The lower value, the higher priority.
 
@@ -82,7 +82,7 @@ class PriorityDispatchSolver(JSSolver):
     
 
     def solving_iteration(self, solution:JSSolution):
-        '''One iteration applying priority dispatching rule.'''
+        '''One iteration applying priority dispatching_rules rule.'''
         # move form
         # collect imminent operations in the processing queue
         head_ops = solution.imminent_ops
