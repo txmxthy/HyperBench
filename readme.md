@@ -24,6 +24,9 @@ cat genetic-stderr-* | grep Slurm | grep -Eo '[0-9]{1,4}' | sort -n | tail -n 1
 
 # Local Running:
 
+Tested and developed with pycharm on debian.
+To run via pycharm seamlessly you can use the env file plugin and edit the run configuration to specify the variables as per the env file/commands below.
+See: https://github.com/Ashald/EnvFile
 
 ## Simulated Annealing
 ```commandline
