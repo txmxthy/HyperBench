@@ -1,7 +1,7 @@
 import glob
 import json
 import os
-import time
+from multiprocessing import Pool
 
 import pandas as pd
 from PIL import Image
@@ -150,59 +150,14 @@ def isolate_same_schedule(path, cols):
     return unique_ids
 
 
-def to_gif(img_path, gif_path, filename):
-    frames = []
-    path = img_path + "*.png"
-    imgs = glob.glob(path)
-    for i in imgs:
-        new_frame = Image.open(i)
-        frames.append(new_frame)
-
-    # Save into a GIF file that loops forever
-    frames[0].save(gif_path + filename, format='GIF',
-                   append_images=frames[1:],
-                   save_all=True,
-                   duration=300, loop=0)
-
-def render_gantts(dataset, alg_dir, ids):
-    """
-    Identify unique schedules and create a gif for the given dataset
-    """
-
-    print("\nCreating Gantt GIF for: " + dataset)
-    # If there are no unique schedules then we can't make a gif
-    if len(ids) == 0:
-        print(f"\tNo unique schedules found for {dataset}")
-        return
-
-    img_path = f"{alg_dir}img/gif/{dataset}/"
-
-    print(f"img_path: {img_path}")
-
-    if not os.path.exists(img_path):
-        os.makedirs(img_path)
-
-    print("TEST")
-    n = len(ids)
-    for i, slurm in enumerate(ids):
-        time.sleep(0.1)
-        progress = int(i / n * 50)
-        print(f'running {i + 1} of {n} {progress * "."}', end='\r', flush=True)
-        json_path = f"{alg_dir}/json/{slurm}_gantt.json"
-        render_gantt_json(infile=json_path, destination=img_path, subdir=True)
-
-    # Return output path
-    return img_path
 
 
-
-def render(alg):
+def get_unique_solutions(alg):
     root_path = "/home/kali/PycharmProjects/Capstone/jobs/"
     alg_path = root_path + "output/" + alg + "/"
 
     csv_path = alg_path + "results/"
     gif_path = root_path + "results/"
-
 
     # datasets = ['ft10', 'abz7', 'ft20', 'abz9', 'la04', 'la03', 'abz6', 'la02', 'abz5', 'la01']
     datasets = ["abz5"]
@@ -210,9 +165,18 @@ def render(alg):
         key = "instance,cost,seed,pop_size,ngen,mut_rate,cross_rate,timeout"
         cols = key.split(",") + ["schedule_id"]
         ids = isolate_same_schedule(csv_path + dataset + ".csv", cols)
-        img_path = render_gantts(dataset, alg_path, ids)
-        to_gif(img_path, gif_path, f"{alg}_{dataset}.gif")
+
+        # Save IDs to file
+        with open(f"{alg_path}unique_solution_ids.txt", "w") as f:
+            for item in ids:
+                f.write("%s" % item+"\n")
+
+    print("Done")
+
+
+
 
 
 if __name__ == "__main__":
-    render("genetic")
+
+    get_unique_solutions("genetic")

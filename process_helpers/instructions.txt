@@ -1,0 +1,4 @@
+# These scripts are for processing the output of the algorithms
+
+The general order is to run process_results, followed by schedule_diff, then parallel_gantt_rendering, then to_gif.
+Param_permutation_generator is used to generate the parameters for the algorithms before running.

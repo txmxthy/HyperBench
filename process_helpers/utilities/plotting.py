@@ -162,6 +162,8 @@ def render_gantt_json(infile, destination, subdir=False):
     name = infile.split("/")[-1].split(".")[0]
     slurm = name.split("_")[0]
 
-    filename = f"{destination}/gantt-{slurm}.png"
+    cost = gantt_data["title"].split("Cost: ")[-1]
+    cost = cost.split(" ")[0]
+    filename = f"{destination}/{cost}-gantt-{slurm}.png"
 
     fig.write_image(filename, format="png")
