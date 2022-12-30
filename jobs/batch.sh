@@ -30,12 +30,15 @@ STAMP="$(date +%Y-%m-%d_%H-%M-%S)"
 #bash genetic_launcher.sh
 
 # Dispatching Rules
-DISPATCH_RDIR="output/dispatching_rules"
-export DISPATCH_RUNDIR="$DISPATCH_RDIR/$STAMP"
-mkdir -p "$DISPATCH_RUNDIR"/{img,json,results}
-
-bash dispatching_launcher.sh
+#DISPATCH_RDIR="output/dispatching_rules"
+#export DISPATCH_RUNDIR="$DISPATCH_RDIR/$STAMP"
+#mkdir -p "$DISPATCH_RUNDIR"/{img,json,results}
+#
+#bash dispatching_launcher.sh
 
 
 # Constraint Programming (Google OR Tools)
-#sbatch constraint.sh
+CONSTRAINT_RDIR="output/constraint"
+export CONSTRAINT_RUNDIR="$CONSTRAINT_RDIR/$STAMP"
+mkdir -p "$CONSTRAINT_RUNDIR"/{img,json,results}
+sbatch constraint.sh

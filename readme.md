@@ -1,5 +1,10 @@
 # JSS Comparison Project
 
+
+# Deps
+
+sudo apt-get install gifsicle
+
 # Grid running
 
 To pull and run after cloning.

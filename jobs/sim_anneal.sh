@@ -14,4 +14,3 @@ source ../venv/bin/activate
 
 cd ../src/Solvers/simu || exit 1
 OUTPUT_DIR="../../../jobs/output/sim_anneal" python3 simu_entry.py
-# To get through all instances you have to manually batch the slurm ids, ie 1-1001, 1002-2002, 2003-3003, etc.

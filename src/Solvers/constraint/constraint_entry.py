@@ -11,7 +11,7 @@ print(f"Hello! This is Constraint Solver (Google OR) - Task {task_id}")
 
 seed, instance = lines[task_id].split(',')
 
-timeout = 20
+timeout = 60*5
 constraint_main(seed=int(seed),
                 timeout=int(timeout),
                 instance=instance.strip())
