@@ -46,6 +46,10 @@ echo "Values: ${VALUES[0]} ... ${VALUES[-1]}" >&2
 module load python/3.8.1
 source ../venv/bin/activate
 cd ../src/Solvers/constraint || exit 1
-OUTPUT_DIR="../../../jobs/$DISPATCH_RUNDIR" RUN_KEY="$ACCESS_KEY" python3 -u dispatching_entry.py
+pwd
+RELATIVE="../../../jobs/$DISPATCH_RUNDIR"
+echo "++ Relative path: $RELATIVE" >&2
+
+OUTPUT_DIR=$RELATIVE RUN_KEY="$ACCESS_KEY" python3 -u dispatching_entry.py
 # To get through all instances you have to manually batch the slurm ids, ie 1-1001, 1002-2002, 2003-3003, etc.
 # Match the number of ids to the number of inputs in the file for that script
