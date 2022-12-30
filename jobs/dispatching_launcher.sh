@@ -58,12 +58,12 @@ for i in $(seq 0 $LIMIT); do
     while [ "$NUM_JOBS" -gt 0 ]; do
 
         # Highest Access Key reached
-        UPTO=$(ls $DISPATCH_RUNDIR/results/results-* 2>/dev/null | grep -Eo '[0-9]+' | sort -n | tail -n 1)
+        UPTO=$(find $DISPATCH_RUNDIR/results/ -name 'results-????-*.csv' | grep -Eo '[0-9]+\.' | sort -n | tail -n 1)
         t1=$(date +%s)
         delta=$((t1 - t0))
         NUM_JOBS=$(squeue -u "$USER" -o "%.15i %.10P  %.16j %.7C %.7m %.12M %.12L %.10T %R" | grep "DISPATCHING_JSS" -c)
         # Progress bar upto vs end for this batch
-        echo -ne "++ Batch $i running with $NUM_JOBS Jobs: $UPTO / $END, Over $delta seconds \r"
+        echo -ne "\e[2K++ Batch $i running with $NUM_JOBS Jobs. | $UPTO / $END, Over $delta seconds\r"
         sleep $SLEEPTIME
     done
     echo "++ Batch $i finished in ~$delta seconds"
