@@ -5,9 +5,6 @@ import time
 import traceback
 from threading import (Thread, currentThread)
 
-import matplotlib
-from matplotlib import pyplot as plt
-matplotlib.use('TkAgg')
 from .problem import JSProblem
 from .domain import Cloneable
 from ..common.exception import JSPException
