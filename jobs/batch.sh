@@ -11,7 +11,7 @@ pip3 install -r ../requirements.txt
 STAMP="$(date +%Y-%m-%d_%H-%M-%S)"
 
 # kick of each thing we're testing in parallel
-#sbatch sim_anneal.sh
+sbatch sim_anneal.sh
 
 # Tabu Search
 
@@ -38,7 +38,7 @@ STAMP="$(date +%Y-%m-%d_%H-%M-%S)"
 
 
 # Constraint Programming (Google OR Tools)
-CONSTRAINT_RDIR="output/constraint"
-export CONSTRAINT_RUNDIR="$CONSTRAINT_RDIR/$STAMP"
-mkdir -p "$CONSTRAINT_RUNDIR"/{img,json,results}
-sbatch constraint.sh
+#CONSTRAINT_RDIR="output/constraint"
+#export CONSTRAINT_RUNDIR="$CONSTRAINT_RDIR/$STAMP"
+#mkdir -p "$CONSTRAINT_RUNDIR"/{img,json,results}
+#sbatch constraint.sh
