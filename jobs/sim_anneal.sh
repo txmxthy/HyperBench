@@ -3,7 +3,7 @@
 #SBATCH -o stdio/sim_anneal-stdout-%A-%a.txt
 #SBATCH -e stdio/sim_anneal-stderr-%A-%a.txt
 #SBATCH --cpus-per-task=1
-#SBATCH --mem-per-cpu=2G
+#SBATCH --mem-per-cpu=1G
 #SBATCH --time=00:35:00
 #SBATCH --partition=parallel
 #SBATCH --mail-type=BEGIN,END,FAIL

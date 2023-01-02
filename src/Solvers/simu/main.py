@@ -38,7 +38,8 @@ def simu_main(seed=None, temp=None, cooldown=None, timeout=None, instance=None):
     print("Number of machines:", m)
     print("Number of jobs:", j)
     printJobs(jobs)
-
+    
+    #//@TODO ADD TERMINATION AND HALTING TO PARAMS https://scialert.net/fulltext/?doi=jas.2009.662.670https://scialert.net/fulltext/?doi=jas.2009.662.670
     (cost, solution), timedOut = simulatedAnnealingSearch(jobs,
                                                           maxTime=timeout,
                                                           T=int(temp),
