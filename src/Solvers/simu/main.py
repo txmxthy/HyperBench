@@ -54,7 +54,7 @@ def simu_main(seed=None, temp=None, cooldown=None, timeout=None, instance=None):
 
     csv_columns = instance, cost, seed, temp, cooldown, timeout,os.environ['SLURM_ARRAY_TASK_ID']
 
-    csv_file = f"{os.environ['OUTPUT_DIR']}/results/results-{os.environ['SLURM_ARRAY_TASK_ID']}.csv"
+    csv_file = f"{os.environ['OUTPUT_DIR']}/csv/results-{os.environ['SLURM_ARRAY_TASK_ID']}.csv"
     try:
         with open(csv_file, 'w') as csvfile:
             writer = csv.DictWriter(csvfile, fieldnames=csv_columns)

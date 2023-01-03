@@ -12,8 +12,8 @@ STAMP="$(date +%Y-%m-%d_%H-%M-%S)"
 
 # kick of each thing we're testing in parallel
 SIM_RDIR="output/sim_anneal"
-export SIM_RUNDIR="SIM_RDIR/$STAMP"
-mkdir -p "$SIM_RUNDIR"/{img,json}
+export SIM_RUNDIR="$SIM_RDIR/$STAMP"
+mkdir -p "$SIM_RUNDIR"/{img,json,csv}
 sbatch sim_anneal.sh
 
 # Tabu Search
