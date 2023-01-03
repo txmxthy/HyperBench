@@ -20,7 +20,7 @@ STAMP="$(date +%Y-%m-%d_%H-%M-%S)"
 
 TABU_RDIR="output/tabu_search"
 export TABU_RUNDIR="$TABU_RDIR/$STAMP"
-mkdir -p "$TABU_RUNDIR"/{img,json}
+mkdir -p "$TABU_RUNDIR"/{img,json,results}
 
 sbatch tabu_search.sh
 #

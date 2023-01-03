@@ -7,10 +7,7 @@ import matplotlib.pyplot as plt
 
 
 def alg_merge_boxes(alg, filepath, key):
-    print("Merging CSVs for Boxplots: " + alg)
-
-    # UNCOMMENT IF NEED
-    unify_csvs(filepath, key=key)
+    pass
 
     # datasets = [f for f in os.listdir(filepath) if f.startswith('results') is False and f.endswith('.csv')]
     # for dataset in datasets:
@@ -90,7 +87,7 @@ def box_plotter(df, target_dir, instance, name, X="param", Y="cost",):
     plt.clf()
 
 
-def unify_csvs(filepath, key):
+def unify_csvs(filepath, key, alg=None):
     print("Unifying csvs")
     print("Trying for dir " + filepath.split("/")[-3])
     print("Full path:" + filepath)
@@ -127,6 +124,10 @@ def unify_csvs(filepath, key):
 
     # Copy the sorted file to the results directory
     os.system(f"cp {filepath}/results_sorted.csv {result_dir}/results_sorted.csv")
+
+    # If alg is specified output to the unified dir
+    if alg is not None:
+
 
 
 def render_gantt_json(infile, destination, subdir=False):
