@@ -13,4 +13,4 @@ module load python/3.8.1
 source ../venv/bin/activate
 
 cd ../src/Solvers/simu || exit 1
-OUTPUT_DIR="../../../jobs/output/sim_anneal" python3 simu_entry.py
+OUTPUT_DIR="../../../jobs/output/sim_anneal" RUN_KEY=$SLURM_ARRAY_TASK_ID python3 simu_entry.py
