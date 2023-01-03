@@ -61,10 +61,13 @@ class GoogleORCPSolver(JSSolver):
 
         # set solver
         solver = cp_model.CpSolver()
+        solver.parameters.catch_sigint_signal = False # REQUIRED FOR SLURM/Parallel *Solvers*
         if self.__max_time is not None:
             solver.parameters.max_time_in_seconds = self.__max_time # set time limit
         solution_printer = VarArraySolutionPrinter(variables, problem, solution)
-        status = solver.SolveWithSolutionCallback(model, solution_printer)
+        #status = solver.SolveWithSolutionCallback(model, solution_printer)
+        status = solver.Solve(model, solution_callback=solution_printer)
+
 
         if status!=cp_model.OPTIMAL and status!=cp_model.FEASIBLE:
             raise JSPException('No feasible solution found.')
