@@ -18,11 +18,11 @@ STAMP="$(date +%Y-%m-%d_%H-%M-%S)"
 
 # Tabu Search
 
-TABU_RDIR="output/tabu_search"
-export TABU_RUNDIR="$TABU_RDIR/$STAMP"
-mkdir -p "$TABU_RUNDIR"/{img,json,results}
+#TABU_RDIR="output/tabu_search"
+#export TABU_RUNDIR="$TABU_RDIR/$STAMP"
+#mkdir -p "$TABU_RUNDIR"/{img,json,results}
 
-sbatch tabu_search.sh
+#sbatch tabu_search.sh
 #
 # Genetic Algorithm
 #
@@ -41,7 +41,7 @@ sbatch tabu_search.sh
 
 
 # Constraint Programming (Google OR Tools)
-#CONSTRAINT_RDIR="output/constraint"
-#export CONSTRAINT_RUNDIR="$CONSTRAINT_RDIR/$STAMP"
-#mkdir -p "$CONSTRAINT_RUNDIR"/{img,json,results}
-#sbatch constraint.sh
+CONSTRAINT_RDIR="output/constraint"
+export CONSTRAINT_RUNDIR="$CONSTRAINT_RDIR/$STAMP"
+mkdir -p "$CONSTRAINT_RUNDIR"/{img,json,results}
+sbatch constraint.sh
