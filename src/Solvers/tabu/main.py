@@ -422,7 +422,7 @@ def tabu_main(seed=None, tabu_len=None, nsteps=None, hold=None, timeout=None, in
     plt.savefig(f"{os.environ['OUTPUT_DIR']}/img/convergence-{os.environ['RUN_KEY']}.png")
     f.close()
 
-    csv_file = f"{os.environ['OUTPUT_DIR']}/results-{os.environ['RUN_KEY']}.csv"
+    csv_file = f"{os.environ['OUTPUT_DIR']}/results/results-{os.environ['RUN_KEY']}.csv"
     try:
         with open(csv_file, 'w') as csvfile:
             writer = csv.DictWriter(csvfile, fieldnames=csv_columns)
