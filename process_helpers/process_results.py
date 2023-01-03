@@ -1,42 +1,45 @@
 import os
 
-from process_helpers.to_gif import minimal_animated_gantt
-from process_helpers.utilities.plotting import alg_gantts, alg_merge_boxes, render_gantt_json, unify_csvs
+from process_helpers.utilities.plotting import unify_csvs, pretty_plot
 
 if __name__ == '__main__':
-    outdir = "/home/kali/PycharmProjects/Capstone/jobs/output/"
+    # outdir = "/home/kali/PycharmProjects/Capstone/jobs/output/"
+    outdir = "D:\Projects\Capstone\Code\jobs\output"
     sim_dir = outdir + "sim_anneal/"
     tabu_dir = outdir + "tabu_search/"
     genetic_dir = outdir + "genetic/"
     constraint_dir = outdir + "constraint/"
     dispatch_dir = outdir + "dispatching_rules/"
 
+    # Unified
+    uni_path = "D:\\Projects\\Capstone\\Code\\jobs\\results\\output"
+
     # List dirs in output
     subdirs = os.listdir(outdir)
     print(subdirs)
 
-    keys = {"sim_anneal": "instance,cost,seed,temp,cooldown,timeout,slurm",
-            "tabu_search": "instance,cost,seed,tabu_len,nsteps,hold,timeout,slurm",
-            "genetic": "instance,cost,seed,pop_size,ngen,mut_rate,cross_rate,timeout",
-            "constraint": "dataset,seed,cost,slurm",
-            "dispatching_rules": "dataset,seed,cost,slurm"}
+    # keys = {"sim_anneal": "instance,cost,seed,temp,cooldown,timeout,slurm",
+    #         "tabu_search": "instance,cost,seed,tabu_len,nsteps,hold,timeout,slurm",
+    #         "genetic": "instance,cost,seed,pop_size,ngen,mut_rate,cross_rate,timeout",
+    #         "constraint": "dataset,seed,cost,slurm",
+    #         "dispatching_rules": "dataset,seed,cost,slurm"}
+
+    keys = {
+        "sim_anneal": ["dataset", "cost", "seed", "temp", "cooldown", "timeout", "slurm"],
+        "tabu_search": ["dataset", "cost", "seed", "tabu_len", "nsteps", "hold", "timeout", "slurm"],
+        "genetic": ["dataset", "cost", "seed", "pop_size", "ngen", "mut_rate", "cross_rate", "timeout"],
+        "constraint": ["dataset", "seed", "cost", "slurm"],
+        "dispatching_rules": ["dataset", "seed", "cost", "slurm"]
+    }
 
     for alg in subdirs:
-        print(f"\nRunning for {alg}: Merging CSVs.")
-        unify_csvs(outdir+alg+"/", key=keys[alg], alg=alg)
+    #     print(f"\nRunning for {alg}: Merging CSVs.")
+    #     keys[alg] = unify_csvs(outdir+alg+"/", key=keys[alg], alg=alg)
 
+    for alg in subdirs:
+        print(f"\nRunning for {alg}: Creating boxplots.")
+        pretty_plot(alg=alg, filepath=f'{uni_path}\\results_sorted_{alg}.csv', key=keys[alg])
 
-    # # Box Plots and CSV magic
-    # key = "instance,cost,seed,temp,cooldown,timeout"
-    # alg_merge_boxes("SA", sim_dir + "results/", key)
-    #
-    # key = "instance,cost,seed,tabu_length,max_steps,longest_hold,timeout"
-    # alg_merge_boxes("TA", tabu_dir + "results/", key)
-
-    # Genetic
-    # key = "instance,cost,seed,pop_size,ngen,mut_rate,cross_rate,timeout"
-    # alg_merge_boxes("GA", genetic_dir + "results/", key)
-    # minimal_animated_gantt(genetic_dir, key)
 
     # # # Gantt Charts
     # alg_gantts(tabu_dir + "json/", tabu_dir)

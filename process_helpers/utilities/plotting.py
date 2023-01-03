@@ -6,66 +6,56 @@ import plotly.express as px
 import matplotlib.pyplot as plt
 
 
-def alg_merge_boxes(alg, filepath, key):
-    pass
-
-    # datasets = [f for f in os.listdir(filepath) if f.startswith('results') is False and f.endswith('.csv')]
-    # for dataset in datasets:
-    #     pretty_plots(instance=dataset, target_dir=filepath, key=key, alg=alg)
-    #
-    # pretty_plots(instance="results_sorted.csv", target_dir=filepath, key=key, alg=alg, verbose=True)
-    #
-
-
-def pretty_plots(instance, target_dir, key, alg, verbose=False):
+def pretty_plot(alg, filepath, key, verbose=False):
     # Create some plots for the given instance
 
-    # Box and whisker plot: Cost variance across seed for each parameter combination
+    # Read the csv file
+    df = pd.read_csv(filepath, names=key)
 
-    # Load the file
-    cols = key.split(",")
-    path = f"{target_dir}/{instance}"
-    df = pd.read_csv(path, names=cols)
+    # Split into list of dataframes by dataset Using list comprehension
 
-    # Unique timeouts
-    timeouts = df["timeout"].unique()
-    # drop timeout column
-    df = df.drop(columns=['timeout'])
+    # Get the unique datasets
+    datasets = df["dataset"].unique()
 
-    ### Create a new column for the parameter combination ###
+    # Create a plot for each dataset
+    for dataset in datasets:
+        d = df[df["dataset"] == dataset].copy()
+        dataset_name = d["dataset"].unique()[0]
+        # Only handle if unique/multiple timeouts exist for the same data
+        if "timeout" in key:
+            timeouts = d["timeout"].unique()
+            d = d.drop(columns=['timeout'])
+            if len(timeouts) > 1:
+                # Raise unimplemented error
+                raise NotImplementedError("Multiple timeouts not implemented for plotting same data")
 
-    if alg == "SA":
-        df['param'] = df['temp'].astype(str) + "-" + df['cooldown'].astype(str)
+        # Create a new column for the parameter combination
+        standard = ["dataset", "cost", "seed", "slurm"]
+        # Combine the remaining columns into a single column "param"
+        params = [col for col in d.columns if col not in standard]
+        d['param'] = d[params].apply(lambda row: '-'.join(row.values.astype(str)), axis=1)
 
-    elif alg == "TA":
-        df['param'] = df['tabu_length'].astype(str) + "-" + df['max_steps'].astype(str) + "-" + df[
-            'longest_hold'].astype(
-            str)
-    elif alg == "GA":
-        # pop_size,ngen,mut_rate,cross_rate
-        df['param'] = df['pop_size'].astype(str) + "-" + df['mut_rate'].astype(
-            str) + "-" + df['cross_rate'].astype(str)
-    # # Count unique parameter combinations
-    # params = df['param'].unique()
-    # print(f"Found {len(params)} parameter combinations")
-    # input("Press Enter to continue...")
+        prefix = f'{win_root_dir()}\\jobs\\results\\output\\{alg}'
+        # Make the directory if it doesn't exist
+        if not os.path.exists(prefix):
+            os.makedirs(prefix)
 
-    # Boxplot for overall performance with all seeds combined
-    box_plotter(df, target_dir, instance, alg + "Cost variance across seeds for " + instance, X="seed", Y="cost")
-    box_plotter(df, target_dir, instance, alg + "Cost variance across parameter combination for " + instance, X="param",
-                Y="cost")
-
-    # Box plot with a seperate box for each dataset (instance)
-    if verbose:
-        box_plotter(df, target_dir, "Overall variance across datasets", alg + "Overall variance across datasets" + instance, X="instance",
-                    Y="cost")
-
+        plots = ["seed", "param"]
+        for plot in plots:
+            box_plotter(d, prefix, alg, dataset_name, plot, "cost")
 
 
 def alg_gantts(candidates, filepath):
     files = [f for f in os.listdir(candidates) if f.endswith('.json')]
     for file in files:
         render_gantt_json(file=candidates + file, outdir=filepath)
+
+
+def win_root_dir():
+    """
+    Dir above jobs
+    """
+    return os.getcwd()[0:os.getcwd().index("Code") + len("Code")]
 
 
 def root_dir():
@@ -75,35 +65,32 @@ def root_dir():
     return os.getcwd()[0:os.getcwd().index("Capstone") + len("Capstone")]
 
 
-def box_plotter(df, target_dir, instance, name, X="param", Y="cost",):
-    #@TODO Make sure scale is the same across all plots (y axis) so that they can be compared
-
-    result_dir = root_dir() + "/jobs/results/" + target_dir.split("/")[-3]
+def box_plotter(df, prefix, alg, dataset, X, Y):
+    # @TODO Make sure scale is the same across all plots (y axis) so that they can be compared
+    title = "{}: {} variance across {} for {}".format(alg, Y, X, dataset)
     sns.boxplot(x=X, y=Y, data=df)
-    # Rotate x labels
     plt.xticks(rotation=90)
-    plt.title(name)
-    plt.savefig(f"{result_dir}/{instance}_boxplot_{X}.png", bbox_inches='tight')
+    plt.title(title)
+    plt.savefig(prefix + f"\\{dataset}_boxplot_{X}.png", bbox_inches='tight')
     plt.clf()
-
-def add_slurm():
-    pass
 
 
 def unify_csvs(filepath, key, alg=None, add_slurm=False):
+    if "slurm" not in key:
+        add_slurm = True
+
     csv_dir = filepath + "results/"
     print("Unifying csvs")
     print("Trying for dir " + filepath.split("/")[-3])
-    print("Full path:" + filepath)
+    print("Full path:" + csv_dir)
     # Delete the files we create if the script has been run before
     # If it is prefixed with results keep it, if it is not, delete it
-    print(os.listdir(filepath))
+    files_to_del = [f for f in os.listdir(csv_dir) if f.startswith('results-') is False and f.endswith('.csv')]
+    print(files_to_del)
 
-    for file in os.listdir(filepath):
-        if file.startswith("results-"):
-            continue
-        elif file.endswith(".csv"):
-            os.remove(f"{filepath}/{file}")
+    for file in files_to_del:
+        # delete
+        os.remove(csv_dir + file)
 
     # Get all files in the directory ending with .csv
     files = [f for f in os.listdir(csv_dir) if f.endswith('.csv')]
@@ -120,10 +107,8 @@ def unify_csvs(filepath, key, alg=None, add_slurm=False):
                         line = line.strip() + "\n"
                     results_file.write(line)
 
-
     # Sort rows by instance
     os.system(f"sort -t, -k1,1 {filepath}/results.csv > {filepath}/results_sorted.csv")
-
 
     # Delete old file
     os.remove(f"{filepath}/results.csv")
@@ -140,9 +125,11 @@ def unify_csvs(filepath, key, alg=None, add_slurm=False):
         # Copy the sorted file to the results directory for the unified dir
         os.system(f"cp {filepath}/results_sorted.csv {result_dir}/results_sorted_{alg}.csv")
 
+    return key.append("slurm") if add_slurm else key
 
 
 def render_gantt_json(infile, destination, subdir=False):
+    print("Rendering gantt chart for " + infile)
     with open(infile, "r") as f:
         gantt_data = json.load(f)
 
