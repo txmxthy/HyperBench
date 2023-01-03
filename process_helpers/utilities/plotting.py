@@ -86,13 +86,19 @@ def box_plotter(df, target_dir, instance, name, X="param", Y="cost",):
     plt.savefig(f"{result_dir}/{instance}_boxplot_{X}.png", bbox_inches='tight')
     plt.clf()
 
+def add_slurm():
+    pass
 
-def unify_csvs(filepath, key, alg=None):
+
+def unify_csvs(filepath, key, alg=None, add_slurm=False):
+    csv_dir = filepath + "results/"
     print("Unifying csvs")
     print("Trying for dir " + filepath.split("/")[-3])
     print("Full path:" + filepath)
     # Delete the files we create if the script has been run before
     # If it is prefixed with results keep it, if it is not, delete it
+    print(os.listdir(filepath))
+
     for file in os.listdir(filepath):
         if file.startswith("results-"):
             continue
@@ -100,20 +106,24 @@ def unify_csvs(filepath, key, alg=None):
             os.remove(f"{filepath}/{file}")
 
     # Get all files in the directory ending with .csv
-    files = [f for f in os.listdir(filepath) if f.endswith('.csv')]
+    files = [f for f in os.listdir(csv_dir) if f.endswith('.csv')]
     # instance, cost, seed, temp, cooldown, timeout
     # Iterate over files and add to a new file
     with open(f"{filepath}/results.csv", "w") as results_file:
         for file in files:
-            with open(f"{filepath}/{file}", "r") as file:
+            with open(f"{csv_dir}/{file}", "r") as file:
                 for line in file:
-                    slurm = file.name.split("/results-")[-1].split(".csv")[0]
-                    line = line.strip() + "," + slurm + "\n"
+                    if add_slurm:
+                        slurm = file.name.split("/results-")[-1].split(".csv")[0]
+                        line = line.strip() + "," + slurm + "\n"
+                    else:
+                        line = line.strip() + "\n"
                     results_file.write(line)
 
 
     # Sort rows by instance
     os.system(f"sort -t, -k1,1 {filepath}/results.csv > {filepath}/results_sorted.csv")
+
 
     # Delete old file
     os.remove(f"{filepath}/results.csv")
@@ -127,6 +137,8 @@ def unify_csvs(filepath, key, alg=None):
 
     # If alg is specified output to the unified dir
     if alg is not None:
+        # Copy the sorted file to the results directory for the unified dir
+        os.system(f"cp {filepath}/results_sorted.csv {result_dir}/results_sorted_{alg}.csv")
 
 
 

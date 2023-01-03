@@ -22,13 +22,13 @@ if __name__ == '__main__':
             "dispatching_rules": "dataset,seed,cost,slurm"}
 
     for alg in subdirs:
-        print("Merging CSVs for Boxplots: " + alg)
+        print(f"\nRunning for {alg}: Merging CSVs.")
         unify_csvs(outdir+alg+"/", key=keys[alg], alg=alg)
 
 
     # # Box Plots and CSV magic
     # key = "instance,cost,seed,temp,cooldown,timeout"
-    alg_merge_boxes("SA", sim_dir + "results/", key)
+    # alg_merge_boxes("SA", sim_dir + "results/", key)
     #
     # key = "instance,cost,seed,tabu_length,max_steps,longest_hold,timeout"
     # alg_merge_boxes("TA", tabu_dir + "results/", key)
