@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --job-name=CONSTRAINT_JSS
-#SBATCH -a 1-301
+#SBATCH -a 1-12
 #SBATCH -o stdio/constraint-stdout-%A-%a.txt
 #SBATCH -e stdio/constraint-stderr-%A-%a.txt
 #SBATCH --cpus-per-task=8
