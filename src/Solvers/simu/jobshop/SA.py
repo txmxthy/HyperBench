@@ -67,7 +67,7 @@ def simulatedAnnealingSearch(jobs, maxTime=None, T=200, termination=10, halting=
     :param decrease: cooldown factor
     :return: best cost and best schedule
     """
-    numExperiments = 1
+    numExperiments = 2
 
     solutions = []
     best = 10000000
