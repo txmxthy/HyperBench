@@ -186,7 +186,8 @@ class JSPAns:
 
     def generate_gantt_json(self, csv_columns):
         # CSV Columns: instance, cost, seed, tabu_len, nsteps, hold, timeout,
-        instance, cost, seed, tabu_len, nsteps, hold, timeout = csv_columns
+
+        instance, cost, seed, tabu_len, nsteps, hold, timeout, os.environ['RUN_KEY'] = csv_columns
         json_dict = {
             "packages": [],
             "title": f"TABU {instance}  Cost: {cost} Slurm: {os.environ['RUN_KEY']}",
