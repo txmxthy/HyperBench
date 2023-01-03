@@ -3,7 +3,7 @@
 #SBATCH -a 1-301
 #SBATCH -o stdio/constraint-stdout-%A-%a.txt
 #SBATCH -e stdio/constraint-stderr-%A-%a.txt
-#SBATCH --cpus-per-task=1
+#SBATCH --cpus-per-task=2
 #SBATCH --mem-per-cpu=2G
 #SBATCH --time=00:35:00
 #SBATCH --partition=parallel
