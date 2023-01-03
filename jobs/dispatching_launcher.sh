@@ -72,7 +72,7 @@ for i in $(seq 0 $LIMIT); do
     echo "++ Merging results"
     cat $DISPATCH_RUNDIR/results/results-*.csv > $DISPATCH_RUNDIR/batched_results-$i.csv
     t4=$(date +%s)
-    echo "++ Results merged into $DISPATCH_RUNDIR/batched_results-$i.csv in ~$((t4 - t3)) seconds"
+    echo "++ Results merged into $DISPATCH_RUNDIR/results-batch-$i.csv in ~$((t4 - t3)) seconds"
     # Delete the individual files from the dir
     echo "++ Deleting individual Files"
     find $DISPATCH_RUNDIR/results/ -name '*.csv' -delete
