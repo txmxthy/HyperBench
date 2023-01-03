@@ -11,7 +11,7 @@
 #SBATCH --mail-user=mcdermtimo@ecs.vuw.ac.nz
 
 # First value of array is skipped
-VALUES=({1001..3000})
+VALUES=({1..1998})
 ACCESS_KEY=${VALUES[$SLURM_ARRAY_TASK_ID]}
 
 
@@ -24,10 +24,3 @@ cd ../src/Solvers/tabu || exit 1
 echo "++ Starting program"
 pwd
 OUTPUT_DIR="../../../jobs/$TABU_RUNDIR" RUN_KEY="$ACCESS_KEY" python3 -u tabu_entry.py
-# To get through all instances you have to manually batch the slurm ids, ie 1-1001, 1002-2002, 2003-3003, etc.
-# Match the number of ids to the number of inputs in the file for that script
-
-# https://stackoverflow.com/questions/69543503/start-a-sbatch-array-with-big-number
-
-# View limit with
-# scontrol show config | grep -i array
