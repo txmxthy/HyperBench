@@ -195,7 +195,7 @@ def do_solve(problem, solver, seed):
 
         # Try and write the content to the target file, creating it if it doesn't exist
         target = f'{os.environ["OUTPUT_DIR"]}/results/results-{os.environ["RUN_KEY"]}.csv'
-        content= f'{problem.name},{seed},{problem.solution.makespan},{os.environ["RUN_KEY"]}\n'
+        content= f'{problem.name},{seed},{problem.solution.makespan},{solver.user_time},{os.environ["RUN_KEY"]}\n'
 
         with open(target, 'a') as f:
             f.write(content)
