@@ -11,18 +11,18 @@ pip3 install -r ../requirements.txt
 STAMP="$(date +%Y-%m-%d_%H-%M-%S)"
 
 # kick of each thing we're testing in parallel
-SIM_RDIR="output/sim_anneal"
-export SIM_RUNDIR="$SIM_RDIR/$STAMP"
-mkdir -p "$SIM_RUNDIR"/{img,json,csv}
-sbatch sim_anneal.sh
+#SIM_RDIR="output/sim_anneal"
+#export SIM_RUNDIR="$SIM_RDIR/$STAMP"
+#mkdir -p "$SIM_RUNDIR"/{img,json,csv}
+#sbatch sim_anneal.sh
 
 # Tabu Search
 
-#TABU_RDIR="output/tabu_search"
-#export TABU_RUNDIR="$TABU_RDIR/$STAMP"
-#mkdir -p "$TABU_RUNDIR"/{img,json}
-#
-#sbatch tabu_search.sh
+TABU_RDIR="output/tabu_search"
+export TABU_RUNDIR="$TABU_RDIR/$STAMP"
+mkdir -p "$TABU_RUNDIR"/{img,json}
+
+sbatch tabu_search.sh
 #
 # Genetic Algorithm
 #
