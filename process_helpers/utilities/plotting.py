@@ -10,37 +10,41 @@ def pretty_plot(alg, filepath, key, verbose=False):
     # Create some plots for the given instance
 
     # Read the csv file
-    df = pd.read_csv(filepath, names=key)
 
-    # Split into list of dataframes by dataset Using list comprehension
-
+    df = pd.read_csv(filepath, names=key, skiprows=1)
+    plots = ["seed"]
     # Get the unique datasets
     datasets = df["dataset"].unique()
+
+    if "timeout" in key:
+        timeouts = df["timeout"].unique()
+        df = df.drop(columns=['timeout'])
+        # Uncomment for multiple manual timeouts (not just early stopping)
+        # if len(timeouts) > 1:
+        #     plots.append("timeout")
+        # else:
+        #     df = df.drop(columns=['timeout'])
+
+
+    # Handle plot types and create a new column for the parameter combinations
+
+    standard = ["dataset", "cost", "seed", "slurm"]
+    params = [col for col in df.columns if col not in standard]
+    if len(params) > 0:
+        df['param'] = df[params].apply(lambda row: '-'.join(row.values.astype(str)), axis=1)
+        plots.append("param")
 
     # Create a plot for each dataset
     for dataset in datasets:
         d = df[df["dataset"] == dataset].copy()
         dataset_name = d["dataset"].unique()[0]
         # Only handle if unique/multiple timeouts exist for the same data
-        if "timeout" in key:
-            timeouts = d["timeout"].unique()
-            d = d.drop(columns=['timeout'])
-            if len(timeouts) > 1:
-                # Raise unimplemented error
-                raise NotImplementedError("Multiple timeouts not implemented for plotting same data")
-
-        # Create a new column for the parameter combination
-        standard = ["dataset", "cost", "seed", "slurm"]
-        # Combine the remaining columns into a single column "param"
-        params = [col for col in d.columns if col not in standard]
-        d['param'] = d[params].apply(lambda row: '-'.join(row.values.astype(str)), axis=1)
 
         prefix = f'{win_root_dir()}\\jobs\\results\\output\\{alg}'
         # Make the directory if it doesn't exist
         if not os.path.exists(prefix):
             os.makedirs(prefix)
 
-        plots = ["seed", "param"]
         for plot in plots:
             box_plotter(d, prefix, alg, dataset_name, plot, "cost")
 
@@ -58,6 +62,10 @@ def win_root_dir():
     return os.getcwd()[0:os.getcwd().index("Code") + len("Code")]
 
 
+def win_uni_dir():
+    return win_root_dir() + "\\jobs\\results\\"
+
+
 def root_dir():
     """
     Dir above jobs
@@ -65,9 +73,14 @@ def root_dir():
     return os.getcwd()[0:os.getcwd().index("Capstone") + len("Capstone")]
 
 
+def uni_dir():
+    return root_dir() + "/jobs/results/"
+
+
 def box_plotter(df, prefix, alg, dataset, X, Y):
     # @TODO Make sure scale is the same across all plots (y axis) so that they can be compared
     title = "{}: {} variance across {} for {}".format(alg, Y, X, dataset)
+    print("Rendering Boxplot: " + title)
     sns.boxplot(x=X, y=Y, data=df)
     plt.xticks(rotation=90)
     plt.title(title)
@@ -76,24 +89,34 @@ def box_plotter(df, prefix, alg, dataset, X, Y):
 
 
 def unify_csvs(filepath, key, alg=None, add_slurm=False):
+    file_sep = None
+    if os.name == 'nt':
+        file_sep = "\\"
+    else:
+        file_sep = "/"
+    filepath += file_sep
+
     if "slurm" not in key:
         add_slurm = True
+        key.append("slurm")
 
-    csv_dir = filepath + "results/"
+    csv_dir = filepath + "results" + file_sep
     print("Unifying csvs")
-    print("Trying for dir " + filepath.split("/")[-3])
     print("Full path:" + csv_dir)
     # Delete the files we create if the script has been run before
     # If it is prefixed with results keep it, if it is not, delete it
-    files_to_del = [f for f in os.listdir(csv_dir) if f.startswith('results-') is False and f.endswith('.csv')]
-    print(files_to_del)
-
+    files_to_del = [f for f in os.listdir(csv_dir)
+                    if f.startswith('results-') is False
+                    and f.startswith("batched") is False
+                    and f.endswith('.csv')]
+    print(f"Deleting {len(files_to_del)} items: {files_to_del}")
     for file in files_to_del:
         # delete
         os.remove(csv_dir + file)
 
     # Get all files in the directory ending with .csv
     files = [f for f in os.listdir(csv_dir) if f.endswith('.csv')]
+    print(f"Found {len(files)} files to unify")
     # instance, cost, seed, temp, cooldown, timeout
     # Iterate over files and add to a new file
     with open(f"{filepath}/results.csv", "w") as results_file:
@@ -107,25 +130,45 @@ def unify_csvs(filepath, key, alg=None, add_slurm=False):
                         line = line.strip() + "\n"
                     results_file.write(line)
 
-    # Sort rows by instance
-    os.system(f"sort -t, -k1,1 {filepath}/results.csv > {filepath}/results_sorted.csv")
+    # IF os is windows
 
-    # Delete old file
-    os.remove(f"{filepath}/results.csv")
+    if os.name != 'nt':
+        # Linux
+        # Use Command Line tools
+        # Sort rows by instance
+        os.system(f"sort -t, -k1,1 {filepath}/results.csv > {filepath}/results_sorted.csv")
 
-    # Create a separate file for each instance, overwriting if it exists
-    os.system(f"awk -F, '{{print > \"{filepath}/\"$1\".csv\"}}' {filepath}/results_sorted.csv")
-    result_dir = root_dir() + "/jobs/results/" + filepath.split("/")[-3]
+        # Delete old file
+        os.remove(f"{filepath}/results.csv")
 
-    # Copy the sorted file to the results directory
-    os.system(f"cp {filepath}/results_sorted.csv {result_dir}/results_sorted.csv")
+        # Removed: Create a separate file for each instance, overwriting if it exists
+        # os.system(f"awk -F, '{{print > \"{filepath}/\"$1\".csv\"}}' {filepath}/results_sorted.csv")
 
-    # If alg is specified output to the unified dir
-    if alg is not None:
-        # Copy the sorted file to the results directory for the unified dir
+        # Copy the sorted file to the results directory
+        result_dir = root_dir() + "/jobs/results/" + filepath.split("/")[-3]
+
         os.system(f"cp {filepath}/results_sorted.csv {result_dir}/results_sorted_{alg}.csv")
 
-    return key.append("slurm") if add_slurm else key
+    else:
+        # Windows
+        # Use Python tools
+        # Sort rows by instance
+        df = pd.read_csv(f"{filepath}/results.csv", names=key)
+
+        df.sort_values(by=key[0], inplace=True)
+
+        df.to_csv(f"{filepath}/results_sorted.csv", index=False)
+
+        # Delete old file
+        os.remove(f"{filepath}/results.csv")
+
+        # Removed: Create a separate file for each instance, overwriting if it exists
+
+        # Copy the sorted file to the results directory
+        command = f"copy {filepath}\\results_sorted.csv {win_uni_dir()}\\results_sorted_{alg}.csv"
+        os.system(command)
+
+    return key
 
 
 def render_gantt_json(infile, destination, subdir=False):

@@ -1,10 +1,10 @@
 import os
 
-from process_helpers.utilities.plotting import unify_csvs, pretty_plot
+from process_helpers.utilities.plotting import unify_csvs, pretty_plot, win_uni_dir
 
 if __name__ == '__main__':
     # outdir = "/home/kali/PycharmProjects/Capstone/jobs/output/"
-    outdir = "D:\Projects\Capstone\Code\jobs\output"
+    outdir = "E:\\Capstone_Data\\"
     sim_dir = outdir + "sim_anneal/"
     tabu_dir = outdir + "tabu_search/"
     genetic_dir = outdir + "genetic/"
@@ -28,18 +28,19 @@ if __name__ == '__main__':
         "sim_anneal": ["dataset", "cost", "seed", "temp", "cooldown", "timeout", "slurm"],
         "tabu_search": ["dataset", "cost", "seed", "tabu_len", "nsteps", "hold", "timeout", "slurm"],
         "genetic": ["dataset", "cost", "seed", "pop_size", "ngen", "mut_rate", "cross_rate", "timeout"],
-        "constraint": ["dataset", "seed", "cost", "slurm"],
+        "constraint": ["dataset", "seed", "cost", "timeout", "slurm"],
         "dispatching_rules": ["dataset", "seed", "cost", "slurm"]
     }
 
-    for alg in subdirs:
+    test = ["sim_anneal"]
+
+    # for alg in subdirs:
     #     print(f"\nRunning for {alg}: Merging CSVs.")
-    #     keys[alg] = unify_csvs(outdir+alg+"/", key=keys[alg], alg=alg)
+    #     keys[alg] = unify_csvs(outdir + alg, key=keys[alg], alg=alg)
 
     for alg in subdirs:
         print(f"\nRunning for {alg}: Creating boxplots.")
-        pretty_plot(alg=alg, filepath=f'{uni_path}\\results_sorted_{alg}.csv', key=keys[alg])
-
+        pretty_plot(alg=alg, filepath=f'{win_uni_dir()}\\results_sorted_{alg}.csv', key=keys[alg])
 
     # # # Gantt Charts
     # alg_gantts(tabu_dir + "json/", tabu_dir)

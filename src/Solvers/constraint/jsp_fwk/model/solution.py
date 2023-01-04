@@ -256,7 +256,7 @@ class JSSolution(Cloneable):
             json_dict["packages"].append(bar)
 
         json_str = json.dumps(json_dict)
-        with open(os.environ["OUTPUT_DIR"] + f"/json/{self.instance}-{os.environ['RUN_KEY']}_gantt.json", "w") as fp:
+        with open(os.environ["OUTPUT_DIR"] + f"\\json\\{self.instance}-{os.environ['RUN_KEY']}_gantt.json", "w") as fp:
         #with open(os.environ["OUTPUT_DIR"] + f"\\json\\{self.instance}-{os.environ['RUN_KEY']}_gantt.json", "w") as fp:
             fp.write(json_str)
 
