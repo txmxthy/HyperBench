@@ -66,7 +66,8 @@ class GoogleORCPSolver(JSSolver):
         print(f"A1: Solver Catch SIGINT{solver.parameters.catch_sigint_signal}", file=sys.stderr)
         print(f"A2: Solver Threading{solver.parameters.num_workers}", file=sys.stderr)
         solver.parameters.catch_sigint_signal = True  # REQUIRED FOR SLURM/Parallel *Solvers*
-        solver.parameters.num_workers = 1  # REQUIRED FOR SLURM/Parallel *Solvers*
+        # solver.parameters.num_workers = 1  # REQUIRED FOR SLURM/Parallel *Solvers*
+        solver.parameters.num_search_workers = 2  # REQUIRED FOR SLURM/Parallel *Solvers* # SET TO N CORES IN SLURM
         print(f"B1: Solver Catch SIGINT{solver.parameters.catch_sigint_signal}", file=sys.stderr)
         print(f"B2: Solver Threading {solver.parameters.catch_sigint_signal}", file=sys.stderr)
         if self.__max_time is not None:
