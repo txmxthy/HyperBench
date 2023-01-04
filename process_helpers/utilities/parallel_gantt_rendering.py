@@ -1,39 +1,47 @@
 import os
 from multiprocessing import Pool
-from tqdm import tqdm
+from tqdm.auto import tqdm
 from process_helpers.utilities.plotting import render_gantt_json
 
 
-def print_args(x):
+def use_args(x):
     dataset = x[0]
-    alg_dir = x[1]
-    id = x[2]
+    target = x[1]
+    idn = x[2]
+    json_path = x[3]
 
-    img_path = f"{alg_dir}img/gif/{dataset}/"
+    img_path = f"{target}\\results\\gif\\img\\{dataset}\\"
     if not os.path.exists(img_path):
         os.makedirs(img_path)
 
-    json_path = f"{alg_dir}/json/{id}_gantt.json"
-    render_gantt_json(infile=json_path, destination=img_path)
+    json_file = f"{json_path}\\{idn}_gantt.json"
+    render_gantt_json(infile=json_file, destination=img_path)
 
-def run_in_parallel():
+def render_gantt_in_parallel(algs, datasets, root_path, json_path):
+
+    print(f"Algs {algs}, Datasets {datasets}, Root {root_path}, JSON {json_path}")
+
     args = []
 
-
-    datasets = ["abz5"]
-    algs = ["genetic"]
     for alg in algs:
-        alg_path = root_path + "output/" + alg + "/"
-        for dataset in datasets:
-            with open(f"{alg_path}unique_solution_ids.txt", "r") as f:
-                for id in f.read().splitlines():
-                    args.append((dataset, root_path + "output/" + alg + "/", id))
 
-    pool = Pool(processes=4)
-    r = list(tqdm(pool.imap(print_args, args), total=len(args)))
+        alg_path = f'{root_path}{alg}'
+        for dataset in datasets:
+            # D:\Projects\Capstone\Code\jobs\results\output\genetic\unique_solution_ids.txt
+            # D:\\Projects\\Capstone\\Code\\jobs\\results\\genetic\\unique_solution_ids.txt
+            with open(f"{alg_path}\\unique_solution_ids.txt", "r") as f:
+                for idn in f.read().splitlines():
+                    args.append((dataset, alg_path, idn, json_path))
+
+    pool = Pool(processes=6)
+    r = list(tqdm(pool.imap(use_args, args), total=len(args)))
+
+
 
 
 if __name__ == '__main__':
     print("Rendering Gantt Charts")
+    datasets = ["abz5"]
+    algs = ["genetic"]
     root_path = "/home/kali/PycharmProjects/Capstone/jobs/"
-    run_in_parallel()
+    render_gantt_in_parallel(algs, datasets, root_path)

@@ -1,10 +1,14 @@
 import glob
 import os
 import imageio
+import pandas as pd
 from PIL import Image
 from pygifsicle import optimize
 
 from tqdm import tqdm
+
+from process_helpers.utilities.plotting import render_gantt_json
+
 
 def gantt_gif_by_dataset(dataset, key, target_dir):
     """
