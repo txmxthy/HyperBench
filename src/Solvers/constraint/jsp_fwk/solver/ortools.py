@@ -63,9 +63,12 @@ class GoogleORCPSolver(JSSolver):
         solver = cp_model.CpSolver()
 
         # print parameter to stderr
-        print(f"A: Solver Catch SIGINT{solver.parameters.catch_sigint_signal}", file=sys.stderr)
-        solver.parameters.catch_sigint_signal = False  # REQUIRED FOR SLURM/Parallel *Solvers*
-        print(f"B: Solver Catch SIGINT{solver.parameters.catch_sigint_signal}", file=sys.stderr)
+        print(f"A1: Solver Catch SIGINT{solver.parameters.catch_sigint_signal}", file=sys.stderr)
+        print(f"A2: Solver Threading{solver.parameters.num_workers}", file=sys.stderr)
+        solver.parameters.catch_sigint_signal = True  # REQUIRED FOR SLURM/Parallel *Solvers*
+        solver.parameters.num_workers = 1  # REQUIRED FOR SLURM/Parallel *Solvers*
+        print(f"B1: Solver Catch SIGINT{solver.parameters.catch_sigint_signal}", file=sys.stderr)
+        print(f"B2: Solver Threading {solver.parameters.catch_sigint_signal}", file=sys.stderr)
         if self.__max_time is not None:
             solver.parameters.max_time_in_seconds = self.__max_time  # set time limit
 
