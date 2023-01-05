@@ -1,5 +1,6 @@
 import random
 
+from scipy import stats
 import seaborn as sns
 import os
 import json
@@ -324,3 +325,35 @@ def handle_one_to_many(path_prefix, algs):
         df.to_csv(filepath, index=False)
 
     return encodings
+
+
+def print_alg_stats(dir, algs):
+
+    cross_solver_avg = pd.DataFrame()
+    for alg in algs:
+        # df results_sorted_{alg}.csv
+        df = pd.read_csv(f"{dir}\\results_sorted_{alg}.csv")
+
+        # Df stats (By Dataset)
+        df_stats = df.groupby(['dataset']).agg({'cost': ['min', 'max', 'mean', 'median']})
+        df_stats.to_latex(f"{dir}\\stats_{alg}.tex")
+
+        # Overall
+        # as a copy
+        df_cross = df.copy()
+        df_stats = df_cross.agg({'cost': ['min', 'max', 'mean', 'median']})
+        # Rename cost to alg
+        df_stats = df_stats.rename(columns={"cost": alg})
+        # Add to the cross solver df
+        cross_solver_avg = pd.concat([cross_solver_avg, df_stats], axis=1)
+
+    print(cross_solver_avg)
+    cross_solver_avg.to_latex(f"{dir}\\stats_cross.tex")
+
+
+
+    # Wilcoxon signed rank test
+    # https://www.youtube.com/watch?v=iYFn1m4hFww
+    # https://sphweb.bumc.bu.edu/otlt/mph-modules/bs/bs704_nonparametric/bs704_nonparametric4.html
+    # stats.wilcoxon(df, datasets, n_datasets, n_samples, seeds)
+
