@@ -153,7 +153,7 @@ def gif_to_mp4(gif_path, filename):
     print(f"Ending file size: {os.path.getsize(no_ext + '.mp4') / 1000000} mb")
     print(f"Factor of compression: {os.path.getsize(gif_path + filename) / os.path.getsize(no_ext + '.mp4')}")
 
-def merge_gifs:
+def merge_gifs():
     pass
 
 if __name__ == '__main__':
