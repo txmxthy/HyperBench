@@ -1,3 +1,5 @@
+import random
+
 import seaborn as sns
 import os
 import json
@@ -11,9 +13,8 @@ def pretty_plot(alg, filepath, key, verbose=False):
     # @TODO: Axis Scaling for number of X Vars
     # @TODO Key for GENETIC doesnt line up
     # Read the csv file
-    print("Key: " + str(key))
+
     df = pd.read_csv(filepath, names=key, skiprows=1)
-    print(df.head(3))
 
     root_path = win_uni_dir()
     alg_path = root_path + "output\\" + alg + "\\"
@@ -112,21 +113,23 @@ def unify_csvs(filepath, key, alg=None, add_slurm=False):
     filepath += file_sep
 
     if "slurm" not in key:
+        print(key)
+        print("Warning: slurm not in key, adding it")
         add_slurm = True
         key.append("slurm")
+        print(key)
 
     csv_dir = filepath + "results" + file_sep
 
-    print("Unifying path:" + csv_dir)
     # Delete the files we create if the script has been run before
     # If it is prefixed with results keep it, if it is not, delete it
     files_to_del = [f for f in os.listdir(csv_dir)
                     if f.startswith('results-') is False
                     and f.startswith("batched") is False
                     and f.endswith('.csv')]
-    print(f"Deleting {len(files_to_del)} items: {files_to_del}")
+
     for file in files_to_del:
-        # delete
+        print(f"Deleting {len(files_to_del)} items: {files_to_del}")
         os.remove(csv_dir + file)
 
     # Get all files in the directory ending with .csv
@@ -134,12 +137,12 @@ def unify_csvs(filepath, key, alg=None, add_slurm=False):
     print(f"Found {len(files)} files to unify")
     # instance, cost, seed, temp, cooldown, timeout
     # Iterate over files and add to a new file
-    with open(f"{filepath}/results.csv", "w") as results_file:
+    with open(f"{filepath}{file_sep}results.csv", "w") as results_file:
         for file in files:
-            with open(f"{csv_dir}/{file}", "r") as file:
+            with open(f"{csv_dir}{file_sep}{file}", "r") as file:
                 for line in file:
                     if add_slurm:
-                        slurm = file.name.split("/results-")[-1].split(".csv")[0]
+                        slurm = file.name.split("results-")[-1].split(".csv")[0]
                         line = line.strip() + "," + slurm + "\n"
                     else:
                         line = line.strip() + "\n"
@@ -168,8 +171,12 @@ def unify_csvs(filepath, key, alg=None, add_slurm=False):
         # Windows
         # Use Python tools
         # Sort rows by instance
-        df = pd.read_csv(f"{filepath}/results.csv", names=key)
+        target = f"{filepath}\\results.csv"
+        print(f"Sorting {target}")
 
+        df = pd.read_csv(target, names=key)
+        # Ensure cost is an int
+        df['cost'] = df['cost'].astype(int)
         df.sort_values(by=key[0], inplace=True)
 
         df.to_csv(f"{filepath}/results_sorted.csv", index=False)
@@ -228,3 +235,42 @@ def render_gantt_json(infile, destination, subdir=False):
         os.remove(filename)
 
     fig.write_image(filename, format="png")
+def handle_one_to_many(path_prefix, algs):
+    """
+    To decode, the dict has a map of ints -> datasets
+    The first 3 digits of the slurm col for encoded int are the dataset
+    """
+
+    def encode_dataset(n_codes):
+        return set([random.randint(100, 999) for _ in range(n_codes)])
+
+    encodings = {}
+    for alg in algs:
+
+        filename = f"\\results_sorted_{alg}.csv"
+        filepath = path_prefix + filename
+
+        # Pandas load
+        df = pd.read_csv(filepath)
+        # Rename slurm to batch
+        df = df.rename(columns={"slurm": "batch"})
+        df = df.assign(slurm=df['dataset'].astype('category').cat.codes)
+        n_codes = len(df['slurm'].unique())
+        codes = ()
+        while len(codes) != n_codes:
+            codes = encode_dataset(n_codes)
+
+        df = df.assign(slurm=df['slurm'].map(dict(zip(df['slurm'].unique(), codes))))
+        # Make a legend to map the dataset to the encoded dataset
+        legend = dict(zip(df['dataset'], df['slurm']))
+
+        df['slurm'] = (df['slurm'].astype(str) + df['batch'].astype(str))
+        # Cast to int
+        df['slurm'] = df['slurm'].astype(int)
+        # Drop the batch column
+        df = df.drop(columns=['batch'])
+        # Save the encoding legend to the dict
+        encodings[alg] = legend
+        # Save the new csv
+        df.to_csv(filepath, index=False)
+    return encodings

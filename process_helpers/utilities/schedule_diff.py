@@ -34,7 +34,16 @@ def flat_check(jsondir, slurms, dataset, makespan):
     os.makedirs(f"{jsondir}\\temp", exist_ok=True)
     with open(f"{jsondir}\\temp\\{makespan}.csv", "w") as f:
         for slurm in slurms:
-            json_path = f"{jsondir}{int(slurm)}_gantt.json"
+
+            # Check slurm to prevent  cannot convert float NaN to integer
+            # if slurm is float nan
+
+            try:
+                slurm = int(slurm)
+            except ValueError:
+                print(f"ValueError: {slurm} is not an integer")
+
+            json_path = f"{jsondir}{(slurm)}_gantt.json"
             if "constraint" in jsondir or "dispatching" in jsondir:
                 json_path = f"{jsondir}\\{dataset}-{int(slurm)}_gantt.json"
 
@@ -79,6 +88,7 @@ def check_json(jsondir, slurms, dataset, n=0, makespan=None, alg=None):
     """
     Pass in a list of schedule ids and return a list of unique schedules from that list
     """
+
     if makespan is None:
         return check_nth_job(jsondir, slurms, dataset, n)
     else:
@@ -142,16 +152,19 @@ def isolate_same_schedule(path, cols, json_path, dataset, alg):
     Read schedule data to identify unique schedules on a dataset merged csv file
     """
     df = pd.read_csv(path, names=cols, skiprows=1)
+    # Keep only the rows with the same dataset
+    df = df[df["dataset"] == dataset]
+
     # Total Rows
     makespans = df["cost"].value_counts()
 
     single_appearance = makespans[makespans == 1]
     multi_appearance = makespans[makespans > 1]
     single_slurms = df[df["cost"].isin(single_appearance.index)]["slurm"]
-    print(f"Found {len(single_appearance)} costs that only appear once")
+    # print(f"Found {len(single_appearance)} costs that only appear once")
 
     multi_slurms = df[df["cost"].isin(multi_appearance.index)]["slurm"]
-    print(f"Found {len(multi_slurms)} costs that appear more than once")
+    # print(f"Found {len(multi_slurms)} costs that appear more than once")
     # Print makespan and schedule id with appearance count
     targets = df[df["slurm"].isin(multi_slurms)]
     # print(df[df["slurm"].isin(multi_slurms)]["cost"].value_counts())
@@ -168,33 +181,31 @@ def isolate_same_schedule(path, cols, json_path, dataset, alg):
     found_d = []
     found_dupes = []
     jsondir = json_path
+
+    n_rows = len(makespan_to_slurms)
+    print(f"\nFound {n_rows} makespans that appear more than once for {dataset} {alg}")
     for row in makespan_to_slurms:
-        print("\nMakespan: ", row)
-        print(
-            f"{len(makespan_to_slurms[row])} instances share this makespan.")  # {makespan_to_slurms[row]}")
+
         uniques, dupes = check_json(jsondir=jsondir,
                                     slurms=makespan_to_slurms[row],
                                     dataset=dataset,
                                     makespan=row,
                                     alg=alg)
-        print(f"Found {len(uniques)} unique schedules and {len(dupes)} duplicate schedules")
-        print("_" * 50)
+
+        print(
+            f"\tMakespan: {row} - {len(makespan_to_slurms[row])} instances with {len(uniques)}/{len(dupes)} uniques/dupes")
         found_u.extend(uniques)
         if len(dupes) > 0:
-            print(f"Duplicate schedules: {dupes}")
-            # Select
-            # pick one of the duplicates to keep and ignore others in the list @TODO assign schedules their own id
-            found_d.append(dupes[0])
+            found_d.append(dupes[0])  # Keep only one of the duplicates
             found_dupes.extend(dupes)
 
     # SUMARY
-    print(f"Found {len(found_u)} unique schedules and {len(found_d)} duplicate schedules")
+    print(f"\n{dataset} {alg} - SUMMARY")
+    print(f"Selected {len(found_u)} unique schedules and {len(found_d)} duplicate schedules")
 
     # Stats
-    print(f"Found {len(single_slurms)} unique schedules from makespan")
-    print(f"Found {len(found_u)} unique schedules from json")
     print(
-        f"Found {len(found_dupes)} duplicate schedules from json with {len(found_d)} unique taken schedules from json")
+        f"Found {len(single_slurms)} uniques from makespan, {len(found_u)} from json and {len(found_d)} taken from {len(found_dupes)} duplicates")
 
     # Combine unique from sources into one df
     single = df[df["slurm"].isin(single_slurms)]  # From makespan
@@ -204,7 +215,8 @@ def isolate_same_schedule(path, cols, json_path, dataset, alg):
     # Combine into one df
     unique = pd.concat([single, jsons, jsond])
 
-    print(f"Found {len(unique)} unique schedules from makespan and json")
+    print(f"Total Found {len(unique)} unique schedules from makespan and json")
+
     # Sort by makespan
     unique = unique.sort_values(by=["cost"])
     # Get only the ids as a list
@@ -213,31 +225,34 @@ def isolate_same_schedule(path, cols, json_path, dataset, alg):
 
 
 def get_unique_solutions_by_alg(alg, key, json_path):
-
-
     root_path = win_uni_dir()
     alg_path = root_path + "output\\" + alg + "\\"
 
     csv_path = alg_path + "results\\"
     gif_path = root_path + "results\\"
+    unique_sol_ids = f"{alg_path}unique_solution_ids.txt"  # Shared betwixt all datasets
+    # Delete file if it exists
+    if os.path.exists(unique_sol_ids):
+        os.remove(unique_sol_ids)
 
-    # datasets = ['ft10', 'abz7', 'ft20', 'abz9', 'la04', 'la03', 'abz6', 'la02', 'abz5', 'la01']
-    datasets = ["abz5"]
+    datasets = ['ft10', 'abz7', 'ft20', 'abz9', 'la04', 'la03', 'abz6', 'la02', 'abz5', 'la01']
     for dataset in datasets:
-        file = f'{csv_path}{dataset}.csv'
-        cols = key.copy()
-        if "timeout" in cols:
-            cols.remove("timeout")
+        file = f'{win_uni_dir()}results_sorted_{alg}.csv'
+
+        # For indvidual files
+        # cols = key.copy()
+        # if "timeout" in cols:
+        #     cols.remove("timeout")
 
         # df = pd.read_csv(file, names=cols, skiprows=1)
         #
         # print(df.head())
         # input("Press Enter to continue...")
 
-        ids = isolate_same_schedule(file, cols, json_path, dataset, alg)
+        ids = isolate_same_schedule(file, key, json_path, dataset, alg)
 
         # Save IDs to file
-        with open(f"{alg_path}unique_solution_ids.txt", "w") as f:
+        with open(unique_sol_ids, "a") as f:
             for item in ids:
                 f.write("%s" % item + "\n")
 

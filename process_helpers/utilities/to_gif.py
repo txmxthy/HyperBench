@@ -100,23 +100,25 @@ def minimal_animated_gantt(target_dir, key):
                    append_images=frames[1:],
                    save_all=True,
                    duration=300, loop=0)
-def to_gif(dir_path, gif_path, filename):
 
-    path = dir_path + "*.png"
+
+def to_gif(images_dir, gif_path, filename):
+    path = images_dir + "*.png"
+
     imgs = glob.glob(path)
+
     name = gif_path + filename
 
     # Ensure the files are ordered by name # List comprehension to get cost
-    costs = [int(img.split("/")[-1].split("-")[0]) for img in imgs]
+    costs = [int(img.split("\\")[-1].split("-")[0]) for img in imgs]
 
-    imgs = sorted(imgs, key=lambda x: int(x.split("/")[-1].split("-")[0]))
+    imgs = sorted(imgs, key=lambda x: int(x.split("\\")[-1].split("-")[0]))
 
     # Framerate: 60fps 16.6 ms per frame
     # Pass as kwarg
     kargs = {'fps': 60}
 
     with imageio.get_writer(name, mode='I', **kargs) as writer:
-
         for id in tqdm(imgs):
             image = imageio.v2.imread(id)
             writer.append_data(image)
@@ -126,6 +128,8 @@ def to_gif(dir_path, gif_path, filename):
 
 
 def optimise_gif(name):
+    if os.name == 'nt':
+        return
     print(f"Starting file size: {os.path.getsize(name) / 1000000} mb")
 
     # new_name = gif_path + filename.split('.')[0] + "optimized.gif"
@@ -138,8 +142,6 @@ def optimise_gif(name):
 def gif_to_mp4(gif_path, filename):
     # starting file size
 
-
-
     # Convert to mp4
     # https://gist.github.com/gvoze32/95f96992a443e73c4794c342a44e0811
     # Ex. ffmpeg -i animated.gif -movflags faststart -pix_fmt yuv420p -vf "scale=trunc(iw/2)*2:trunc(ih/2)*2" video.mp4
@@ -148,14 +150,16 @@ def gif_to_mp4(gif_path, filename):
         f"ffmpeg -i {gif_path + filename} -movflags faststart -pix_fmt yuv420p -vf \"scale=trunc(iw/2)*2:trunc(ih/2)*2\" {no_ext}.mp4")
     print(f"Saved {no_ext}.mp4")
     print(f"Starting file size: {os.path.getsize(gif_path + filename) / 1000000} mb")
-    print(f"Ending file size: {os.path.getsize(no_ext + '.mp4')/ 1000000} mb")
+    print(f"Ending file size: {os.path.getsize(no_ext + '.mp4') / 1000000} mb")
     print(f"Factor of compression: {os.path.getsize(gif_path + filename) / os.path.getsize(no_ext + '.mp4')}")
 
+
 if __name__ == '__main__':
-    print("Rendering Gantt Charts as GIF")
-    dir_path = "/home/kali/PycharmProjects/Capstone/jobs/output/genetic/img/gif/abz5/"
-    gif_path = "/home/kali/PycharmProjects/Capstone/jobs/results/genetic/"
-    filename = "abz5_genetic.gif"
-    # to_gif(dir_path, gif_path, filename)
-    optimise_gif(gif_path + filename)
-    # gif_to_mp4(gif_path, filename)
+    pass
+    # print("Rendering Gantt Charts as GIF")
+    # dir_path = "/home/kali/PycharmProjects/Capstone/jobs/output/genetic/img/gif/abz5/"
+    # gif_path = "/home/kali/PycharmProjects/Capstone/jobs/results/genetic/"
+    # filename = "abz5_genetic.gif"
+    # # to_gif(dir_path, gif_path, filename)
+    # optimise_gif(gif_path + filename)
+    # # gif_to_mp4(gif_path, filename)
