@@ -350,7 +350,11 @@ def print_alg_stats(dir, algs):
     print(cross_solver_avg)
     cross_solver_avg.to_latex(f"{dir}\\stats_cross.tex")
 
-
+    #@TODO
+    # Better pretty plots,
+    # Wilcoxon
+    # Scatter plots
+    # Convergence (MAYBE)
 
     # Wilcoxon signed rank test
     # https://www.youtube.com/watch?v=iYFn1m4hFww
