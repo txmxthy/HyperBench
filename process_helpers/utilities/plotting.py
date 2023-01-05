@@ -6,6 +6,24 @@ import json
 import pandas as pd
 import plotly.express as px
 import matplotlib.pyplot as plt
+from PIL import Image
+from PIL.PngImagePlugin import PngInfo
+
+
+def save_encoding(encoding):
+    with open(f'{win_uni_dir()}\\encoding.json', 'w') as f:
+        json.dump(encoding, f)
+
+
+def load_encoding():
+    with open(f'{win_uni_dir()}\\encoding.json', 'r') as f:
+        encoding = json.load(f)
+    return encoding
+
+
+def get_one_to_many():
+    # @TODO can check for duplicate keys to automatically create this list in future
+    return ["dispatching_rules"]
 
 
 def pretty_plot(alg, filepath, key, verbose=False):
@@ -53,8 +71,8 @@ def pretty_plot(alg, filepath, key, verbose=False):
         dataset_name = d["dataset"].unique()[0]
 
         # Save it as a csv for later
-        file = f'{csv_path}{dataset_name}.csv'
-        d.to_csv(file, index=False)
+        # file = f'{csv_path}{dataset_name}.csv'
+        # d.to_csv(file, index=False)
 
         # Only handle if unique/multiple timeouts exist for the same data
         d['param'] = d[params].apply(lambda row: '-'.join(row.values.astype(str)), axis=1)
@@ -193,7 +211,12 @@ def unify_csvs(filepath, key, alg=None, add_slurm=False):
     return key
 
 
-def render_gantt_json(infile, destination, subdir=False):
+def render_gantt_json(infile, destination, dupes, alg):
+    # @TODO Max param for scaling can change by what you want to show.
+    # Ie for dataset anim alg df['cost'].max() + 10 would be good,
+    # But for comparing algorithms you want all algs max
+    # max_cost = df['cost'].max() + 10
+
     with open(infile, "r") as f:
         gantt_data = json.load(f)
 
@@ -210,10 +233,26 @@ def render_gantt_json(infile, destination, subdir=False):
     df = pd.DataFrame(list_of_dicts)
     df['Delta'] = df['End'] - df['Start']
 
+    raw_title = gantt_data["title"]
+    try:
+
+        prefix, slurm = raw_title.split("Slurm: ")
+        name_ds, cost = prefix.split("Cost: ")
+        cost = int(float(cost.strip()))
+        title = f"{name_ds.strip()}: {cost} id: {slurm}"
+
+        if len(dupes) > 1:
+            title += f" copies: {len(dupes)}"
+    except ValueError as v:
+        print(f"Error parsing title: {raw_title} err: {v}")
+
     fig = px.timeline(df, x_start="Start", x_end="End", y="Machine", color="Color", labels="Job",
-                      title=gantt_data["title"])
+                      title=title)
     fig.update_yaxes(autorange="reversed")
+
     fig.layout.xaxis.type = 'linear'
+    fig.layout.xaxis.range = [-10, df['End'].max() + 10]
+    # fig.layout.xaxis.range = [min_cost, max_cost] # Disabled for now
 
     for d in fig.data:
         filt = df['Color'] == d.name
@@ -222,19 +261,29 @@ def render_gantt_json(infile, destination, subdir=False):
 
     fig.update_xaxes(type='linear')
     fig.update_yaxes(autorange="reversed")  # otherwise tasks are listed from the bottom up
-    # Read the name of the file
-    name = infile.split("\\")[-1].split(".")[0]
-    slurm = name.split("_")[0]
 
-    cost = gantt_data["title"].split("Cost: ")[-1]
-    cost = cost.split(" ")[0]
     filename = f"{destination}/{cost}-gantt-{slurm}.png"
+
+    # Attach the dupes
 
     # if file exists, delete it
     if os.path.exists(filename):
         os.remove(filename)
+    try:
+        fig.write_image(filename, format="png")
+    except FileExistsError as e:
+        print(f"File {filename} already exists")
+        raise e
 
-    fig.write_image(filename, format="png")
+    # Write the dupes to the png files metadata
+    # if len(dupes) > 1:
+    #     # Get the image
+    #     img = Image.open(filename)
+    #     metadata = PngInfo()
+    #     metadata.add_text("dupes", str(dupes))
+    #     img.save(filename, "png", pnginfo=metadata)
+
+
 def handle_one_to_many(path_prefix, algs):
     """
     To decode, the dict has a map of ints -> datasets
@@ -262,8 +311,8 @@ def handle_one_to_many(path_prefix, algs):
 
         df = df.assign(slurm=df['slurm'].map(dict(zip(df['slurm'].unique(), codes))))
         # Make a legend to map the dataset to the encoded dataset
-        legend = dict(zip(df['dataset'], df['slurm']))
-
+        legend = dict(zip(df['slurm'], df['dataset']))
+        legend = {str(k): v for k, v in legend.items()}
         df['slurm'] = (df['slurm'].astype(str) + df['batch'].astype(str))
         # Cast to int
         df['slurm'] = df['slurm'].astype(int)
@@ -273,4 +322,5 @@ def handle_one_to_many(path_prefix, algs):
         encodings[alg] = legend
         # Save the new csv
         df.to_csv(filepath, index=False)
+
     return encodings

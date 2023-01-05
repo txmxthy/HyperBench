@@ -6,7 +6,7 @@ from multiprocessing import Pool
 import pandas as pd
 from PIL import Image
 
-from process_helpers.utilities.plotting import render_gantt_json, uni_dir, win_uni_dir
+from process_helpers.utilities.plotting import render_gantt_json, uni_dir, win_uni_dir, get_one_to_many
 
 DEBUG = False
 
@@ -24,7 +24,7 @@ def rprint(text, depth, alert=False):
         print(f"{prefix}{text}")
 
 
-def flat_check(jsondir, slurms, dataset, makespan):
+def flat_check(jsondir, slurms, dataset, makespan, slurm_encoded):
     """
     Much faster way to check for unique schedules
     """
@@ -33,7 +33,13 @@ def flat_check(jsondir, slurms, dataset, makespan):
 
     os.makedirs(f"{jsondir}\\temp", exist_ok=True)
     with open(f"{jsondir}\\temp\\{makespan}.csv", "w") as f:
-        for slurm in slurms:
+
+        slurms_sub = slurms
+        if slurm_encoded:
+            slurms = [str(slurm)[3:] for slurm in slurms]
+
+        for i, slurm in enumerate(slurms):
+            # if it is encoded then we drop the first 3 chars which are the dataset
 
             # Check slurm to prevent  cannot convert float NaN to integer
             # if slurm is float nan
@@ -51,7 +57,7 @@ def flat_check(jsondir, slurms, dataset, makespan):
                 json_data = json.load(j)
                 for package in json_data["packages"]:
                     f.write(f"{package['end']},")
-                f.write(f'{slurm}\n')
+                f.write(f'{slurms_sub[i]}\n')
 
     # Read all lines
     # Pandas unique read csv
@@ -59,40 +65,79 @@ def flat_check(jsondir, slurms, dataset, makespan):
 
     # Factorize the dataframe apart from the last column which is kept
     slurms = df.iloc[:, -1]
+    all_slurms_list = [str(slurm) for slurm in slurms.tolist()]
+
     df = df.iloc[:, :-1].apply(lambda x: pd.factorize(x)[0])
 
-    # Count unique rows
-    # unique = df.drop_duplicates().shape[0] - 1 # We count as  unique only if it appears once
-    # duplicate = df.shape[0] - unique
-    # print(f"Unique: {unique}, Duplicate: {duplicate}")
+    # Write the factorized dataframe to a csv
+    df.to_csv(f"{jsondir}\\temp\\{makespan}_factorized.csv", index=False, header=False)
 
     # Put the slurms back in
     df["slurm"] = slurms
+    # Slurms list
 
-    # Drop duplicates again (Ignore the slurm column when checking for duplicates, but drop it if its row is a duplicate)
-    df = df.drop_duplicates(subset=df.columns[:-1], keep="first")
+    # IF all but the last column (slurm) are the same then they are the same schedule
+    # Track the unique schedules
+    # - drop any repeats but store the slurm of the dropped one in a dict with the key being the slurm of the kept one
 
-    uniques = df["slurm"].tolist()
-    duplicates = [slurm for slurm in slurms if slurm not in uniques]
+    schedules_to_ids = {}
 
-    # write
-    # df.to_csv(f"{jsondir}\\temp\\{makespan}_factorized.csv", index=False, header=False)
+    for i, row in df.iterrows():
+
+        # Make the row hashable, and exclude the slurm column
+        row = row[:-1]
+        # Hash
+        key = hash(tuple(row))
+
+        slurm = df["slurm"][i]
+        # If key is not in dict then add it
+        if key not in schedules_to_ids.keys():
+            schedules_to_ids[key] = str(slurm)
+        else:
+            schedules_to_ids[key] += f",{slurm}"
+
+    slurm_map = {}
+    for row, slurms in schedules_to_ids.items():
+        if "," in slurms:
+            ids = slurms.split(",")
+            key = ids[0]
+            matches = ids[1:]
+            slurm_map[key] = matches
+        else:
+            slurm_map[slurms] = []
+            # If there is only one slurm then it is not a duplicate
+
+    # for k, v in slurm_map.items():
+    #     print(f"{k} : {v}")
+
+    # Stats
+
+    unique_slurms = list(slurm_map.keys())
+    duplicate_slurms = [slurm for slurm in all_slurms_list if slurm not in unique_slurms]
+
+    # print(f"Unique Slurms: {(unique_slurms)}")
+    # print(f"Duplicate Slurms: {(duplicate_slurms)}")
+    #
+    # print(f"Unique: {len(unique_slurms)}, Duplicates: {len(duplicate_slurms)}")
 
     # Delete file
     os.remove(f"{jsondir}\\temp\\{makespan}.csv")
 
-    return uniques, duplicates
+    return slurm_map, duplicate_slurms
 
 
-def check_json(jsondir, slurms, dataset, n=0, makespan=None, alg=None):
+def check_json(jsondir, slurms, alg, dataset, n=0, makespan=None):
     """
     Pass in a list of schedule ids and return a list of unique schedules from that list
     """
+    slurm_encoded = False
+    if alg in get_one_to_many():
+        slurm_encoded = True
 
     if makespan is None:
         return check_nth_job(jsondir, slurms, dataset, n)
     else:
-        return flat_check(jsondir, slurms, dataset, makespan)
+        return flat_check(jsondir, slurms, dataset, makespan, slurm_encoded)
 
     # If the times are different then they are not the same schedule,
 
@@ -171,57 +216,74 @@ def isolate_same_schedule(path, cols, json_path, dataset, alg):
 
     # Store dict of makespan to a list of schedule ids
     makespan_to_slurms = {}
-    for index, row in targets.iterrows():
-        if row["cost"] not in makespan_to_slurms:
-            makespan_to_slurms[row["cost"]] = []
-        makespan_to_slurms[row["cost"]].append(row["slurm"])
+    for index, makespan in targets.iterrows():
+        if makespan["cost"] not in makespan_to_slurms:
+            makespan_to_slurms[makespan["cost"]] = []
+        makespan_to_slurms[makespan["cost"]].append(makespan["slurm"])
 
     found_u = []
-
-    found_d = []
     found_dupes = []
+    slurms_dicts_list = []
     jsondir = json_path
 
     n_rows = len(makespan_to_slurms)
     print(f"\nFound {n_rows} makespans that appear more than once for {dataset} {alg}")
-    for row in makespan_to_slurms:
+    for makespan in makespan_to_slurms:
 
-        uniques, dupes = check_json(jsondir=jsondir,
-                                    slurms=makespan_to_slurms[row],
-                                    dataset=dataset,
-                                    makespan=row,
-                                    alg=alg)
+        slurm_map, dupes = check_json(jsondir=jsondir,
+                                      slurms=makespan_to_slurms[makespan],
+                                      alg=alg,
+                                      dataset=dataset,
+                                      makespan=makespan
+                                      )
 
-        print(
-            f"\tMakespan: {row} - {len(makespan_to_slurms[row])} instances with {len(uniques)}/{len(dupes)} uniques/dupes")
+        uniques = slurm_map.keys()
+        # Convert to ints
+        uniques = [int(x) for x in uniques]
+        print(f"\tMakespan: {makespan} - {len(makespan_to_slurms[makespan])} "
+              f"instances with {len(uniques)}/{len(dupes)} uniques/dupes")
+        slurms_dicts_list.append(slurm_map)
         found_u.extend(uniques)
         if len(dupes) > 0:
-            found_d.append(dupes[0])  # Keep only one of the duplicates
+            dupes = [int(x) for x in dupes]
             found_dupes.extend(dupes)
 
     # SUMARY
     print(f"\n{dataset} {alg} - SUMMARY")
-    print(f"Selected {len(found_u)} unique schedules and {len(found_d)} duplicate schedules")
+    print(f"Selected {len(found_u)} unique schedules")
 
     # Stats
-    print(
-        f"Found {len(single_slurms)} uniques from makespan, {len(found_u)} from json and {len(found_d)} taken from {len(found_dupes)} duplicates")
+    print(f"Found {len(single_slurms)} uniques from makespan, "
+          f"{len(found_u)} from json and {len(found_dupes)} duplicates")
 
     # Combine unique from sources into one df
-    single = df[df["slurm"].isin(single_slurms)]  # From makespan
-    jsons = df[df["slurm"].isin(found_u)]  # Unique from json
-    jsond = df[df["slurm"].isin(found_d)]  # Duplicate from json
 
-    # Combine into one df
-    unique = pd.concat([single, jsons, jsond])
+    # Make a copy of df with the elements where the slurm is in single_slurms
+    dfA = df.copy()
+    dfB = df.copy()
 
-    print(f"Total Found {len(unique)} unique schedules from makespan and json")
+    single = dfA[dfA["slurm"].isin(single_slurms)]
+    jsons = dfB[dfB["slurm"].isin(found_u)]
+    print(f"Found {len(single)} unique from makespan and {len(jsons)} from json")
 
-    # Sort by makespan
+    unique = pd.concat([single, jsons], ignore_index=True)
     unique = unique.sort_values(by=["cost"])
+
+    # Flatten the list of dicts into a single dict
+    slurms_dict = {}
+    for dictionary in slurms_dicts_list:
+        slurms_dict.update(dictionary)
+
+    # Put the makespan found slurms into the slurms dict
+    for slurm in single_slurms:
+        slurms_dict[slurm] = []
+
+    # Ensure all keys are strings
+    slurms_dict = {str(k): v for k, v in slurms_dict.items()}
+
     # Get only the ids as a list
     unique_ids = unique["slurm"].tolist()
-    return unique_ids
+    return unique_ids, slurms_dict
 
 
 def get_unique_solutions_by_alg(alg, key, json_path):
@@ -249,12 +311,19 @@ def get_unique_solutions_by_alg(alg, key, json_path):
         # print(df.head())
         # input("Press Enter to continue...")
 
-        ids = isolate_same_schedule(file, key, json_path, dataset, alg)
-
+        # Try ids as dict unique to duplicates
+        # when writing to a file each line is a new schedule and the first one is the selected one
+        ids, dupes = isolate_same_schedule(file, key, json_path, dataset, alg)
+        print(dupes.keys())
         # Save IDs to file
         with open(unique_sol_ids, "a") as f:
             for item in ids:
-                f.write("%s" % item + "\n")
+                matches = dupes[str(item)]
+                # Format matches like csv
+                matches = ",".join(matches)
+                f.write(f'{item}:{matches}\n')
+        print(f"Saved {len(ids)} unique solutions to {unique_sol_ids}")
+
 
 
 if __name__ == "__main__":

@@ -115,14 +115,14 @@ def to_gif(images_dir, gif_path, filename):
     imgs = sorted(imgs, key=lambda x: int(x.split("\\")[-1].split("-")[0]))
 
     # Framerate: 60fps 16.6 ms per frame
+    # 1 frame per 100ms = 10fps
     # Pass as kwarg
-    kargs = {'fps': 60}
+    kargs = {'fps': 10}
 
     with imageio.get_writer(name, mode='I', **kargs) as writer:
         for id in tqdm(imgs):
             image = imageio.v2.imread(id)
             writer.append_data(image)
-    print(f"Saved {name}")
 
     optimise_gif(name)
 
@@ -153,6 +153,8 @@ def gif_to_mp4(gif_path, filename):
     print(f"Ending file size: {os.path.getsize(no_ext + '.mp4') / 1000000} mb")
     print(f"Factor of compression: {os.path.getsize(gif_path + filename) / os.path.getsize(no_ext + '.mp4')}")
 
+def merge_gifs:
+    pass
 
 if __name__ == '__main__':
     pass
