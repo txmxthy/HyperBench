@@ -1,8 +1,9 @@
 import glob
 import os
 import imageio
+import numpy as np
 import pandas as pd
-from PIL import Image
+from PIL import Image, ImageSequence
 from pygifsicle import optimize
 
 from tqdm import tqdm
@@ -109,14 +110,11 @@ def to_gif(images_dir, gif_path, filename):
 
     name = gif_path + filename
 
-    # Ensure the files are ordered by name # List comprehension to get cost
+    # Ensure the files are ordered by name
     costs = [int(img.split("\\")[-1].split("-")[0]) for img in imgs]
 
     imgs = sorted(imgs, key=lambda x: int(x.split("\\")[-1].split("-")[0]))
 
-    # Framerate: 60fps 16.6 ms per frame
-    # 1 frame per 100ms = 10fps
-    # Pass as kwarg
     kargs = {'fps': 10}
 
     with imageio.get_writer(name, mode='I', **kargs) as writer:
@@ -124,7 +122,7 @@ def to_gif(images_dir, gif_path, filename):
             image = imageio.v2.imread(id)
             writer.append_data(image)
 
-    optimise_gif(name)
+    # optimise_gif(name)
 
 
 def optimise_gif(name):
@@ -153,8 +151,22 @@ def gif_to_mp4(gif_path, filename):
     print(f"Ending file size: {os.path.getsize(no_ext + '.mp4') / 1000000} mb")
     print(f"Factor of compression: {os.path.getsize(gif_path + filename) / os.path.getsize(no_ext + '.mp4')}")
 
-def merge_gifs():
-    pass
+
+def merge_gifs(prefix, gifs, output_filename):
+    # merge the gifs in list files to a single sequential gif
+    # Create an empty list to store the frames of the output GIF
+    print(f"Creating {output_filename} from {prefix}")
+    kargs = {'fps': 10}
+    with imageio.get_writer(prefix + output_filename, mode='I', **kargs) as writer:
+        for gif_name in gifs:
+            gif_path = prefix + "base\\" + gif_name
+            # Load the frames of the GIF
+            gif = imageio.v2.imread(gif_path, pilmode='I')
+            # Append the frames to the lis
+            writer.append_data(gif)
+
+    print(f"Saved {prefix + output_filename}")
+
 
 if __name__ == '__main__':
     pass

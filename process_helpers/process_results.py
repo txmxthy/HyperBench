@@ -10,7 +10,9 @@ from process_helpers.utilities.parallel_gantt_rendering import make_parallel_arg
 from process_helpers.utilities.plotting import unify_csvs, pretty_plot, win_uni_dir, win_root_dir, handle_one_to_many, \
     get_one_to_many, save_encoding, load_encoding
 from process_helpers.utilities.schedule_diff import get_unique_solutions_by_alg
-from process_helpers.utilities.to_gif import to_gif
+from process_helpers.utilities.to_gif import to_gif, merge_gifs
+
+
 
 if __name__ == '__main__':
     outdir = "E:\\Capstone_Data\\"
@@ -78,13 +80,21 @@ if __name__ == '__main__':
             # D:\Projects\Capstone\Code\jobs\results\output\constraint\results\gif\img
             images_dir = f'{alg_path}img\\{dataset}\\'
             filename = f'{alg}_{dataset}.gif'
-            to_gif(images_dir, alg_path + "base\\", filename)
+            # to_gif(images_dir, alg_path + "base\\", filename)
+
+        files = os.listdir(alg_path + "base\\")
+        gifs = [f for f in files if f.endswith('.gif')]
+        merge_gifs(alg_path, gifs, f'{alg}_dataset_merged.gif')
 
     # Combine Gifs in a few ways:
     # 1. All datasets for an alg
     # 2. All algs for a dataset
     # 3. All algs for all datasets
     # 4. Best gantt for each alg for each dataset
+
+    # Table stats
+    for alg in to_render:
+        print_alg_stats(alg)
 
 
     print("Done!")
