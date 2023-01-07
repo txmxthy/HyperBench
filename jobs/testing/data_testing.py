@@ -15,13 +15,13 @@ if __name__ == '__main__':
 
     df["rules"] = [x.split(":") for x in df["rules"]]
     # Rules as a string, joined by a comma
-    df["rules"] = [",".join(x) for x in df["rules"]]
+    df["rules"] = [":".join(x) for x in df["rules"]]
 
     # 3 Dataframes from the original dataframe, one for single rule runs, one for two rule runs, and one for three rule runs
     # Need to add a column to each dataframe with the number of rules
 
     # N rules column
-    df["n_rules"] = [len(x.split(",")) for x in df["rules"]]
+    df["n_rules"] = [len(x.split(":")) for x in df["rules"]]
 
     seeds = 30
     new_seeds = [random.randint(0, 1000000) for _ in range(seeds)]
@@ -57,6 +57,10 @@ if __name__ == '__main__':
     resultsdf['rules'] = resultsdf['slurm'].apply(lambda x: slurm_to_rules[x])
     resultsdf['n_rules'] = resultsdf['slurm'].apply(lambda x: slurm_to_n_rules[x])
 
+    # "Reorganised column order": ["dataset", "seed", "cost", "rules", "n_rules", "slurm"]
+    resultsdf = resultsdf[["dataset", "seed", "cost", "rules", "n_rules", "slurm"]]
+    # Sort by cost
+    resultsdf.sort_values(by=['cost'], inplace=True)
     resultsdf.to_csv("testing\\overriden.csv", index=False)
 
     combineddf.rename(columns={'rules': 'rules:+...'}, inplace=True)

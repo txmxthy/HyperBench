@@ -54,8 +54,8 @@ def pretty_plot(alg, filepath, key, verbose=False):
 
     # Handle plot types and create a new column for the parameter combinations
 
-    standard = ["dataset", "cost", "seed", "slurm"]
-    params = [col for col in df.columns if col not in standard]
+    excluded = ["dataset", "cost", "seed", "slurm", "n_rules"] #@TODO Can include N-rules specifically as its own boxplot param
+    params = [col for col in df.columns if col not in excluded]
     if len(params) > 0:
         plots.append("param")
 

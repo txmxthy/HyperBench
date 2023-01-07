@@ -57,7 +57,7 @@ def main():
         "tabu_search": ["dataset", "cost", "seed", "tabu_len", "nsteps", "hold", "timeout", "slurm"],
         "genetic": ["dataset", "cost", "seed", "pop_size", "ngen", "mut_rate", "cross_rate", "timeout"],
         "constraint": ["dataset", "seed", "cost", "timeout", "slurm"],
-        "dispatching_rules": ["dataset", "seed", "cost", "slurm"]
+        "dispatching_rules": ["dataset", "seed", "cost", "rules", "n_rules", "slurm"]
     }
 
     # Warning - Genetic has MANY unique solutions
@@ -67,11 +67,13 @@ def main():
 
     # Disabled as we have got this already - dispatching is quite finnicky
     for alg in to_reunify:
+        print(f"Reunifying {alg}")
         unify_csvs(outdir + alg, key=keys[alg], alg=alg)
 
-    # for alg in to_render:
-    #     pretty_plot(alg=alg, filepath=f'{win_uni_dir()}\\results_sorted_{alg}.csv', key=keys[alg])
-    #
+    for alg in to_render:
+        print(f"Rendering {alg}")
+        pretty_plot(alg=alg, filepath=f'{win_uni_dir()}\\results_sorted_{alg}.csv', key=keys[alg])
+
     # # # Handle 1:Many slurm relations i.e. one slurm to test many datasets
     # one_to_many = get_one_to_many()
     # encoding = handle_one_to_many(win_uni_dir(), one_to_many)
