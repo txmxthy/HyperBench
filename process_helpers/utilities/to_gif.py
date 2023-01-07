@@ -11,53 +11,6 @@ from tqdm import tqdm
 from process_helpers.utilities.plotting import render_gantt_json
 
 
-def gantt_gif_by_dataset(dataset, key, target_dir):
-    """
-    Identify unique schedules and create a gif for the given dataset
-    """
-
-    print("\nCreating Gantt GIF for: " + dataset)
-    unique_schedule_ids = None
-    csv_path = f"{target_dir}/results/{dataset}.csv"
-    # Columns
-    cols = key.split(",") + ["schedule_id"]
-    # Load the file
-    ids = unique_makespans(cols, csv_path)
-
-    # If there are no unique schedules then we can't make a gif
-    if len(ids) == 0:
-        print(f"\tNo unique schedules found for {dataset}")
-        return
-
-    #
-    # Create folders
-    # {target_dir}/gif/{dataset}/
-    # If {target_dir}/gif/{dataset}/ does not exist, create it
-    img_path = f"{target_dir}/img/gif/{dataset}/"
-
-    if not os.path.exists(img_path):
-        os.makedirs(img_path)
-
-    for slurm in ids:
-        json_path = f"{target_dir}json/{slurm}_gantt.json"
-        render_gantt_json(file=json_path, outdir=img_path, img_subdir=False)
-
-    # Create the gif
-
-    frames = []
-    path = img_path + "*.png"
-    imgs = glob.glob(path)
-    for i in imgs:
-        new_frame = Image.open(i)
-        frames.append(new_frame)
-
-    # Save into a GIF file that loops forever
-    frames[0].save(target_dir + dataset, format='GIF',
-                   append_images=frames[1:],
-                   save_all=True,
-                   duration=300, loop=0)
-
-
 def unique_makespans(cols, csv_path):
     df = pd.read_csv(csv_path, names=cols)
     # Total Rows
@@ -77,32 +30,6 @@ def unique_makespans(cols, csv_path):
     return unique_schedule_ids
 
 
-def minimal_animated_gantt(target_dir, key):
-    """
-    Make a gif to show each unique gantt chart
-    """
-
-    # To create the animation we need to identify unique schedules
-    # if a schedule is the same then it will have the same makespan. but not all makespans are the same schedule.
-    datasets = ['ft10', 'abz7', 'ft20', 'abz9', 'la04', 'la03', 'abz6', 'la02', 'abz5', 'la01']
-    for dataset in datasets:
-        gantt_gif_by_dataset(dataset, key, target_dir)
-
-    # Create the frames
-    frames = []
-    path = target_dir + "img/gif/*/*.png"
-    imgs = glob.glob(path)
-    for i in imgs:
-        new_frame = Image.open(i)
-        frames.append(new_frame)
-
-    # Save into a GIF file that loops forever
-    frames[0].save(target_dir + "ALL.gif", format='GIF',
-                   append_images=frames[1:],
-                   save_all=True,
-                   duration=300, loop=0)
-
-
 def to_gif(images_dir, gif_path, filename):
     path = images_dir + "*.png"
 
@@ -111,8 +38,7 @@ def to_gif(images_dir, gif_path, filename):
     name = gif_path + filename
 
     # Ensure the files are ordered by name
-    costs = [int(img.split("\\")[-1].split("-")[0]) for img in imgs]
-
+    # costs = [int(img.split("\\")[-1].split("-")[0]) for img in imgs]
     imgs = sorted(imgs, key=lambda x: int(x.split("\\")[-1].split("-")[0]))
 
     kargs = {'fps': 10}
@@ -155,15 +81,14 @@ def gif_to_mp4(gif_path, filename):
 def merge_gifs(prefix, gifs, output_filename):
     # merge the gifs in list files to a single sequential gif
     # Create an empty list to store the frames of the output GIF
+
     print(f"Creating {output_filename} from {prefix}")
-    kargs = {'fps': 10}
-    with imageio.get_writer(prefix + output_filename, mode='I', **kargs) as writer:
-        for gif_name in gifs:
-            gif_path = prefix + "base\\" + gif_name
-            # Load the frames of the GIF
-            gif = imageio.v2.imread(gif_path, pilmode='I')
-            # Append the frames to the lis
-            writer.append_data(gif)
+    gif_paths = [prefix + "\\base\\" + name for name in gifs]
+    imgs = np.vstack([imageio.v3.imread(path) for path in gif_paths])
+
+    # Note: loop=0 means loop forever
+    # Note2: duration = 1/fps * 1000 (ie. gap between two frames in ms)
+    imageio.v3.imwrite(prefix + output_filename, imgs, duration=100, loop=0)
 
     print(f"Saved {prefix + output_filename}")
 

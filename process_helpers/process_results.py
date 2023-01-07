@@ -90,11 +90,14 @@ if __name__ == '__main__':
     # 2. All algs for a dataset
     # 3. All algs for all datasets
     # 4. Best gantt for each alg for each dataset
-
+    for alg in to_render:
+        alg_path = f'{win_uni_dir()}\\output\\{alg}\\results\\gif\\'
+        files = os.listdir(alg_path + "base\\")
+        gifs = [f for f in files if f.endswith('.gif')]
+        merge_gifs(alg_path, gifs, f'{alg}_dataset_merged.gif')
     # Table stats
 
-
-    print_alg_stats(results_path, to_render)
+    # print_alg_stats(results_path, to_render)
 
     print("Done!")
     # @TODO Table with summary statistics
