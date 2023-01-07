@@ -81,11 +81,6 @@ def pretty_plot(alg, filepath, key, verbose=False):
             box_plotter(d, prefix, alg, dataset_name, plot, "cost")
 
 
-def alg_gantts(candidates, filepath):
-    files = [f for f in os.listdir(candidates) if f.endswith('.json')]
-    for file in files:
-        render_gantt_json(file=candidates + file, outdir=filepath)
-
 
 def win_root_dir():
     """

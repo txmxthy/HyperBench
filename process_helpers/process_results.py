@@ -26,7 +26,7 @@ def make_gantt_charts(to_render, args, delete_old=False):
     render_parallel_gantt(args)
 
 
-def gantt_gif_by_alg_dataset(to_render):
+def gantt_gif_by_alg_dataset(to_render, datasets):
     for alg in to_render:
         alg_path = f'{win_uni_dir()}\\output\\{alg}\\results\\gif\\'
         if not os.path.exists(alg_path + "base\\"):
@@ -45,7 +45,7 @@ def combined_gif_by_alg(to_render):
         merge_gifs(alg_path, gifs, f'{alg}_dataset_merged.gif')
 
 
-if __name__ == '__main__':
+def main():
     outdir = "E:\\Capstone_Data\\"
     results_path = "D:\\Projects\\Capstone\\Code\\jobs\\results"
     uni_path = f"{results_path}\\output"
@@ -94,7 +94,7 @@ if __name__ == '__main__':
                       delete_old=True)
 
     # Turn gantt charts into gifs
-    gantt_gif_by_alg_dataset(to_render)
+    gantt_gif_by_alg_dataset(to_render, datasets)
 
     # Combine Gifs in a few ways:
     # 1. All datasets for an alg
@@ -110,3 +110,7 @@ if __name__ == '__main__':
     # @TODO Table with summary statistics
     # @TODO PASS IN STATS SO THEY CAN BE RENDERED ON THE SAME SCALE
     # @TODO MAP SLURMS TO DISPATCHING RULES
+
+
+if __name__ == '__main__':
+    main()
