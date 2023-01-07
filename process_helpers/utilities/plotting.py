@@ -54,7 +54,10 @@ def pretty_plot(alg, filepath, key, verbose=False):
 
     # Handle plot types and create a new column for the parameter combinations
 
-    excluded = ["dataset", "cost", "seed", "slurm", "n_rules"] #@TODO Can include N-rules specifically as its own boxplot param
+    excluded = ["dataset", "cost", "seed", "slurm",
+                "rules"]  # @TODO DO rules specifically as its OWN PARAM (MANY COMBOS)
+    # @TODO Other idea, individual rule IN rules instead of every combo (Should be 14 values instead of 14^3)
+    # @TODO Could also do rule in position1, rule in position2, rule in position3 all separately to see if it matters
     params = [col for col in df.columns if col not in excluded]
     if len(params) > 0:
         plots.append("param")
@@ -79,7 +82,6 @@ def pretty_plot(alg, filepath, key, verbose=False):
         d['param'] = d[params].apply(lambda row: '-'.join(row.values.astype(str)), axis=1)
         for plot in plots:
             box_plotter(d, prefix, alg, dataset_name, plot, "cost")
-
 
 
 def win_root_dir():
@@ -323,7 +325,6 @@ def handle_one_to_many(path_prefix, algs):
 
 
 def print_alg_stats(dir, algs):
-
     cross_solver_avg = pd.DataFrame()
     for alg in algs:
         # df results_sorted_{alg}.csv
@@ -345,7 +346,7 @@ def print_alg_stats(dir, algs):
     print(cross_solver_avg)
     cross_solver_avg.to_latex(f"{dir}\\stats_cross.tex")
 
-    #@TODO
+    # @TODO
     # Better pretty plots,
     # Wilcoxon
     # Scatter plots
@@ -355,4 +356,3 @@ def print_alg_stats(dir, algs):
     # https://www.youtube.com/watch?v=iYFn1m4hFww
     # https://sphweb.bumc.bu.edu/otlt/mph-modules/bs/bs704_nonparametric/bs704_nonparametric4.html
     # stats.wilcoxon(df, datasets, n_datasets, n_samples, seeds)
-

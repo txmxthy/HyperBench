@@ -66,11 +66,11 @@ def main():
     to_render = ['constraint', 'dispatching_rules', 'sim_anneal', 'tabu_search']
 
     # Disabled as we have got this already - dispatching is quite finnicky
-    for alg in to_reunify:
-        print(f"Reunifying {alg}")
-        unify_csvs(outdir + alg, key=keys[alg], alg=alg)
+    # for alg in to_reunify:
+    #     print(f"Reunifying {alg}")
+    #     unify_csvs(outdir + alg, key=keys[alg], alg=alg)
 
-    for alg in to_render:
+    for alg in ["dispatching_rules"]:
         print(f"Rendering {alg}")
         pretty_plot(alg=alg, filepath=f'{win_uni_dir()}\\results_sorted_{alg}.csv', key=keys[alg])
 
