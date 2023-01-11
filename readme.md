@@ -3,7 +3,8 @@
 
 # Deps
 
-sudo apt-get install gifsicle
+sudo apt-get install gifsicle on linux or https://eternallybored.org/misc/gifsicle/ on windows
+
 
 # Grid running
 

@@ -169,13 +169,13 @@ def run_algorithms(Algorithms, Datasets, parameters):
             elif alg == 'Dispatching Rules':
                 rules = parameters['rules']
                 solver = PriorityDispatchSolver(rule=rules[-1])
-                do_solve(problem, solver, seed)
+                do_solve(problem, solver, seed, params=rules)
             else:
                 print(f'Algorithm {alg} not found.')
                 continue
 
 
-def do_solve(problem, solver, seed):
+def do_solve(problem, solver, seed, params=None):
     solver.solve(problem=problem, interval=None, callback=print_intermediate_solution)
     solver.wait()
     print('----------------------------------------')
@@ -194,8 +194,15 @@ def do_solve(problem, solver, seed):
         #         f.write(f'{problem.name},{solver.name},{problem.optimum},{problem.solution.makespan},{solver.user_time}\n')
 
         # Try and write the content to the target file, creating it if it doesn't exist
-        target = f'{os.environ["OUTPUT_DIR"]}/results/results-{os.environ["RUN_KEY"]}.csv'
-        content= f'{problem.name},{seed},{problem.solution.makespan},{os.environ["RUN_KEY"]}\n'
+        target = f'{os.environ["OUTPUT_DIR"]}\\results\\results-{os.environ["RUN_KEY"]}.csv'
+
+        if params is not None:
+            as_str = ':'.join([str(p) for p in params])
+            additional_params = as_str + ","
+        else:
+            additional_params = ""
+
+        content = f'{problem.name},{seed},{problem.solution.makespan},{additional_params}{solver.user_time},{os.environ["RUN_KEY"]}\n'
 
         with open(target, 'a') as f:
             f.write(content)

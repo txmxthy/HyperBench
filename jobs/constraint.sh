@@ -4,7 +4,7 @@
 #SBATCH -o stdio/constraint-stdout-%A-%a.txt
 #SBATCH -e stdio/constraint-stderr-%A-%a.txt
 #SBATCH --cpus-per-task=2
-#SBATCH --mem-per-cpu=6G
+#SBATCH --mem-per-cpu=4G
 #SBATCH --time=00:35:00
 #SBATCH --partition=parallel
 #SBATCH --mail-type=BEGIN,END,FAIL

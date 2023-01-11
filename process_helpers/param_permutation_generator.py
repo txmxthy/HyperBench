@@ -160,13 +160,15 @@ def generate_dispatching_params(timeout):
     # Lower case for the rules
     dispatching_rules = [x.lower() for x in dispatching_rules]
 
+    seeds_list = [random.randint(0, 1000000) for _ in range(seeds)]
+
+
     # Single Rule per Seed and Dataset
     with open("process_helpers/dispatching_param.txt", "w") as param_file:
         # Write the header
         param_file.write("seed,rules:+...")
         # Write the parameters
-        for i in range(seeds):
-            seed = random.randint(0, 1000000)
+        for seed in seeds_list:
             # Write each single on its own once
             for rule in dispatching_rules:
                 param_file.write(f"\n{seed},{rule}")
@@ -176,8 +178,7 @@ def generate_dispatching_params(timeout):
     # Two Rules per Seed
     with open("process_helpers/dispatching_param_2.txt", "w") as param_file:
         # Write the parameters
-        for i in range(seeds):
-            seed = random.randint(0, 1000000)
+        for seed in seeds_list:
             # Write each single on its own once
             for rule in dispatching_rules:
                 for rule2 in dispatching_rules:
@@ -188,9 +189,7 @@ def generate_dispatching_params(timeout):
     # Three Rules per Seed
     with open("process_helpers/dispatching_param_3.txt", "w") as param_file:
         # Write the parameters
-        for i in range(seeds):
-            seed = random.randint(0, 1000000)
-            # Write each single on its own once
+        for seed in seeds_list:
             for rule in dispatching_rules:
                 for rule2 in dispatching_rules:
                     if validate_rules([rule, rule2]):
