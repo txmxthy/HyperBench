@@ -1,0 +1,2 @@
+seed,eval.num-elites,generations,select.tournament.size,filePath
+1,6,22,7,./instances/flexible/abz6.fjs

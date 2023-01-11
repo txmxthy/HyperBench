@@ -41,7 +41,17 @@ STAMP="$(date +%Y-%m-%d_%H-%M-%S)"
 
 
 # Constraint Programming (Google OR Tools)
-CONSTRAINT_RDIR="output/constraint"
-export CONSTRAINT_RUNDIR="$CONSTRAINT_RDIR/$STAMP"
-mkdir -p "$CONSTRAINT_RUNDIR"/{img,json,results}
-sbatch constraint.sh
+#CONSTRAINT_RDIR="output/constraint"
+#export CONSTRAINT_RUNDIR="$CONSTRAINT_RDIR/$STAMP"
+#mkdir -p "$CONSTRAINT_RUNDIR"/{img,json,results}
+#sbatch constraint.sh
+
+
+#
+# Genetic Programming
+#
+#GP_RDIR="output/gp"
+#export GP_RUNDIR="GP_RDIR/$STAMP"
+#mkdir -p "GP_RUNDIR"/{img,json}
+#
+#bash gp_launcher.sh

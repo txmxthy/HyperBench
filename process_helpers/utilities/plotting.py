@@ -93,17 +93,15 @@ def add_slurm():
 def unify_csvs(filepath, key, alg=None, add_slurm=False):
     csv_dir = filepath + "results/"
     print("Unifying csvs")
-    print("Trying for dir " + filepath.split("/")[-3])
-    print("Full path:" + filepath)
+    print("Full path:" + csv_dir)
     # Delete the files we create if the script has been run before
     # If it is prefixed with results keep it, if it is not, delete it
-    print(os.listdir(filepath))
+    files_to_del = [f for f in os.listdir(csv_dir) if f.startswith('results-') is False and f.endswith('.csv')]
+    print(files_to_del)
 
-    for file in os.listdir(filepath):
-        if file.startswith("results-"):
-            continue
-        elif file.endswith(".csv"):
-            os.remove(f"{filepath}/{file}")
+    for file in files_to_del:
+        # delete
+        os.remove(csv_dir + file)
 
     # Get all files in the directory ending with .csv
     files = [f for f in os.listdir(csv_dir) if f.endswith('.csv')]

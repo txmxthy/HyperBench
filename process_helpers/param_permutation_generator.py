@@ -204,7 +204,8 @@ def generate_dispatching_params(timeout):
     os.system(
         "cat process_helpers/dispatching_param.txt process_helpers/dispatching_param_2.txt process_helpers/dispatching_param_3.txt > process_helpers/dispatching_inputs.txt")
     # Delete the old files
-    os.system("rm process_helpers/dispatching_param.txt process_helpers/dispatching_param_2.txt process_helpers/dispatching_param_3.txt")
+    os.system(
+        "rm process_helpers/dispatching_param.txt process_helpers/dispatching_param_2.txt process_helpers/dispatching_param_3.txt")
 
 
 def validate_rules(group):
@@ -220,8 +221,8 @@ def validate_rules(group):
 
     return True
 
-def generate_constraint_params(datasets):
 
+def generate_constraint_params(datasets):
     # No hyper params just seeds and datasets
     seeds = 30  # Set to the number of verification runs
 
@@ -241,6 +242,7 @@ def generate_constraint_params(datasets):
     total_runs = seeds * len(datasets)
     return total_runs
 
+
 def calculate_runtime(total_runs, timeout):
     """
     Calculate the runtime of the algorithm
@@ -259,6 +261,33 @@ def calculate_runtime(total_runs, timeout):
         print(f"For {parallel} parallel instances: - {hours} hours, {minutes} minutes, {seconds} seconds")
 
 
+def generate_gp_params():
+    """
+    Generate the parameters for the GP
+    """
+    # seed, eval.num - elites, generations, select.tournament.size, filePath
+    dataset_dir = "/home/kali/PycharmProjects/Capstone/src/Solvers/gp/instances/flexible"
+    datasets = os.listdir(dataset_dir)
+    prefix = "./instances/flexible/"
+    seeds = 30  # Set to the number of verification runs
+    # Inputs file location = /home/kali/PycharmProjects/Capstone/src/Solvers/gp/gp_inputs.csv
+
+    with open("gp_inputs.csv", "w") as param_file:
+        # Write the header
+        param_file.write("seed,eval.num,elites,generations,select.tournament.size,filePath")
+        # Write the parameters
+        for i in range(seeds):
+            seed = random.randint(0, 1000000)
+            for elites in [0, 1, 3, 5, 7]:
+                for generations in [10, 50, 60]:
+                    for tournament_size in [2, 3, 4, 5, 6]:
+                        for dataset in datasets:
+                            param_file.write(f"{seed},{elites},{generations},{tournament_size},{prefix}{dataset}\n")
+    # close
+
+    param_file.close()
+
+
 if __name__ == '__main__':
     """
     Generate a param file to pass arguments to the jobshop solver on SLURM grid cluster
@@ -266,12 +295,11 @@ if __name__ == '__main__':
     """
     # datasets = ['ft10', 'abz7', 'ft20', 'abz9', 'la04', 'la03', 'abz6', 'la02', 'abz5', 'la01']
     timeout_s = 60
+    generate_gp_params()
     #
     # total_runs = generate_constraint_params(datasets)
     # calculate_runtime(total_runs, timeout_s)
 
     # total_runs = generate_simulated_annealing_params(datasets, timeout_s)
-    total_runs = generate_dispatching_params(timeout_s)
+    # total_runs = generate_dispatching_params(timeout_s)
     # calculate_runtime(total_runs, timeout_s)
-
-

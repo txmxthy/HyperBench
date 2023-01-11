@@ -1,0 +1,294 @@
+#print-unaccessed-params = true
+#print-used-params = true
+
+
+# ADMIN
+# ==============================
+evalthreads = 1
+breedthreads = 1
+seed.0 = 0
+checkpoint = false
+checkpoint-modulo = 1
+checkpoint-prefix = ec
+
+
+# BASIC EVOLUTION PARAMS
+# ==============================
+state = solvers.gp.GPRuleEvolutionState
+finish = ec.simple.SimpleFinisher
+exch = ec.simple.SimpleExchanger
+breed =	ec.simple.SimpleBreeder
+#eval = solvers.algorithm.coevolutiongp.MultiPopCoevolutionaryEvaluator1
+eval =                                 ec.coevolve.MultiPopCoevolutionaryEvaluator
+eval.num-current=                       0
+
+#the number of elite partners selected from the previous generation, for evaluation
+eval.num-elites =                       1
+eval.num-prev =                         0
+eval.num-shuffled = 0
+
+#stat = ec.simple.SimpleStatistics
+stat = solvers.algorithm.coevolutiongp.SimpleStatisticsSaveFitnessCCGP
+
+stat.file = $out.stat
+#stat.num-children = 1
+#stat.child.0 = ec.gp.koza.KozaShortStatistics
+#stat.child.0.file = $outtabular.stat
+stat.do-generation = true
+stat.do-message = true
+
+generations = 51
+quit-on-run-complete = true
+
+pop = ec.Population
+pop.subpops = 2
+pop.default-subpop = 0
+pop.subpop.0 = ec.Subpopulation
+pop.subpop.0.size =	1000
+
+breed.elite.0 = 5
+
+pop.subpop.1 =                          ec.Subpopulation
+pop.subpop.1.size =                     10
+breed.elite.1 =                         5
+
+
+# GP GENERAL PARAMS
+# ==============================
+
+# GP population parameters
+pop.subpop.0.species = ec.gp.GPSpecies
+pop.subpop.0.species.ind = ec.gp.GPIndividual
+pop.subpop.0.species.ind.numtrees = 1
+pop.subpop.0.species.ind.tree.0 = ec.gp.GPTree
+pop.subpop.0.species.ind.tree.0.tc = tc0
+
+pop.subpop.1.species =                  ec.gp.GPSpecies
+pop.subpop.1.species.ind =              ec.gp.GPIndividual
+pop.subpop.1.species.ind.numtrees =     1
+pop.subpop.1.species.ind.tree.0 =       ec.gp.GPTree
+pop.subpop.1.species.ind.tree.0.tc =    tc1
+
+pop.subpop.0.species.fitness = ec.multiobjective.MultiObjectiveFitness
+pop.subpop.0.species.fitness.num-objectives = 1
+pop.subpop.0.species.fitness.maximize = false
+pop.subpop.0.duplicate-retries = 100
+
+pop.subpop.1.species.fitness = ec.multiobjective.MultiObjectiveFitness
+pop.subpop.1.species.fitness.num-objectives = 1
+pop.subpop.1.species.fitness.maximize = false
+pop.subpop.1.duplicate-retries =        100
+
+# GP INIT
+# ========================
+init = ec.gp.GPInitializer
+
+# GP breeding pipeline
+pop.subpop.0.species.pipe = ec.breed.MultiBreedingPipeline
+pop.subpop.0.species.pipe.generate-max = false
+pop.subpop.0.species.pipe.num-sources = 3
+pop.subpop.0.species.pipe.source.0 = ec.gp.koza.CrossoverPipeline
+pop.subpop.0.species.pipe.source.0.prob = 0.80
+pop.subpop.0.species.pipe.source.1 = ec.gp.koza.MutationPipeline
+pop.subpop.0.species.pipe.source.1.prob = 0.15
+pop.subpop.0.species.pipe.source.2 = ec.breed.ReproductionPipeline
+pop.subpop.0.species.pipe.source.2.prob = 0.05
+
+pop.subpop.1.species.pipe =             ec.breed.MultiBreedingPipeline
+pop.subpop.1.species.pipe.generate-max = false
+pop.subpop.1.species.pipe.num-sources = 3
+pop.subpop.1.species.pipe.source.0 =    ec.gp.koza.CrossoverPipeline
+pop.subpop.1.species.pipe.source.0.prob = 0.80
+pop.subpop.1.species.pipe.source.1 =    ec.gp.koza.MutationPipeline
+pop.subpop.1.species.pipe.source.1.prob = 0.15
+pop.subpop.1.species.pipe.source.2 =    ec.breed.ReproductionPipeline
+pop.subpop.1.species.pipe.source.2.prob = 0.05
+
+# Selection for reproduction
+breed.reproduce.source.0 = ec.select.TournamentSelection
+
+# Koza crossover parameters
+gp.koza.xover.source.0 = ec.select.TournamentSelection
+gp.koza.xover.source.1 = same
+gp.koza.xover.ns.0 = ec.gp.koza.KozaNodeSelector
+gp.koza.xover.ns.1 = same
+gp.koza.xover.maxdepth = 8
+gp.koza.xover.tries = 1
+
+# Koza mutation parameters
+gp.koza.mutate.source.0 = ec.select.TournamentSelection
+gp.koza.mutate.ns.0 = ec.gp.koza.KozaNodeSelector
+gp.koza.mutate.build.0 = ec.gp.koza.GrowBuilder
+gp.koza.mutate.maxdepth = 8
+gp.koza.mutate.tries = 1
+
+# Tournament selection, for reproduction, crossover and mutation
+select.tournament.size = 7
+
+# Koza grow parameters, for mutation
+gp.koza.grow.min-depth = 4
+gp.koza.grow.max-depth = 4
+
+# Koza node selector, for crossover and mutation
+gp.koza.ns.terminals = 0.1
+gp.koza.ns.nonterminals = 0.9
+gp.koza.ns.root = 0.0
+
+# GP atomic (a) and set (s) type parameters
+gp.type.a.size = 1
+gp.type.a.0.name = nil
+gp.type.s.size = 0
+
+# GP tree constraints
+gp.tc.size = 2
+gp.tc.0 = ec.gp.GPTreeConstraints
+gp.tc.0.name = tc0
+gp.tc.0.fset = f0
+gp.tc.0.returns = nil
+gp.tc.0.init = ec.gp.koza.HalfBuilder
+
+gp.tc.1 =                               ec.gp.GPTreeConstraints
+gp.tc.1.name =                          tc1
+gp.tc.1.fset =                          f1
+gp.tc.1.returns =                       nil
+gp.tc.1.init =                          ec.gp.koza.HalfBuilder
+
+# Koza half-ramp-and-ramp parameters, for gp.tc.0.init
+gp.koza.half.min-depth = 2
+gp.koza.half.max-depth = 6
+gp.koza.half.growp = 0.5
+
+# GP node constraints (nc[k] means the node takes k children), no other constraint
+gp.nc.size = 7
+
+gp.nc.0 = ec.gp.GPNodeConstraints
+gp.nc.0.name = nc0
+gp.nc.0.returns = nil
+gp.nc.0.size = 0
+
+gp.nc.1 = ec.gp.GPNodeConstraints
+gp.nc.1.name = nc1
+gp.nc.1.returns = nil
+gp.nc.1.size = 1
+gp.nc.1.child.0 = nil
+
+gp.nc.2 = ec.gp.GPNodeConstraints
+gp.nc.2.name = nc2
+gp.nc.2.returns = nil
+gp.nc.2.size = 2
+gp.nc.2.child.0 = nil
+gp.nc.2.child.1 = nil
+
+gp.nc.3 = ec.gp.GPNodeConstraints
+gp.nc.3.name = nc3
+gp.nc.3.returns = nil
+gp.nc.3.size = 3
+gp.nc.3.child.0 = nil
+gp.nc.3.child.1 = nil
+gp.nc.3.child.2 = nil
+
+gp.nc.4 = ec.gp.GPNodeConstraints
+gp.nc.4.name = nc4
+gp.nc.4.returns = nil
+gp.nc.4.size = 4
+gp.nc.4.child.0 = nil
+gp.nc.4.child.1 = nil
+gp.nc.4.child.2 = nil
+gp.nc.4.child.3 = nil
+
+gp.nc.5 = ec.gp.GPNodeConstraints
+gp.nc.5.name = nc5
+gp.nc.5.returns = nil
+gp.nc.5.size = 5
+gp.nc.5.child.0 = nil
+gp.nc.5.child.1 = nil
+gp.nc.5.child.2 = nil
+gp.nc.5.child.3 = nil
+gp.nc.5.child.4 = nil
+
+gp.nc.6 = ec.gp.GPNodeConstraints
+gp.nc.6.name = nc6
+gp.nc.6.returns = nil
+gp.nc.6.size = 6
+gp.nc.6.child.0 = nil
+gp.nc.6.child.1 = nil
+gp.nc.6.child.2 = nil
+gp.nc.6.child.3 = nil
+gp.nc.6.child.4 = nil
+gp.nc.6.child.5 = nil
+
+# GP ADF PARAMS
+gp.problem.stack = ec.gp.ADFStack
+gp.adf-stack.context = ec.gp.ADFContext
+
+
+# GP PROBLEM SPECIFIC PARAMS
+# ==============================
+
+# GP function set parameters
+gp.fs.size = 2
+gp.fs.0.name = f0
+gp.fs.0.size = 7
+gp.fs.0.func.0 = solvers.gp.terminal.TerminalERCUniform
+gp.fs.0.func.0.nc = nc0
+gp.fs.0.func.1 = solvers.gp.function.Add
+gp.fs.0.func.1.nc = nc2
+gp.fs.0.func.2 = solvers.gp.function.Sub
+gp.fs.0.func.2.nc = nc2
+gp.fs.0.func.3 = solvers.gp.function.Mul
+gp.fs.0.func.3.nc = nc2
+gp.fs.0.func.4 = solvers.gp.function.Div
+gp.fs.0.func.4.nc = nc2
+gp.fs.0.func.5 = solvers.gp.function.Max
+gp.fs.0.func.5.nc = nc2
+gp.fs.0.func.6 = solvers.gp.function.Min
+gp.fs.0.func.6.nc = nc2
+
+gp.fs.1.name = f1
+gp.fs.1.size = 7
+gp.fs.1.func.0 = solvers.gp.terminal.TerminalERCUniform
+gp.fs.1.func.0.nc = nc0
+gp.fs.1.func.1 = solvers.gp.function.Add
+gp.fs.1.func.1.nc = nc2
+gp.fs.1.func.2 = solvers.gp.function.Sub
+gp.fs.1.func.2.nc = nc2
+gp.fs.1.func.3 = solvers.gp.function.Mul
+gp.fs.1.func.3.nc = nc2
+gp.fs.1.func.4 = solvers.gp.function.Div
+gp.fs.1.func.4.nc = nc2
+gp.fs.1.func.5 = solvers.gp.function.Max
+gp.fs.1.func.5.nc = nc2
+gp.fs.1.func.6 = solvers.gp.function.Min
+gp.fs.1.func.6.nc = nc2
+
+
+# OUTPUT FORMATTING
+# ==============================
+#gp.tree.print-style = c
+#pop.subpop.0.species.ind.tree.0.c-operators = false
+#gp.tree.print-style = dot
+
+
+# PROBLEM
+# ==============================
+eval.problem = simulation.rules.ruleoptimisation.RuleCoevolutionProblem
+eval.problem.data = solvers.gp.data.DoubleData
+eval.problem.eval-model = simulation.rules.ruleevaluation.MultipleRuleEvaluationModel
+eval.problem.eval-model.objectives = 1
+eval.problem.eval-model.objectives.0 = makespan
+eval.problem.eval-model.sim-models = 1
+eval.problem.eval-model.sim-models.0.util-level = 0.85
+eval.problem.eval-model.sim-models.0.num-jobs = 500
+eval.problem.eval-model.sim-models.0.warmup-jobs = 100
+eval.problem.eval-model.sim-models.0.replications = 1
+eval.problem.eval-model.sim-models.0.num-machines = 10
+eval.problem.eval-model.rotate-sim-seed = true
+
+#terminals-from = history
+#terminals-from.0 = relative
+#terminals-from.1 = systemstate
+terminals-from = relative
+#terminals-from = systemstate
+
+# Append the path to the instance with the grid script
+filePath = /home/kali/PycharmProjects/GeneticProgramming/instances/flexible/abz5.fjs
