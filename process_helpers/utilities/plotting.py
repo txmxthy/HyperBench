@@ -82,6 +82,10 @@ def pretty_plot(alg, filepath, key, verbose=False):
         d['param'] = d[params].apply(lambda row: '-'.join(row.values.astype(str)), axis=1)
         for plot in plots:
             box_plotter(d, prefix, alg, dataset_name, plot, "cost")
+    df['param'] = df[params].apply(lambda row: '-'.join(row.values.astype(str)), axis=1)
+
+    for plot in plots:
+        line_plotter(df, prefix, alg, plot, "cost")
 
 
 def win_root_dir():
@@ -119,6 +123,19 @@ def box_plotter(df, prefix, alg, dataset, X, Y):
     plt.savefig(prefix + f"\\{dataset}_boxplot_{X}.png", bbox_inches='tight')
     plt.clf()
 
+def line_plotter(df, prefix, alg, X, Y):
+    title = "{}: {} variance across {}".format(alg, Y, X)
+    #
+    # #convert df from np array to pandas dataframe
+    df = pd.DataFrame(df)
+
+    # draw line plot where each line is a dataset and the error bars are the range
+    sns.lineplot(x=X, y=Y, data=df, hue='dataset', estimator="median", errorbar=("pi", 0.5))
+
+    plt.xticks(rotation=90)
+    plt.title(title)
+    plt.savefig(prefix + f"/lineplot_{X}.png", bbox_inches='tight')
+    plt.clf()
 
 def unify_csvs(filepath, key, alg=None, add_slurm=False):
     file_sep = None
