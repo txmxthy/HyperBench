@@ -1,4 +1,4 @@
-# JSS Comparison Project
+# Distributed Benchmarking of Hyper Heuristics for the Job Shop Scheduling Problem
 
 
 # Deps
