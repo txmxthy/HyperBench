@@ -2,7 +2,8 @@
 - HyperBench is a framework for benchmarking and comparing solvers for the Job Shop Problem.
 - It was specifically designed to allow for widespread parameter testing and comparison of traditional exact solvers against meta/hyper-herustics.
 
--The hyperbench framework includes automated grid job batching, time forecasting, some bundled solvers and examples for importing your own algorithm. 
+- The hyperbench framework includes automated grid job batching, time forecasting, some bundled solvers and examples for importing your own algorithm.
+- Credit to the original authors for the implementation of their respective solvers or algorithms. I do not claim ownership of any external solvers or algorithms included. All rights are retained by their respective creators, and any use or distribution should acknowledge them accordingly.
 
 - A simulation environment is also included which can be connected to the rendering mechanisms, or new algorithms can be built on the pre-existing environments.
 
