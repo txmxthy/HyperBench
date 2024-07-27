@@ -1,3 +1,5 @@
+![image](Hyperbench Logos/hyperbench-logo(3).svg)
+
 # Welcome to HyperBench
 - HyperBench is a framework for benchmarking and comparing solvers for the Job Shop Problem.
 - It was specifically designed to allow for widespread parameter testing and comparison of traditional exact solvers against meta/hyper-herustics.
