@@ -1,5 +1,16 @@
-![image](https://raw.githubusercontent.com/txmxthy/HyperBench/master/Hyperbench%20Logos/open-graph-logo.png)
-# Welcome to HyperBench
+
+
+
+<h1 align="center">
+  <img src="https://raw.githubusercontent.com/txmxthy/HyperBench/master/Hyperbench%20Logos/open-graph-logo.png" alt="Logo" style="width:400px; height:auto;">
+</h1>
+
+
+<h4 align="center"> 
+    Benchmarking solvers for the Job Shop Problem
+</h4>
+
+### About
 - HyperBench is a framework for benchmarking and comparing solvers for the Job Shop Problem.
 - It was specifically designed to allow for widespread parameter testing and comparison of traditional exact solvers against meta/hyper-herustics.
 
@@ -9,12 +20,12 @@
 - A simulation environment is also included which can be connected to the rendering mechanisms, or new algorithms can be built on the pre-existing environments.
 
 
-# Dependencies
+#### Dependencies
 
 sudo apt-get install gifsicle on linux or https://eternallybored.org/misc/gifsicle/ on windows
 
 
-# Running with SLURM.
+### Running with SLURM.
 
 To pull and run after cloning.
 ```commandline
@@ -36,7 +47,7 @@ cat genetic-stderr-* | grep Slurm | grep -Eo '[0-9]{1,4}' | sort -n | tail -n 1
 ```
 
 
-# Local Running:
+### Local Running:
 
 Tested and developed with Pycharm on debian/kali.
 
@@ -46,37 +57,37 @@ See: https://github.com/Ashald/EnvFile
 
 
 
-## Simulated Annealing
+#### Simulated Annealing
 ```commandline
 SLURM_ARRAY_TASK_ID=1 OUTPUT_DIR=/<Path To>/HyperBench/jobs/output/sim_anneal RUN_KEY=1 python3 simu_entry.py    
 ```
 
-## Tabu Search
+#### Tabu Search
 ```commandline
 SLURM_ARRAY_TASK_ID=1 OUTPUT_DIR=/<Path To>/HyperBench/jobs/output/tabu_search python3 tabu_entry.py    
 ```
 
-## Genetic Algorithm
+#### Genetic Algorithm
 ```commandline
 SLURM_ARRAY_TASK_ID=1 OUTPUT_DIR=/<Path To>/HyperBench/jobs/output/genetic python3 genetic_entry.py    
 ```
 
-## Dispatching Rules
+#### Dispatching Rules
 ```commandline
 SLURM_ARRAY_TASK_ID=1 OUTPUT_DIR=/<Path To>/HyperBench/jobs/output/dispatching_rules python3 dispatching_rules_entry.py    
 ```
 
-## Constraint 
+#### Constraint 
 ```commandline
 SLURM_ARRAY_TASK_ID=1 OUTPUT_DIR=/<Path To>/HyperBench/jobs/output/constraint python3 constraint_entry.py    
 ```
-# Parameter Selection
+### Parameter Selection
 The default parameters have been selected from a range of literature. 
 There is an accompanying report to this project which may be made public at some stage in the future. 
 
-## Genetic Algorithm parameters
+#### Genetic Algorithm parameters
 https://eprints.ncl.ac.uk/file_store/production/56840/02F80BF2-FA85-49F3-B5B4-3E63CB6A4412.pdf
 https://www.researchgate.net/figure/Genetic-algorithm-parameters-and-their-values-types_tbl2_266204025
 
-## Dispatching parameters
+#### Dispatching parameters
 https://www.researchgate.net/publication/273266719_Comparison_of_dispatching_rules_in_job-shop_Schedulingproblem_Usingsimulation_A_case_study
