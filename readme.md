@@ -10,6 +10,10 @@
     Benchmarking solvers for the Job Shop Problem
 </h4>
 
+<h4 align="center"> 
+  <img src="https://github.com/user-attachments/assets/1ab7e760-4ccf-4158-8eaf-3a0a6665baec" alt="jobshopMockup" width="50%">
+</h4>
+
 ### About
 - HyperBench is a framework for benchmarking and comparing solvers for the Job Shop Problem.
 - It was specifically designed to allow for widespread parameter testing and comparison of traditional exact solvers against meta/hyper-herustics.
